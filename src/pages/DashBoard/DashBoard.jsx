@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import { AppBar, Toolbar, Typography, IconButton, Box, Avatar, Badge, Drawer, Divider, Menu, MenuItem } from "@mui/material";
+import { AppBar, Toolbar, Typography, IconButton, Box, Avatar, Badge, Menu, MenuItem } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import Sidebar from "../../components/sidebar/Sidebar.jsx";
@@ -9,9 +9,10 @@ import axios from "axios";
 
 const Dashboard = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const [notificationCount] = useState(3);
+    const [notificationCount, setNotificationCount] = useState(0); // Số lượng thông báo chưa đọc
+    const [notifications, setNotifications] = useState([""]); // Danh sách thông báo
+    const [anchorEl, setAnchorEl] = useState(null); // Mở menu thông báo
     const [boards, setBoards] = useState([]);
-
     useEffect(() => {
         fetchBoards();
     }, []);
@@ -27,6 +28,21 @@ const Dashboard = () => {
 
     const handleBoardCreated = (newBoard) => {
         setBoards((prevBoards) => [...prevBoards, newBoard]); // Cập nhật danh sách bảng trên UI
+        addNotification(`Đã tạo bảng: ${newBoard.name}`); // Thêm thông báo mới
+    };
+
+    const addNotification = (message) => {
+        setNotifications((prev) => [ message, ...prev ]); // Thêm vào danh sách thông báo
+        setNotificationCount((prev) => prev + 1); // Tăng số lượng thông báo
+    };
+
+    const handleNotificationClick = (event) => {
+        setAnchorEl(event.currentTarget);
+        setNotificationCount(0); // Xóa số đỏ khi mở menu
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
     };
 
     return (
@@ -40,11 +56,32 @@ const Dashboard = () => {
                         <Typography variant="h6">WorkMG</Typography>
                     </Box>
                     <TopMenu onBoardCreated={handleBoardCreated} />
-                    <IconButton color="inherit">
+
+                    {/* Biểu tượng chuông thông báo */}
+                    <IconButton color="inherit" onClick={handleNotificationClick}>
                         <Badge badgeContent={notificationCount} color="error">
                             <NotificationsIcon />
                         </Badge>
                     </IconButton>
+
+                    {/* Danh sách thông báo */}
+                    <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                        sx={{ mt: 2 }}
+                    >
+                        {notifications.length > 0 ? (
+                            notifications.map((notification, index) => (
+                                <MenuItem key={index} onClick={handleClose}>
+                                    {notification}
+                                </MenuItem>
+                            ))
+                        ) : (
+                            <MenuItem disabled>Không có thông báo</MenuItem>
+                        )}
+                    </Menu>
+
                     <IconButton sx={{ p: 0 }}>
                         <Avatar alt="User" src="/static/images/avatar/1.jpg" />
                     </IconButton>
