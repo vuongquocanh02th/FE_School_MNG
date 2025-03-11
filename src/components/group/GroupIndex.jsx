@@ -4,19 +4,19 @@ import GroupList from "./GroupList.jsx";
 import GroupInfo from "./GroupInfo.jsx";
 
 export default function GroupIndex() {
-    let formType = '';
+    const [formType, setFormType] = useState('');
     const [showForm, setShowForm] = useState(false);
     const [showInfo, setShowInfo] = useState(false);
 
     const [groupDetails, setGroupDetails] = useState({});
 
     const openAddForm = () => {
-        formType = 'add';
+        setFormType('add');
         setShowForm(true);
     }
 
     const openEditForm = () => {
-        formType = 'edit';
+        setFormType('edit');
         closeInfo();
         setShowForm(true);
     }
@@ -31,7 +31,7 @@ export default function GroupIndex() {
 
     return (
         <div className="ms-4 my-4">
-            <button className="btn btn-primary" onClick={openAddForm}>
+            <button type="button" className="btn btn-primary" onClick={openAddForm}>
                 Mở Form
             </button>
             <GroupList onItemClick={chooseGroup}/>

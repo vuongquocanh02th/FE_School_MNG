@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import axios from "axios";
 
-export default function GroupForm({closeForm,formType,data}) {
+export default function GroupForm({closeForm, formType, data}) {
     const groupDataTemplate = {
         id: '',
         name: '',
@@ -91,7 +91,7 @@ export default function GroupForm({closeForm,formType,data}) {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-primary" onClick={handleSubmit}>
-                                    Gửi
+                                    {formType === 'add' ? 'Thêm' : 'Sửa'}
                                 </button>
                                 <button type="button" className="btn btn-secondary" onClick={closeForm}>
                                     Đóng
