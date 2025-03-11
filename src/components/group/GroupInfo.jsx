@@ -5,7 +5,7 @@ export default function GroupInfo({data, closeInfo, openForm}) {
     const sendHttpRequestDeleteGroup = (id) => {
         axios.delete("http://localhost:8080/api/group/" + id)
             .then(() => {
-                alert("Xóa nhóm thành công")
+                alert("Xóa nhóm thành công");
                 closeInfo();
             })
             .catch((err) => {
@@ -21,47 +21,58 @@ export default function GroupInfo({data, closeInfo, openForm}) {
     }
 
     const reformatDate = (date) => {
-        let str = "";
-        let arr = date.split("-");
-        str += `${arr[0]}-${arr[1]}-`;
-        arr = arr[2].split("T");
-        str += arr[0];
-        arr = arr[1].split(":");
-        str += ` ${arr[0]}:${arr[1]}:${arr[2].split(".")[0]}`;
-        return str;
+        try {
+            let str = "";
+            let arr = date.split("-");
+            str += `${arr[0]}-${arr[1]}-`;
+            arr = arr[2].split("T");
+            str += arr[0];
+            arr = arr[1].split(":");
+            str += ` ${arr[0]}:${arr[1]}:${arr[2].split(".")[0]}`;
+            return str;
+        } catch {
+            return "";
+        }
     }
 
     return (
         <>
-            <div className="modal-backdrop fade show"></div>
-            <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">Chi tiết thông tin nhóm</h5>
-                            <button type="button" className="btn-close" onClick={closeInfo}
-                                    aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body">
-                            <div className="mb-3"><strong>Tên nhóm:</strong> {data.name}</div>
-                            <div className="mb-3"><strong>Loại:</strong> {data.type}</div>
-                            <div className="mb-3"><strong>Quyền truy cập:</strong> {data.access}</div>
-                            <div className="mb-3"><strong>Thời điểm tạo:</strong> {reformatDate(data.created_at)}</div>
-                            <div className="mb-3"><strong>Người tạo:</strong> {data.created_by}</div>
-                            <div className="mb-3"><strong>Mô tả:</strong> {data.description}</div>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-success" onClick={openForm}>
-                                Sửa
-                            </button>
-                            <button type="button" className="btn btn-danger" onClick={onDeleteClick}>
-                                Xóa
-                            </button>
-                            <button type="button" className="btn btn-secondary" onClick={closeInfo}>
-                                Đóng
-                            </button>
-                        </div>
-                    </div>
+            <div className="my-2">
+                <h2 className="mb-4">Thông tin chi tiết</h2>
+                <div className="mb-3">
+                    <strong>Tên nhóm:</strong>
+                    <p className="mb-0">{data.name}</p>
+                </div>
+                <div className="mb-3">
+                    <strong>Loại:</strong>
+                    <p className="mb-0">{data.type}</p>
+                </div>
+                <div className="mb-3">
+                    <strong>Quyền truy cập:</strong>
+                    <p className="mb-0">{data.access}</p>
+                </div>
+                <div className="mb-3">
+                    <strong>Thời điểm tạo:</strong>
+                    <p className="mb-0">{reformatDate(data.created_at)}</p>
+                </div>
+                <div className="mb-3">
+                    <strong>Người tạo:</strong>
+                    <p className="mb-0">{data.created_by}</p>
+                </div>
+                <div className="mb-3">
+                    <strong>Mô tả:</strong>
+                    <p className="mb-0">{data.description}</p>
+                </div>
+                <div className="d-flex justify-content-start mt-4">
+                    <button className="btn btn-primary me-2" onClick={openForm}>
+                        Sửa
+                    </button>
+                    <button className="btn btn-danger me-2" onClick={onDeleteClick}>
+                        Xóa
+                    </button>
+                    <button className="btn btn-secondary me-2" onClick={closeInfo}>
+                        Quay lại
+                    </button>
                 </div>
             </div>
         </>

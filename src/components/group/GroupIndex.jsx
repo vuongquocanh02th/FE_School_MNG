@@ -17,7 +17,6 @@ export default function GroupIndex() {
 
     const openEditForm = () => {
         setFormType('edit');
-        closeInfo();
         setShowForm(true);
     }
 
@@ -31,15 +30,19 @@ export default function GroupIndex() {
 
     return (
         <div className="ms-4 my-4">
-            <button type="button" className="btn btn-primary" onClick={openAddForm}>
-                Mở Form
-            </button>
-            <GroupList onItemClick={chooseGroup}/>
-            {showForm && (
-                <GroupForm data={groupDetails} formType={formType} closeForm={closeForm}/>
+            {!showInfo && (
+                <>
+                    <button type="button" className="btn btn-primary" onClick={openAddForm}>
+                        Tạo nhóm
+                    </button>
+                    <GroupList onItemClick={chooseGroup}/>
+                </>
             )}
             {showInfo && (
                 <GroupInfo data={groupDetails} closeInfo={closeInfo} openForm={openEditForm}/>
+            )}
+            {showForm && (
+                <GroupForm data={groupDetails} formType={formType} closeForm={closeForm}/>
             )}
         </div>
     )
