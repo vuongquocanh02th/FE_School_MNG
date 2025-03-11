@@ -49,7 +49,7 @@ function Home() {
                             textDecoration: 'none',
                         }}
                     >
-                        LOGO
+                        WorkMG
                     </Typography>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -118,9 +118,9 @@ function Home() {
                     </Box>
                     <Box sx={{ flexGrow: 0 }}>
                         <Link to={"/login"}>
-                        <Button variant="contained">
-                            Login
-                        </Button>
+                            <Button variant="contained">
+                                Login
+                            </Button>
                         </Link>
                     </Box>
 
