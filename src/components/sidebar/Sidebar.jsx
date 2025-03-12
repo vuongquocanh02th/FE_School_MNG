@@ -18,7 +18,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import GroupForm from "../group/GroupForm";
 import GroupList from "../group/GroupList.jsx"; // Import GroupForm.jsx
 
-const Sidebar = () => {
+const Sidebar = ({onGroupCreated}) => {
     const groups = useSelector((state) => state.groups.list);
     const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
@@ -57,11 +57,8 @@ const Sidebar = () => {
 
                 {/* Modal thêm nhóm */}
                 {isGroupModalOpen && (
-                    <GroupForm
-                        closeForm={() => setIsGroupModalOpen(false)}
-                        formType="add"
-                        data={null}
-                    />
+                    <GroupForm closeForm={() => setIsGroupModalOpen(false)} formType="add" data={null} onGroupCreated={onGroupCreated} />
+
                 )}
 
                 {/* Danh sách nhóm */}
