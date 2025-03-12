@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import { Modal, Box, Typography, TextField, Select, MenuItem, Button, IconButton } from "@mui/material";
+import React from "react";
+import { Modal, Box, Typography, TextField, Select, MenuItem, Button, IconButton, FormHelperText, FormControl } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 
 export default function GroupForm({ closeForm, formType, data }) {
     const groupDataTemplate = {
@@ -11,23 +13,26 @@ export default function GroupForm({ closeForm, formType, data }) {
         access: "PUBLIC",
         description: "",
     };
-    const [formData, setFormData] = useState(formType === "add" ? groupDataTemplate : data);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
+    const initialValues = formType === "add" ? groupDataTemplate : data;
 
-    const handleSubmit = () => {
+    // Schema validation với Yup
+    const validationSchema = Yup.object({
+        name: Yup.string().required("Tên nhóm không được để trống"),
+        type: Yup.string().required("Loại nhóm không được để trống"),
+    });
+
+    const handleSubmit = (values, { setSubmitting }) => {
         if (formType === "add") {
-            sendHttpRequestAddGroup();
+            sendHttpRequestAddGroup(values);
         } else {
-            sendHttpRequestEditGroup();
+            sendHttpRequestEditGroup(values);
         }
+        setSubmitting(false);
         closeForm();
     };
 
-    const sendHttpRequestAddGroup = () => {
+    const sendHttpRequestAddGroup = (formData) => {
         axios
             .post("http://localhost:8080/api/group", formData)
             .then(() => {
@@ -38,9 +43,9 @@ export default function GroupForm({ closeForm, formType, data }) {
             });
     };
 
-    const sendHttpRequestEditGroup = () => {
+    const sendHttpRequestEditGroup = (formData) => {
         axios
-            .put("http://localhost:8080/api/group/" + formData.id, formData)
+            .put(`http://localhost:8080/api/group/${formData.id}`, formData)
             .then(() => {
                 alert("Sửa thông tin nhóm thành công");
             })
@@ -71,53 +76,69 @@ export default function GroupForm({ closeForm, formType, data }) {
                     </IconButton>
                 </Box>
 
-                <TextField
-                    fullWidth
-                    label="Tên nhóm"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    margin="normal"
-                    required
-                />
-                <TextField
-                    fullWidth
-                    label="Loại"
-                    name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                    margin="normal"
-                    required
-                />
-                <Select
-                    fullWidth
-                    name="access"
-                    value={formData.access}
-                    onChange={handleChange}
-                    displayEmpty
-                    sx={{ mt: 2 }}
-                >
-                    <MenuItem value="PUBLIC">Công khai</MenuItem>
-                    <MenuItem value="PRIVATE">Riêng tư</MenuItem>
-                </Select>
-                <TextField
-                    fullWidth
-                    label="Mô tả"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    margin="normal"
-                    multiline
-                    rows={3}
-                />
-                <Box mt={2} display="flex" justifyContent="flex-end">
-                    <Button onClick={closeForm} sx={{ mr: 1 }}>
-                        Đóng
-                    </Button>
-                    <Button variant="contained" color="primary" onClick={handleSubmit}>
-                        {formType === "add" ? "Thêm" : "Sửa"}
-                    </Button>
-                </Box>
+                <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+                    {({ errors, touched, handleChange, values }) => (
+                        <Form>
+                            <FormControl fullWidth margin="normal">
+                                <TextField
+                                    label="Tên nhóm"
+                                    name="name"
+                                    value={values.name}
+                                    onChange={handleChange}
+                                    error={touched.name && Boolean(errors.name)}
+                                />
+                                {touched.name && errors.name && (
+                                    <FormHelperText error>{errors.name}</FormHelperText>
+                                )}
+                            </FormControl>
+
+                            <FormControl fullWidth margin="normal">
+                                <TextField
+                                    label="Loại"
+                                    name="type"
+                                    value={values.type}
+                                    onChange={handleChange}
+                                    error={touched.type && Boolean(errors.type)}
+                                />
+                                {touched.type && errors.type && (
+                                    <FormHelperText error>{errors.type}</FormHelperText>
+                                )}
+                            </FormControl>
+
+                            <FormControl fullWidth margin="normal">
+                                <Select
+                                    name="access"
+                                    value={values.access}
+                                    onChange={handleChange}
+                                    displayEmpty
+                                >
+                                    <MenuItem value="PUBLIC">Công khai</MenuItem>
+                                    <MenuItem value="PRIVATE">Riêng tư</MenuItem>
+                                </Select>
+                            </FormControl>
+
+                            <FormControl fullWidth margin="normal">
+                                <TextField
+                                    label="Mô tả"
+                                    name="description"
+                                    value={values.description}
+                                    onChange={handleChange}
+                                    multiline
+                                    rows={3}
+                                />
+                            </FormControl>
+
+                            <Box mt={2} display="flex" justifyContent="flex-end">
+                                <Button onClick={closeForm} sx={{ mr: 1 }}>
+                                    Đóng
+                                </Button>
+                                <Button variant="contained" color="primary" type="submit">
+                                    {formType === "add" ? "Thêm" : "Sửa"}
+                                </Button>
+                            </Box>
+                        </Form>
+                    )}
+                </Formik>
             </Box>
         </Modal>
     );
