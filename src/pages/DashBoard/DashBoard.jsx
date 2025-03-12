@@ -31,6 +31,10 @@ const Dashboard = () => {
         addNotification(`Đã tạo bảng: ${newBoard.name}`); // Thêm thông báo mới
     };
 
+    const handleGroupCreated = (newGroup) => {
+        addNotification(`Đã tạo nhóm: ${newGroup.name}`);
+    };
+
     const addNotification = (message) => {
         setNotifications((prev) => [ message, ...prev ]); // Thêm vào danh sách thông báo
         setNotificationCount((prev) => prev + 1); // Tăng số lượng thông báo
@@ -88,7 +92,7 @@ const Dashboard = () => {
                 </Toolbar>
             </AppBar>
 
-            <Sidebar open={drawerOpen} toggleDrawer={() => setDrawerOpen(!drawerOpen)} />
+            <Sidebar open={drawerOpen} toggleDrawer={() => setDrawerOpen(!drawerOpen)} onGroupCreated={handleGroupCreated} />
 
             <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>
                 <Outlet context={{ boards }} />

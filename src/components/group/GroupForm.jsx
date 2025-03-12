@@ -5,7 +5,7 @@ import axios from "axios";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 
-export default function GroupForm({ closeForm, formType, data }) {
+export default function GroupForm({ closeForm, formType, data, onGroupCreated }) {
     const groupDataTemplate = {
         id: "",
         name: "",
@@ -22,15 +22,28 @@ export default function GroupForm({ closeForm, formType, data }) {
         type: Yup.string().required("Loại nhóm không được để trống"),
     });
 
-    const handleSubmit = (values, { setSubmitting }) => {
-        if (formType === "add") {
-            sendHttpRequestAddGroup(values);
-        } else {
-            sendHttpRequestEditGroup(values);
+    const handleSubmit = async (values, { setSubmitting }) => {
+        try {
+            let response;
+            if (formType === "add") {
+                response = await axios.post("http://localhost:8080/api/group", values);
+                alert("Thêm nhóm thành công");
+            } else {
+                response = await axios.put(`http://localhost:8080/api/group/${values.id}`, values);
+                alert("Sửa thông tin nhóm thành công");
+            }
+
+            onGroupCreated(response?.data); // Gửi dữ liệu nhóm vừa tạo lên Dashboard để hiển thị thông báo
+        } catch (error) {
+            console.error("Lỗi khi xử lý nhóm:", error);
+            alert("Bị lỗi khi xử lý nhóm, vui lòng thử lại");
+        } finally {
+            setSubmitting(false);
+            closeForm();
         }
-        setSubmitting(false);
-        closeForm();
     };
+
+
 
     const sendHttpRequestAddGroup = (formData) => {
         axios
