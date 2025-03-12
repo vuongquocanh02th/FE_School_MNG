@@ -1,14 +1,9 @@
 import axios from "axios";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
+import { List, ListItem, ListItemAvatar, Avatar, ListItemText } from "@mui/material";
 
-export default function GroupList({onItemClick}) {
+export default function GroupList({ onItemClick }) {
     const [data, setData] = useState([]);
-
-    const listStyte = {
-        cursor: "pointer",
-        minWidth: "100px",
-        textAlign: "center"
-    }
 
     const fetchData = () => {
         axios.get("http://localhost:8080/api/group")
@@ -17,22 +12,23 @@ export default function GroupList({onItemClick}) {
             })
             .catch((err) => {
                 console.log(err);
-            })
-    }
+            });
+    };
 
     useEffect(() => {
         fetchData();
-    }, [])
+    }, []);
 
     return (
-        <div className="d-flex flex-wrap">
-            {data.map((item, index) => (
-                <div key={index} className="p-2 m-2 border rounded"
-                     style={listStyte}
-                     onClick={() => onItemClick(item)}>
-                    {item.name}
-                </div>
+        <List>
+            {data.map((item) => (
+                <ListItem key={item.id} button onClick={() => onItemClick(item)}>
+                    <ListItemAvatar>
+                        <Avatar>{item.name.charAt(0)}</Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={item.name} />
+                </ListItem>
             ))}
-        </div>
+        </List>
     );
 }

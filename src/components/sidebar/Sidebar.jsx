@@ -15,7 +15,8 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import GroupForm from "../group/GroupForm"; // Import GroupForm.jsx
+import GroupForm from "../group/GroupForm";
+import GroupList from "../group/GroupList.jsx"; // Import GroupForm.jsx
 
 const Sidebar = () => {
     const groups = useSelector((state) => state.groups.list);
@@ -64,12 +65,7 @@ const Sidebar = () => {
                 )}
 
                 {/* Danh sách nhóm */}
-                {groups.map((group) => (
-                    <ListItem button key={group.id}>
-                        <Avatar sx={{ width: 32, height: 32, mr: 2 }}>{group.name.charAt(0)}</Avatar>
-                        <ListItemText primary={group.name} />
-                    </ListItem>
-                ))}
+                <GroupList onItemClick={(group) => console.log("Nhóm được chọn:", group)} />
             </List>
         </Box>
     );
