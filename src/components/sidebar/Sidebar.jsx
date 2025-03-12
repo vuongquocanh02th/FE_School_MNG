@@ -18,7 +18,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import GroupForm from "../group/GroupForm";
 import GroupList from "../group/GroupList.jsx"; // Import GroupForm.jsx
 
-const Sidebar = ({onGroupCreated}) => {
+const Sidebar = ({onGroupCreated, onGroupSelected, onBoardCreated, onShowAllBoards}) => {
     const groups = useSelector((state) => state.groups.list);
     const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
@@ -39,7 +39,7 @@ const Sidebar = ({onGroupCreated}) => {
         >
             <List>
                 <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate("/dashboard/boards")}>
+                    <ListItemButton onClick={onShowAllBoards}>
                         <ListItemIcon>
                             <DashboardIcon />
                         </ListItemIcon>
@@ -62,7 +62,7 @@ const Sidebar = ({onGroupCreated}) => {
                 )}
 
                 {/* Danh sách nhóm */}
-                <GroupList onItemClick={(group) => console.log("Nhóm được chọn:", group)} />
+                <GroupList onItemClick={onGroupSelected} onBoardCreated={onBoardCreated} />
             </List>
         </Box>
     );
