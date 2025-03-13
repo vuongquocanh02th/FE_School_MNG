@@ -62,6 +62,7 @@ const Dashboard = () => {
     };
 
     const handleGroupCreated = (newGroup) => {
+        window.location.reload();
         addNotification(`🎉 Đã tạo nhóm: ${newGroup.name}`);
     };
 
