@@ -1,10 +1,12 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+// import "bootstrap/dist/css/bootstrap.min.css";
 
-const GroupMembers = ({ groupId = 2, onMemberAdded = () => {} }) => {
+const GroupMembers = ({ groupId , onMemberAdded = () => {} }) => {
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState(null);
+    const [message1, setMessage1] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [email, setEmail] = useState("");
     const [groupRole, setGroupRole] = useState("MEMBER");
@@ -13,11 +15,11 @@ const GroupMembers = ({ groupId = 2, onMemberAdded = () => {} }) => {
 
     const handleAddMember = async () => {
         if (!email) {
-            setMessage("Vui lòng nhập email!");
+            setMessage1("Vui lòng nhập email!");
             return;
         }
         if (!isValidEmail(email)) {
-            setMessage("Email không hợp lệ!");
+            setMessage1("Email không hợp lệ!");
             return;
         }
 
@@ -27,10 +29,8 @@ const GroupMembers = ({ groupId = 2, onMemberAdded = () => {} }) => {
         try {
             const payload = {
                 email,
-                groupRole: groupRole.toUpperCase(), // Đảm bảo giá trị role viết hoa
+                groupRole: groupRole.toUpperCase(),
             };
-
-            console.log("📤 Gửi request:", payload);
 
             const response = await axios.post(
                 `http://localhost:8080/members/${groupId}/add`,
@@ -39,18 +39,13 @@ const GroupMembers = ({ groupId = 2, onMemberAdded = () => {} }) => {
             );
 
             alert("Thêm thành viên thành công!");
-            window.location.reload();
+            setMembers((prev) => [...prev, response.data]); // Thêm thành viên mới vào danh sách hiện tại
             setEmail("");
             setGroupRole("MEMBER");
-
-            if (typeof onMemberAdded === "function") {
-                onMemberAdded(response.data);
-            }
-
+            onMemberAdded(response.data);
             setTimeout(() => setShowForm(false), 1500);
         } catch (error) {
-            console.error("❌ Lỗi API:", error.response?.data);
-            setMessage(error.response?.data || "Lỗi khi thêm thành viên!");
+            setMessage1(error.response?.data || "Lỗi khi thêm thành viên!");
         } finally {
             setLoading(false);
         }
@@ -58,38 +53,31 @@ const GroupMembers = ({ groupId = 2, onMemberAdded = () => {} }) => {
 
     useEffect(() => {
         fetchMembers();
-    }, [groupId]); // Thêm dependency để đảm bảo fetch khi groupId thay đổi
+    }, [groupId]);
 
     const fetchMembers = async () => {
         try {
             const response = await axios.get(`http://localhost:8080/members/${groupId}`);
-            console.log(response.data); // Debug API response
-
-            // Kiểm tra dữ liệu trả về từ API
-            const fetchedMembers = response.data || [];
-            setMembers(fetchedMembers);
+            setMembers(response.data || []);
             setLoading(false);
+            // eslint-disable-next-line no-unused-vars
         } catch (error) {
-            console.error("Lỗi khi lấy danh sách thành viên:", error);
             setLoading(false);
         }
     };
 
-
     const handleRemoveMember = async (userId) => {
         if (!window.confirm("Bạn có chắc chắn muốn xóa thành viên này không?")) return;
-
         try {
             await axios.delete(`http://localhost:8080/members/${groupId}/remove/${userId}`);
             setMembers((prev) => prev.filter((member) => member.user?.id !== userId));
             alert("Xóa thành viên thành công!");
-            window.location.reload(); // Reload trang
+            setMembers((prev) => prev.filter((member) => member.id !== userId));
+            // eslint-disable-next-line no-unused-vars
         } catch (error) {
             alert("Lỗi khi xóa thành viên!");
-            console.error(error);
         }
     };
-
     const handleUpdateRole = async (userId, newRole) => {
         if (!window.confirm(`Bạn có chắc muốn đổi quyền thành ${newRole}?`)) return;
 
@@ -102,98 +90,89 @@ const GroupMembers = ({ groupId = 2, onMemberAdded = () => {} }) => {
             );
 
             alert("Cập nhật quyền thành viên thành công!");
-            window.location.reload(); // Reload trang
-        } catch (error) {
+            setMembers((prev) =>
+                prev.map((member) =>
+                    member.id === userId ? { ...member, groupRole: newRole } : member
+                )
+            );        } catch (error) {
             console.error("Lỗi khi cập nhật quyền!", error.response);
             setMessage("Lỗi khi cập nhật quyền!");
         }
     };
 
-
-    if (loading) return <p>Đang tải...</p>;
+    // if (loading) return <p className="text-center">Đang tải...</p>;
 
     return (
-        <div>
-            <div>
+        <div className="container mt-4">
+            <div className="mb-3">
                 {!showForm ? (
-                    <button onClick={() => setShowForm(true)}>Thêm thành viên</button>
+                    <button className="btn btn-primary" onClick={() => setShowForm(true)}>
+                        Thêm thành viên
+                    </button>
                 ) : (
-                    <div>
+                    <div className="card p-3">
                         <input
                             type="email"
+                            className="form-control mb-2"
                             placeholder="Nhập email thành viên..."
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={loading}
                         />
-                        <select value={groupRole} onChange={(e) => setGroupRole(e.target.value)} disabled={loading}>
+                        <select className="form-select mb-2" value={groupRole} onChange={(e) => setGroupRole(e.target.value)} disabled={loading}>
                             <option value="MEMBER">Thành viên</option>
                             <option value="ADMIN">Quản trị viên</option>
                         </select>
-                        <button onClick={handleAddMember} disabled={loading}>
+                        {message1 && <p className="text-success">{message1}</p>}
+                        <button className="btn btn-success me-2" onClick={handleAddMember} disabled={loading}>
                             {loading ? "Đang thêm..." : "Thêm"}
                         </button>
-                        <button onClick={() => setShowForm(false)} disabled={loading}>Hủy</button>
-                        {/*{message && <p>{message}</p>}*/}
+                        <button className="btn btn-secondary" onClick={() => setShowForm(false)} disabled={loading}>Hủy</button>
                     </div>
                 )}
             </div>
-            <div>
-                {message && <p style={{color: "green"}}>{message}</p>}
-                <table border="1" cellPadding="10" cellSpacing="0" style={{width: "100%", borderCollapse: "collapse"}}>
-                    <thead>
-                    <tr style={{background: "#f4f4f4"}}>
-                        <th>Ảnh</th>
-                        <th>Tên</th>
-                        <th>Email</th>
-                        <th>Vai trò</th>
-                        <th>Hành động</th>
+            {message && <p className="text-success">{message}</p>}
+            <table className="table table-bordered table-striped">
+                <thead className="table-light">
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên</th>
+                    <th>Email</th>
+                    <th>Vai trò</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                {members.map((member) => (
+                    <tr key={member.id}>
+                        <td>
+                            <img
+                                src={member.avatarUrl}
+                                alt="Avatar"
+                                className="rounded-circle"
+                                width="40"
+                                height="40"
+                            />
+                        </td>
+                        <td>{member.displayName}</td>
+                        <td>{member.email}</td>
+                        <td>
+                            <select className="form-select" value={member.GroupRole} onChange={(e) => handleUpdateRole(member.id, e.target.value)}>
+                                <option value="MEMBER">Thành viên</option>
+                                <option value="ADMIN">Quản trị viên</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button className="btn btn-danger" onClick={() => handleRemoveMember(member.id)}>
+                                Xóa
+                            </button>
+                        </td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {members.map((member) => (
-                        <tr key={member.id}>
-                            <td className="p-3">
-                                <img
-                                    src={member.avatarUrl}
-                                    alt="Avatar"
-                                    className="w-10 h-10 rounded-full border"
-                                />
-                            </td>
-                            <td>{member.displayName}</td>
-                            <td>{member.email}</td>
-                            <td>
-                                <select
-                                    value={member.GroupRole}
-                                    onChange={(e) => handleUpdateRole(member.id, e.target.value)}
-                                    style={{padding: "5px"}}
-                                >
-                                    <option value="MEMBER">Thành viên</option>
-                                    <option value="ADMIN">Quản trị viên</option>
-                                </select>
-                            </td>
-                            <td>
-                                <button
-                                    onClick={() => handleRemoveMember(member.id)}
-                                    style={{
-                                        background: "red",
-                                        color: "white",
-                                        border: "none",
-                                        padding: "5px 10px",
-                                        cursor: "pointer",
-                                    }}
-                                >
-                                    Xóa
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-            </div>
+                ))}
+                </tbody>
+            </table>
         </div>
-    )
-        ;
+    );
 };
 
 export default GroupMembers;

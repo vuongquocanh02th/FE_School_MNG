@@ -8,20 +8,20 @@ import {
     IconButton,
     Typography,
     Divider,
-    Avatar,
     ListItemButton,
     ListItemIcon
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { useNavigate } from "react-router-dom";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import GroupIcon from "@mui/icons-material/Group";
+import PeopleIcon from "@mui/icons-material/People";
+import { useNavigate } from "react-router-dom";
 import GroupForm from "../group/GroupForm";
-import GroupList from "../group/GroupList.jsx"; // Import GroupForm.jsx
+import GroupList from "../group/GroupList";
 
-const Sidebar = ({onGroupCreated, onGroupSelected, onBoardCreated, onShowAllBoards}) => {
+const Sidebar = ({ onGroupCreated, onGroupSelected, onBoardCreated, onShowAllBoards, onShowMembers }) => {
     const groups = useSelector((state) => state.groups.list);
     const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
-
     const navigate = useNavigate();
 
     return (
@@ -38,6 +38,7 @@ const Sidebar = ({onGroupCreated, onGroupSelected, onBoardCreated, onShowAllBoar
             }}
         >
             <List>
+                {/* Nút Bảng */}
                 <ListItem disablePadding>
                     <ListItemButton onClick={onShowAllBoards}>
                         <ListItemIcon>
@@ -46,23 +47,32 @@ const Sidebar = ({onGroupCreated, onGroupSelected, onBoardCreated, onShowAllBoar
                         <ListItemText primary="Bảng" />
                     </ListItemButton>
                 </ListItem>
-
                 <Divider />
+
+                {/* Nhóm */}
                 <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mt: 2, ml: 2, mr: 2 }}>
-                    <Typography variant="subtitle1">Nhóm người dùng</Typography>
+                    <Typography variant="subtitle1">Nhóm</Typography>
                     <IconButton color="primary" onClick={() => setIsGroupModalOpen(true)}>
                         <AddIcon />
                     </IconButton>
                 </Box>
 
-                {/* Modal thêm nhóm */}
                 {isGroupModalOpen && (
                     <GroupForm closeForm={() => setIsGroupModalOpen(false)} formType="add" data={null} onGroupCreated={onGroupCreated} />
-
                 )}
 
-                {/* Danh sách nhóm */}
                 <GroupList onItemClick={onGroupSelected} onBoardCreated={onBoardCreated} />
+
+                <Divider sx={{ my: 2 }} />
+                {/* Nút Thành viên */}
+                <ListItem disablePadding>
+                    <ListItemButton onClick={onShowMembers}>
+                        <ListItemIcon>
+                            <PeopleIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Thành viên" />
+                    </ListItemButton>
+                </ListItem>
             </List>
         </Box>
     );

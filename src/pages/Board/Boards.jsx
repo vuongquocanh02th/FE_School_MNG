@@ -1,5 +1,4 @@
 import React from "react";
-import BoardList from "../../components/board/BoardList.jsx";
 import { useOutletContext } from "react-router-dom";
 
 const Boards = () => {

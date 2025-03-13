@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const AddMemberForm = ({ groupId = 2, onMemberAdded = () => {} }) => {
+const AddMemberForm = ({ groupId, onMemberAdded = () => {} }) => {
     const [showForm, setShowForm] = useState(false);
     const [email, setEmail] = useState("");
     const [groupRole, setGroupRole] = useState("MEMBER");
@@ -47,7 +47,7 @@ const AddMemberForm = ({ groupId = 2, onMemberAdded = () => {} }) => {
 
             setTimeout(() => setShowForm(false), 1500);
         } catch (error) {
-            console.error("❌ Lỗi API:", error.response?.data);
+            console.error("Lỗi API:", error.response?.data);
             setMessage(error.response?.data || "Lỗi khi thêm thành viên!");
         } finally {
             setLoading(false);

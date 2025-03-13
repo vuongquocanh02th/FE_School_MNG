@@ -1,26 +1,45 @@
-import React from "react";
-import { Box, Typography, Paper, Grid } from "@mui/material";
+// import React from "react";
+import React, { useState } from "react";
+import { Box, Typography, Paper, Grid, Button } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import GroupMember from "../groupMember/GroupMember.jsx";
 
-const BoardsList = ({ boards }) => {
+const BoardsList = ({ boards, groupId }) => {
+    const [showMembers, setShowMembers] = useState(false);
+
     return (
-        <Box sx={{ p: 3, maxWidth: "900px", mx: "auto" }}> {/* Giới hạn chiều rộng danh sách bảng */}
+        <Box sx={{ p: 3, maxWidth: "900px", mx: "auto" }}>
+            {/* Nút Xem Thành Viên */}
+            <Button
+                variant="contained"
+                color="primary"
+                sx={{ mb: 2 }}
+                onClick={() => {
+                    console.log("Group ID:", groupId); // Kiểm tra groupId trước khi gọi
+                    if (groupId) {
+                        setShowMembers((prev) => !prev);
+                    } else {
+                        alert("Lỗi: Không có groupId!");
+                    }
+                }}
+            >
+                {showMembers ? "Đóng danh sách thành viên" : "Xem thành viên"}
+            </Button>
+
+            {showMembers && <GroupMember groupId={groupId} />}
+
+
             <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", color: "#333" }}>
                 Danh sách bảng
             </Typography>
-            <Grid
-                container
-                spacing={2}
-                sx={{
-                    justifyContent: "flex-start", // Căn danh sách về bên trái thay vì dàn đều
-                }}
-            >
+
+            <Grid container spacing={2} sx={{ justifyContent: "flex-start" }}>
                 {boards.length > 0 ? (
                     boards.map((board) => (
-                        <Grid item xs={12} sm={6} md={3} key={board.id}> {/* Giảm kích thước bảng */}
+                        <Grid item xs={12} sm={6} md={3} key={board.id}>
                             <Paper
                                 sx={{
-                                    p: 2, // Giảm padding để bảng nhỏ hơn
+                                    p: 2,
                                     display: "flex",
                                     alignItems: "center",
                                     gap: 1,
@@ -34,20 +53,20 @@ const BoardsList = ({ boards }) => {
                                         bgcolor: "#e3f2fd",
                                     },
                                     cursor: "pointer",
-                                    width: "100%", // Đảm bảo bảng không bị kéo dài
-                                    minHeight: "80px", // Đặt chiều cao tối thiểu cho bảng
+                                    width: "100%",
+                                    minHeight: "80px",
                                 }}
                             >
-                                <DashboardIcon sx={{ color: "#1976d2", fontSize: 32 }} /> {/* Giảm kích thước icon */}
+                                <DashboardIcon sx={{ color: "#1976d2", fontSize: 32 }} />
                                 <Typography
                                     variant="body1"
                                     sx={{
                                         fontWeight: "bold",
                                         color: "#333",
-                                        whiteSpace: "nowrap", // Không cho xuống dòng
+                                        whiteSpace: "nowrap",
                                         overflow: "hidden",
-                                        textOverflow: "ellipsis", // Cắt bớt chữ nếu quá dài
-                                        maxWidth: "120px", // Giới hạn chiều rộng chữ
+                                        textOverflow: "ellipsis",
+                                        maxWidth: "120px",
                                     }}
                                 >
                                     {board.name}
