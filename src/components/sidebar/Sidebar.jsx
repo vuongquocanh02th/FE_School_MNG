@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import {
     Box,
     List,
@@ -8,44 +8,21 @@ import {
     IconButton,
     Typography,
     Divider,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    TextField,
-    DialogActions,
-    Button,
     Avatar,
-    ListItemButton, ListItemIcon
+    ListItemButton,
+    ListItemIcon
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { addGroup } from "../../redux/groupsSlice";
 import { useNavigate } from "react-router-dom";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import GroupForm from "../group/GroupForm";
+import GroupList from "../group/GroupList.jsx"; // Import GroupForm.jsx
 
-const Sidebar = () => {
-    const dispatch = useDispatch();
+const Sidebar = ({onGroupCreated, onGroupSelected, onBoardCreated, onShowAllBoards}) => {
     const groups = useSelector((state) => state.groups.list);
-    const [open, setOpen] = useState(false);
-    const [groupName, setGroupName] = useState("");
+    const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
     const navigate = useNavigate();
-
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-        setGroupName("");
-    };
-
-    const handleAddGroup = () => {
-        if (groupName.trim()) {
-            dispatch(addGroup(groupName.trim()));
-            handleClose();
-        }
-    };
 
     return (
         <Box
@@ -62,7 +39,7 @@ const Sidebar = () => {
         >
             <List>
                 <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate("/dashboard/boards")}>
+                    <ListItemButton onClick={onShowAllBoards}>
                         <ListItemIcon>
                             <DashboardIcon />
                         </ListItemIcon>
@@ -73,34 +50,20 @@ const Sidebar = () => {
                 <Divider />
                 <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mt: 2, ml: 2, mr: 2 }}>
                     <Typography variant="subtitle1">Nhóm người dùng</Typography>
-                    <IconButton color="primary" onClick={handleOpen}>
+                    <IconButton color="primary" onClick={() => setIsGroupModalOpen(true)}>
                         <AddIcon />
                     </IconButton>
                 </Box>
-                {groups.map((group, index) => (
-                    <ListItem button key={index}>
-                        <Avatar sx={{ width: 32, height: 32, mr: 2 }}>{group.charAt(0)}</Avatar>
-                        <ListItemText primary={group} />
-                    </ListItem>
-                ))}
+
+                {/* Modal thêm nhóm */}
+                {isGroupModalOpen && (
+                    <GroupForm closeForm={() => setIsGroupModalOpen(false)} formType="add" data={null} onGroupCreated={onGroupCreated} />
+
+                )}
+
+                {/* Danh sách nhóm */}
+                <GroupList onItemClick={onGroupSelected} onBoardCreated={onBoardCreated} />
             </List>
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Thêm Nhóm Mới</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="Tên nhóm"
-                        fullWidth
-                        value={groupName}
-                        onChange={(e) => setGroupName(e.target.value)}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="secondary">Hủy</Button>
-                    <Button onClick={handleAddGroup} color="primary">Thêm</Button>
-                </DialogActions>
-            </Dialog>
         </Box>
     );
 };
