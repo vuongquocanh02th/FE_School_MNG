@@ -17,10 +17,13 @@ export default function AuthForm() {
     const handleSubmit = async (values, { setSubmitting }) => {
         try {
             const url = formType === LOGINTYPE ? "/auth/login" : "/auth/register";
-            await axios.post(`http://localhost:8080${url}`, values);
+            const response = await axios.post(`http://localhost:8080${url}`, values);
+
             alert(`${formType === LOGINTYPE ? "Đăng nhập" : "Đăng ký"} thành công!`);
 
             if (formType === LOGINTYPE) {
+                localStorage.setItem("authToken", response.data.token); // Lưu token
+                localStorage.setItem("username", values.username); // Lưu tên user
                 navigate("/dashboard/home"); // Điều hướng sau khi đăng nhập
             }
         } catch (error) {
@@ -29,6 +32,7 @@ export default function AuthForm() {
             setSubmitting(false);
         }
     };
+
 
     return (
         <Container fluid className="d-flex align-items-center justify-content-center vh-100 w-100 bg-primary">
