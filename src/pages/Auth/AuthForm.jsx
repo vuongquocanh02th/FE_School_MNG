@@ -1,116 +1,102 @@
-import React, {useState} from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from "react";
+import { Container, Card, Form, Button } from "react-bootstrap";
+import { Formik } from "formik";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 export default function AuthForm() {
-    const LOGINTYPE = 'LOGIN';
-    const REGISTERTYPE = 'REGISTER';
-
-    const formDataTemplate = {
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
-    };
-
-    const [formType, setFormType] = useState("LOGIN");
-    const [formData, setFormData] = useState(formDataTemplate);
-
-    const handleChange = (e) => {
-        const {name, value} = e.target;
-        setFormData(prev => ({...prev, [name]: value}));
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (formType === 'LOGIN') {
-            sendHttpRequestLogin();
-        } else {
-            sendHttpRequestRegister();
-        }
-    };
-
-    const sendHttpRequestLogin = () => {
-        axios.post("http://localhost:8080/auth/login", formData)
-            .then((res) => {
-                alert("Đăng nhập thành công");
-                console.log(res);
-            })
-            .catch((err) => {
-                alert(err.response.data);
-                console.log(err);
-            })
-    };
-
-    const sendHttpRequestRegister = () => {
-        axios.post("http://localhost:8080/auth/login", formData)
-            .then((res) => {
-                alert("Đăng ký thành công");
-                console.log(res.data);
-            })
-            .catch((err) => {
-                alert(err.response.data);
-                console.log(err);
-            })
-    };
+    const LOGINTYPE = "LOGIN";
+    const REGISTERTYPE = "REGISTER";
+    const [formType, setFormType] = useState(LOGINTYPE);
+    const navigate = useNavigate(); // Khai báo useNavigate
 
     const switchForm = () => {
-        if (formType === 'LOGIN') {
-            setFormType(REGISTERTYPE);
-        } else {
-            setFormType(LOGINTYPE);
+        setFormType(formType === LOGINTYPE ? REGISTERTYPE : LOGINTYPE);
+    };
+
+    const handleSubmit = async (values, { setSubmitting }) => {
+        try {
+            const url = formType === LOGINTYPE ? "/auth/login" : "/auth/register";
+            await axios.post(`http://localhost:8080${url}`, values);
+            alert(`${formType === LOGINTYPE ? "Đăng nhập" : "Đăng ký"} thành công!`);
+
+            if (formType === LOGINTYPE) {
+                navigate("/dashboard/home"); // Điều hướng sau khi đăng nhập
+            }
+        } catch (error) {
+            alert(error.response?.data || "Có lỗi xảy ra!");
+        } finally {
+            setSubmitting(false);
         }
-        setFormData(formDataTemplate);
-    }
+    };
 
     return (
-        <div className="d-flex align-items-center justify-content-center vh-100"
-             style={{backgroundColor: '#0077be'}}>
-            <div className="card p-4 shadow-lg" style={{width: '100%', maxWidth: '400px'}}>
-                <h3 className="text-center mb-4">
-                    {formType !== LOGINTYPE ? "Đăng ký" : "Đăng nhập"}
-                </h3>
-                <form>
-                    <div className="mb-3" hidden={formType === LOGINTYPE}>
-                        <label htmlFor="email" className="form-label">Email</label>
-                        <input type="email" id="email" className="form-control" placeholder="example@gmail.com"
-                               name="email"
-                               value={formData.email} onChange={handleChange} required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="username" className="form-label">Tên tài khoản</label>
-                        <input type="text" id="username" className="form-control" placeholder="name"
-                               name="username"
-                               value={formData.username} onChange={handleChange} required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="password" className="form-label">Mật khẩu</label>
-                        <input type="password" id="password" className="form-control" placeholder="password"
-                               name="password"
-                               value={formData.password} onChange={handleChange} required
-                        />
-                    </div>
-                    <div className="mb-3" hidden={formType === LOGINTYPE}>
-                        <label htmlFor="confirmPassword" className="form-label">Xác nhận mật khẩu</label>
-                        <input type="password" id="confirmPassword" className="form-control"
-                               placeholder=" confirm password"
-                               name="confirmPassword"
-                               value={formData.confirmPassword} onChange={handleChange} required
-                        />
-                    </div>
-                    <button type="button" className="btn btn-primary w-100" onClick={handleSubmit}>
-                        {formType !== LOGINTYPE ? "Đăng ký" : "Đăng nhập"}
-                    </button>
-                    <p className="mt-3 text-center">
-                        {formType === LOGINTYPE ? "Chưa có" : "Đã có"}{' tài khoản? '}
-                        <a className="" style={{cursor: "pointer"}} onClick={switchForm}>
-                            {formType === LOGINTYPE ? "Đăng ký" : "Đăng nhập"}
-                        </a>
-                    </p>
-                </form>
-            </div>
-        </div>
+        <Container fluid className="d-flex align-items-center justify-content-center vh-100 w-100 bg-primary">
+            <Card className="p-4 shadow-lg" style={{ maxWidth: "400px", width: "100%" }}>
+                <h3 className="text-center mb-4">{formType === LOGINTYPE ? "Đăng nhập" : "Đăng ký"}</h3>
+                <Formik
+                    initialValues={{ username: "", email: "", password: "", confirmPassword: "" }}
+                    onSubmit={handleSubmit}
+                >
+                    {({ values, handleChange, handleSubmit, isSubmitting }) => (
+                        <Form onSubmit={handleSubmit}>
+                            {formType === REGISTERTYPE && (
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Email</Form.Label>
+                                    <Form.Control
+                                        type="email"
+                                        name="email"
+                                        placeholder="example@gmail.com"
+                                        value={values.email}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                            )}
+                            <Form.Group className="mb-3">
+                                <Form.Label>Tên tài khoản</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="username"
+                                    placeholder="Nhập tên tài khoản"
+                                    value={values.username}
+                                    onChange={handleChange}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Mật khẩu</Form.Label>
+                                <Form.Control
+                                    type="password"
+                                    name="password"
+                                    placeholder="Nhập mật khẩu"
+                                    value={values.password}
+                                    onChange={handleChange}
+                                />
+                            </Form.Group>
+                            {formType === REGISTERTYPE && (
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Xác nhận mật khẩu</Form.Label>
+                                    <Form.Control
+                                        type="password"
+                                        name="confirmPassword"
+                                        placeholder="Nhập lại mật khẩu"
+                                        value={values.confirmPassword}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                            )}
+                            <Button type="submit" variant="primary" className="w-100" disabled={isSubmitting}>
+                                {formType === LOGINTYPE ? "Đăng nhập" : "Đăng ký"}
+                            </Button>
+                        </Form>
+                    )}
+                </Formik>
+                <p className="mt-3 text-center">
+                    {formType === LOGINTYPE ? "Chưa có tài khoản?" : "Đã có tài khoản?"}{" "}
+                    <span className="text-primary" style={{ cursor: "pointer" }} onClick={switchForm}>
+                        {formType === LOGINTYPE ? "Đăng ký" : "Đăng nhập"}
+                    </span>
+                </p>
+            </Card>
+        </Container>
     );
 }

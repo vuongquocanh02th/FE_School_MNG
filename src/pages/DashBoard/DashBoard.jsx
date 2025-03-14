@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from "react";
-import {Outlet} from "react-router-dom";
-import {Container, Row, Col, Navbar, Nav, Button, Badge, Dropdown, Toast, ToastContainer} from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Outlet } from "react-router-dom";
+import { Row, Col, Toast, ToastContainer } from "react-bootstrap";
 import Sidebar from "../../components/sidebar/Sidebar.jsx";
 import axios from "axios";
-import {FaBars, FaBell, FaUser} from "react-icons/fa";
+import TopMenu from "../../components/topmenu/TopMenu.jsx"; // Import TopMenu
 
 const Dashboard = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -14,7 +14,6 @@ const Dashboard = () => {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
     const [selectedGroupName, setSelectedGroupName] = useState("");
-
 
     useEffect(() => {
         fetchBoards(selectedGroup);
@@ -42,7 +41,7 @@ const Dashboard = () => {
     };
 
     const handleBoardCreated = (newBoard) => {
-        setBoards((prevBoards) => [...prevBoards, newBoard]); // ✅ Cập nhật ngay lập tức
+        setBoards((prevBoards) => [...prevBoards, newBoard]);
         addNotification(`Đã tạo bảng: ${newBoard.name}`);
         showToastMessage(`Bảng "${newBoard.name}" đã được tạo thành công!`);
     };
@@ -64,41 +63,15 @@ const Dashboard = () => {
 
     return (
         <div className="vh-100 d-flex flex-column">
-            <Navbar bg="dark" variant="dark" expand="lg" className="px-3">
-                <Container fluid>
-                    <Button variant="outline-light" onClick={() => setDrawerOpen(!drawerOpen)}>
-                        <FaBars/>
-                    </Button>
-                    <Navbar.Brand className="ms-2">WorkMG</Navbar.Brand>
-                    <Nav className="ms-auto d-flex align-items-center">
-                        <Dropdown align="end" onToggle={(isOpen) => isOpen && setNotificationCount(0)}>
-                            <Dropdown.Toggle variant="outline-light">
-                                {notificationCount > 0 && <Badge bg="danger">{notificationCount}</Badge>}
-                                <FaBell className="ms-2" />
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                                {notifications.length > 0 ? (
-                                    notifications.map((notification, index) => (
-                                        <Dropdown.Item key={index}>{notification}</Dropdown.Item>
-                                    ))
-                                ) : (
-                                    <Dropdown.Item disabled>Không có thông báo</Dropdown.Item>
-                                )}
-                            </Dropdown.Menu>
-                        </Dropdown>
-
-
-                        <Button variant="outline-light" className="ms-3">
-                            <FaUser/>
-                        </Button>
-                    </Nav>
-                </Container>
-            </Navbar>
+            <TopMenu
+                toggleDrawer={() => setDrawerOpen(!drawerOpen)}
+                notificationCount={notificationCount}
+                setNotificationCount={setNotificationCount}
+                notifications={notifications}
+            />
 
             <Row className="flex-grow-1 g-0">
-                <Col xs={12} md={3} lg={2} className={`bg-light ${drawerOpen ? "d-block" : "d-none d-md-block"}`}
-                     style={{height: "100vh", overflowY: "auto"}}>
+                <Col xs={12} md={3} lg={2} className={`bg-light ${drawerOpen ? "d-block" : "d-none d-md-block"}`} style={{ height: "100vh", overflowY: "auto" }}>
                     <Sidebar
                         open={drawerOpen}
                         toggleDrawer={() => setDrawerOpen(!drawerOpen)}
@@ -111,11 +84,7 @@ const Dashboard = () => {
 
                 <Col xs={12} md={9} lg={10} className="p-3 d-flex flex-column">
                     {selectedGroupName && <h5 className="mb-3">Tên nhóm: {selectedGroupName}</h5>}
-                    <Outlet context={{
-                        boards,
-                        groupId: selectedGroup ? selectedGroup.id : null,
-                        onBoardCreated: handleBoardCreated
-                    }}/>
+                    <Outlet context={{ boards, groupId: selectedGroup ? selectedGroup.id : null, onBoardCreated: handleBoardCreated }} />
                 </Col>
             </Row>
 

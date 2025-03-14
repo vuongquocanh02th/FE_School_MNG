@@ -17,6 +17,7 @@
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.6.1",
     "@toolpad/core": "^0.12.1",
+    "antd": "^5.24.3",
     "axios": "^1.8.2",
     "bootstrap": "^5.3.3",
     "docs": "^0.3.2-canary.0",
