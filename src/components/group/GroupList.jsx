@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { ListGroup, Badge } from "react-bootstrap";
 
 export default function GroupList({ onItemClick }) {
     const [data, setData] = useState([]);
@@ -7,32 +8,29 @@ export default function GroupList({ onItemClick }) {
 
     useEffect(() => {
         axios.get("http://localhost:8080/api/group")
-            .then(res => {
-                setData(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+            .then(res => setData(res.data))
+            .catch(err => console.log(err));
     }, []);
 
     return (
-        <ul className="list-group">
+        <ListGroup>
             {data.map((item) => (
-                <li
+                <ListGroup.Item
                     key={item.id}
-                    className={`list-group-item d-flex align-items-center ${selectedGroupId === item.id ? 'active' : ''}`}
+                    action
+                    active={selectedGroupId === item.id}
                     onClick={() => {
                         setSelectedGroupId(item.id);
                         onItemClick(item);
                     }}
-                    style={{ cursor: 'pointer' }}
+                    className="d-flex align-items-center"
                 >
-                    <div className="me-3 rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px', fontSize: '1.2rem' }}>
+                    <Badge bg="primary" className="me-3 rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px', fontSize: '1.2rem' }}>
                         {item.name.charAt(0)}
-                    </div>
+                    </Badge>
                     <span>{item.name}</span>
-                </li>
+                </ListGroup.Item>
             ))}
-        </ul>
+        </ListGroup>
     );
 }
