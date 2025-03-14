@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Button, Modal, ListGroup, Container } from "react-bootstrap";
 import { FaPlus, FaTachometerAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import GroupForm from "../group/GroupForm";
 import GroupList from "../group/GroupList.jsx";
 
-const Sidebar = ({ onGroupCreated, onGroupSelected, onBoardCreated, onShowAllBoards }) => {
+const Sidebar = ({ onGroupCreated, onGroupSelected, onBoardCreated }) => {
+    const navigate = useNavigate();
     const groups = useSelector((state) => state.groups.list);
     const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
@@ -13,7 +15,11 @@ const Sidebar = ({ onGroupCreated, onGroupSelected, onBoardCreated, onShowAllBoa
         <Container fluid className="sidebar bg-light p-3">
             {/* Nút chuyển đến danh sách bảng */}
             <ListGroup className="mb-3">
-                <ListGroup.Item action onClick={onShowAllBoards} className="d-flex align-items-center">
+                <ListGroup.Item
+                    action
+                    onClick={() => navigate("/dashboard/boards")}
+                    className="d-flex align-items-center"
+                >
                     <FaTachometerAlt className="me-2" /> Bảng
                 </ListGroup.Item>
             </ListGroup>
@@ -31,13 +37,18 @@ const Sidebar = ({ onGroupCreated, onGroupSelected, onBoardCreated, onShowAllBoa
             {/* Danh sách nhóm */}
             <GroupList onItemClick={onGroupSelected} onBoardCreated={onBoardCreated} />
 
-            {/* Modal thêm nhóm */}
+            {/* Modal chứa GroupForm */}
             <Modal show={isGroupModalOpen} onHide={() => setIsGroupModalOpen(false)} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Thêm Nhóm</Modal.Title>
+                    <Modal.Title>Thêm nhóm</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <GroupForm closeForm={() => setIsGroupModalOpen(false)} formType="add" data={null} onGroupCreated={onGroupCreated} />
+                    <GroupForm
+                        closeForm={() => setIsGroupModalOpen(false)}
+                        formType="add"
+                        data={null}
+                        onGroupCreated={onGroupCreated}
+                    />
                 </Modal.Body>
             </Modal>
         </Container>
