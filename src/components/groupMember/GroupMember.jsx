@@ -2,10 +2,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 // import "bootstrap/dist/css/bootstrap.min.css";
 
-const GroupMembers = ({
-                          groupId = 2, onMemberAdded = () => {
-    }
-                      }) => {
+const GroupMembers = ({groupId, onMemberAdded = () => {}}) => {
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState(null);
@@ -36,7 +33,7 @@ const GroupMembers = ({
             };
 
             const response = await axios.post(
-                `http://localhost:8080/members/${groupId}/add`,
+                `http://localhost:8080/api/members/${groupId}/add`,
                 payload,
                 {headers: {"Content-Type": "application/json"}}
             );
@@ -54,13 +51,12 @@ const GroupMembers = ({
         }
     };
 
-    useEffect(() => {
-        fetchMembers();
-    }, [groupId]);
+    useEffect(() => {fetchMembers();},[groupId]);
 
     const fetchMembers = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/members/${groupId}`);
+            const response = await axios.get(`http://localhost:8080/api/members/${groupId}`);
+            console.log(response)
             setMembers(response.data || []);
             setLoading(false);
             // eslint-disable-next-line no-unused-vars
@@ -72,7 +68,7 @@ const GroupMembers = ({
     const handleRemoveMember = async (userId) => {
         if (!window.confirm("Bạn có chắc chắn muốn xóa thành viên này không?")) return;
         try {
-            await axios.delete(`http://localhost:8080/members/${groupId}/remove/${userId}`);
+            await axios.delete(`http://localhost:8080/api/members/${groupId}/remove/${userId}`);
             alert("Xóa thành viên thành công!");
             fetchMembers(groupId);
             // eslint-disable-next-line no-unused-vars
@@ -86,7 +82,7 @@ const GroupMembers = ({
         try {
             console.log("Gửi yêu cầu cập nhật:", {role: newRole}); // Debug
 
-            await axios.put(`http://localhost:8080/members/${groupId}/update-role/${userId}`,
+            await axios.put(`http://localhost:8080/api/members/${groupId}/update-role/${userId}`,
                 {role: newRole},
                 {headers: {"Content-Type": "application/json"}}
             );
@@ -98,8 +94,6 @@ const GroupMembers = ({
             setMessage("Lỗi khi cập nhật quyền!");
         }
     };
-
-    // if (loading) return <p className="text-center">Đang tải...</p>;
 
     return (
         <div className="container mt-4">
@@ -160,7 +154,7 @@ const GroupMembers = ({
                                 height="40"
                             />
                         </td>
-                        <td>{member.displayName}</td>
+                        <td>{member.userName}</td>
                         <td>{member.email}</td>
                         <td>
                             <select className="form-select" value={member.GroupRole}

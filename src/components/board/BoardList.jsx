@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
-import { PlusCircle } from "react-feather";
+import { Container, Row, Col, Card, Button, ListGroup, Modal } from "react-bootstrap";
+import { PlusCircle, Users } from "react-feather";
 import BoardForm from "../board/BoardForm";
 import { useOutletContext } from "react-router-dom";
+import GroupMembers from "../groupMember/GroupMember.jsx";
 
 const BoardsList = () => {
     const [openBoardForm, setOpenBoardForm] = useState(false);
-    const { boards, groupId, onBoardCreated, groupName } = useOutletContext(); // ✅ Nhận hàm onBoardCreated
+    const [showMembers, setShowMembers] = useState(false);
+    const { boards, groupId, onBoardCreated, groupName, members } = useOutletContext();
 
     return (
         <Container className="py-3" style={{ maxWidth: "900px" }}>
@@ -25,6 +27,9 @@ const BoardsList = () => {
                     }}
                     style={{ cursor: "pointer" }}
                 />
+                <Button variant="outline-primary" className="ms-3" onClick={() => setShowMembers(true)}>
+                    <Users size={20} className="me-1" /> Danh sách thành viên
+                </Button>
             </h5>
 
             <Row className="g-3">
@@ -47,6 +52,14 @@ const BoardsList = () => {
             </Row>
 
             <BoardForm open={openBoardForm} onClose={() => setOpenBoardForm(false)} onBoardCreated={onBoardCreated} groupId={groupId} />
+
+            {/* Modal hiển thị danh sách thành viên */}
+            <Modal size={"lg"} show={showMembers} onHide={() => setShowMembers(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Danh sách thành viên</Modal.Title>
+                </Modal.Header>
+                <GroupMembers groupId={groupId} showMembers={showMembers} />
+            </Modal>
         </Container>
     );
 };
