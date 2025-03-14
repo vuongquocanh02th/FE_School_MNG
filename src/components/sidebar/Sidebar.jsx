@@ -1,80 +1,43 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import {
-    Box,
-    List,
-    ListItem,
-    ListItemText,
-    IconButton,
-    Typography,
-    Divider,
-    ListItemButton,
-    ListItemIcon
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import GroupIcon from "@mui/icons-material/Group";
-import PeopleIcon from "@mui/icons-material/People";
 import { useNavigate } from "react-router-dom";
 import GroupForm from "../group/GroupForm";
-import GroupList from "../group/GroupList";
+import GroupList from "../group/GroupList.jsx";
+import { FaPlus, FaTachometerAlt } from "react-icons/fa";
 
-const Sidebar = ({ onGroupCreated, onGroupSelected, onBoardCreated, onShowAllBoards, onShowMembers }) => {
+const Sidebar = ({ onGroupCreated, onGroupSelected, onBoardCreated, onShowAllBoards }) => {
     const groups = useSelector((state) => state.groups.list);
     const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+
     const navigate = useNavigate();
 
     return (
-        <Box
-            sx={{
-                width: 250,
-                height: "100vh",
-                position: "fixed",
-                top: 64,
-                left: 0,
-                bgcolor: "background.paper",
-                boxShadow: 1,
-                p: 2,
-            }}
-        >
-            <List>
-                {/* Nút Bảng */}
-                <ListItem disablePadding>
-                    <ListItemButton onClick={onShowAllBoards}>
-                        <ListItemIcon>
-                            <DashboardIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Bảng" />
-                    </ListItemButton>
-                </ListItem>
-                <Divider />
+        <div className="d-flex flex-column p-3 bg-light" style={{ width: "250px", top: "64px", left: "0" }}>
+            <ul className="nav nav-pills flex-column mb-3">
+                <li className="nav-item">
+                    <button className="nav-link d-flex align-items-center" onClick={onShowAllBoards}>
+                        <FaTachometerAlt className="me-2" /> Bảng
+                    </button>
+                </li>
+            </ul>
 
-                {/* Nhóm */}
-                <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mt: 2, ml: 2, mr: 2 }}>
-                    <Typography variant="subtitle1">Nhóm</Typography>
-                    <IconButton color="primary" onClick={() => setIsGroupModalOpen(true)}>
-                        <AddIcon />
-                    </IconButton>
-                </Box>
+            <hr />
 
-                {isGroupModalOpen && (
-                    <GroupForm closeForm={() => setIsGroupModalOpen(false)} formType="add" data={null} onGroupCreated={onGroupCreated} />
-                )}
+            <div className="d-flex justify-content-between align-items-center mb-2">
+                <span className="fw-bold">Nhóm người dùng</span>
+                <button className="btn btn-primary btn-sm" onClick={() => setIsGroupModalOpen(true)}>
+                    <FaPlus />
+                </button>
+            </div>
 
-                <GroupList onItemClick={onGroupSelected} onBoardCreated={onBoardCreated} />
+            {/* Modal thêm nhóm */}
+            {isGroupModalOpen && (
+                <GroupForm closeForm={() => setIsGroupModalOpen(false)} formType="add" data={null} onGroupCreated={onGroupCreated} />
+            )}
 
-                <Divider sx={{ my: 2 }} />
-                {/* Nút Thành viên */}
-                <ListItem disablePadding>
-                    <ListItemButton onClick={onShowMembers}>
-                        <ListItemIcon>
-                            <PeopleIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Thành viên" />
-                    </ListItemButton>
-                </ListItem>
-            </List>
-        </Box>
+            {/* Danh sách nhóm */}
+            <GroupList onItemClick={onGroupSelected} onBoardCreated={onBoardCreated} />
+        </div>
     );
 };
 

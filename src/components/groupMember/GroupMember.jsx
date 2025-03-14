@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 // import "bootstrap/dist/css/bootstrap.min.css";
 
-const GroupMembers = ({ groupId , onMemberAdded = () => {} }) => {
+const GroupMembers = ({
+                          groupId = 2, onMemberAdded = () => {
+    }
+                      }) => {
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState(null);
@@ -35,11 +38,11 @@ const GroupMembers = ({ groupId , onMemberAdded = () => {} }) => {
             const response = await axios.post(
                 `http://localhost:8080/members/${groupId}/add`,
                 payload,
-                { headers: { "Content-Type": "application/json" } }
+                {headers: {"Content-Type": "application/json"}}
             );
 
             alert("Thêm thành viên thành công!");
-            setMembers((prev) => [...prev, response.data]); // Thêm thành viên mới vào danh sách hiện tại
+            fetchMembers(groupId);
             setEmail("");
             setGroupRole("MEMBER");
             onMemberAdded(response.data);
@@ -70,9 +73,8 @@ const GroupMembers = ({ groupId , onMemberAdded = () => {} }) => {
         if (!window.confirm("Bạn có chắc chắn muốn xóa thành viên này không?")) return;
         try {
             await axios.delete(`http://localhost:8080/members/${groupId}/remove/${userId}`);
-            setMembers((prev) => prev.filter((member) => member.user?.id !== userId));
             alert("Xóa thành viên thành công!");
-            setMembers((prev) => prev.filter((member) => member.id !== userId));
+            fetchMembers(groupId);
             // eslint-disable-next-line no-unused-vars
         } catch (error) {
             alert("Lỗi khi xóa thành viên!");
@@ -90,11 +92,8 @@ const GroupMembers = ({ groupId , onMemberAdded = () => {} }) => {
             );
 
             alert("Cập nhật quyền thành viên thành công!");
-            setMembers((prev) =>
-                prev.map((member) =>
-                    member.id === userId ? { ...member, groupRole: newRole } : member
-                )
-            );        } catch (error) {
+            window.location.reload();
+        } catch (error) {
             console.error("Lỗi khi cập nhật quyền!", error.response);
             setMessage("Lỗi khi cập nhật quyền!");
         }
@@ -119,15 +118,22 @@ const GroupMembers = ({ groupId , onMemberAdded = () => {} }) => {
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={loading}
                         />
-                        <select className="form-select mb-2" value={groupRole} onChange={(e) => setGroupRole(e.target.value)} disabled={loading}>
+                        <select className="form-select mb-2" value={groupRole}
+                                onChange={(e) => setGroupRole(e.target.value)} disabled={loading}>
                             <option value="MEMBER">Thành viên</option>
                             <option value="ADMIN">Quản trị viên</option>
                         </select>
                         {message1 && <p className="text-success">{message1}</p>}
-                        <button className="btn btn-success me-2" onClick={handleAddMember} disabled={loading}>
-                            {loading ? "Đang thêm..." : "Thêm"}
-                        </button>
-                        <button className="btn btn-secondary" onClick={() => setShowForm(false)} disabled={loading}>Hủy</button>
+                        <div className="d-flex align-items-center">
+                            <button className="btn btn-success btn-sm me-2" onClick={handleAddMember}
+                                    disabled={loading}>
+                                {loading ? "Đang thêm..." : "Thêm"}
+                            </button>
+                            <button className="btn btn-secondary btn-sm" onClick={() => setShowForm(false)}
+                                    disabled={loading}>
+                                Hủy
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
@@ -157,7 +163,8 @@ const GroupMembers = ({ groupId , onMemberAdded = () => {} }) => {
                         <td>{member.displayName}</td>
                         <td>{member.email}</td>
                         <td>
-                            <select className="form-select" value={member.GroupRole} onChange={(e) => handleUpdateRole(member.id, e.target.value)}>
+                            <select className="form-select" value={member.GroupRole}
+                                    onChange={(e) => handleUpdateRole(member.id, e.target.value)}>
                                 <option value="MEMBER">Thành viên</option>
                                 <option value="ADMIN">Quản trị viên</option>
                             </select>
