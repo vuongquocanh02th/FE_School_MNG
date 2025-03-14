@@ -1,43 +1,46 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Button, Modal, ListGroup, Container } from "react-bootstrap";
+import { FaPlus, FaTachometerAlt } from "react-icons/fa";
 import GroupForm from "../group/GroupForm";
 import GroupList from "../group/GroupList.jsx";
-import { FaPlus, FaTachometerAlt } from "react-icons/fa";
 
 const Sidebar = ({ onGroupCreated, onGroupSelected, onBoardCreated, onShowAllBoards }) => {
     const groups = useSelector((state) => state.groups.list);
     const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
-    const navigate = useNavigate();
-
     return (
-        <div className="d-flex flex-column p-3 bg-light" style={{ width: "250px", top: "64px", left: "0" }}>
-            <ul className="nav nav-pills flex-column mb-3">
-                <li className="nav-item">
-                    <button className="nav-link d-flex align-items-center" onClick={onShowAllBoards}>
-                        <FaTachometerAlt className="me-2" /> Bảng
-                    </button>
-                </li>
-            </ul>
+        <Container fluid className="sidebar bg-light p-3">
+            {/* Nút chuyển đến danh sách bảng */}
+            <ListGroup className="mb-3">
+                <ListGroup.Item action onClick={onShowAllBoards} className="d-flex align-items-center">
+                    <FaTachometerAlt className="me-2" /> Bảng
+                </ListGroup.Item>
+            </ListGroup>
 
             <hr />
 
+            {/* Tiêu đề và nút thêm nhóm */}
             <div className="d-flex justify-content-between align-items-center mb-2">
                 <span className="fw-bold">Nhóm người dùng</span>
-                <button className="btn btn-primary btn-sm" onClick={() => setIsGroupModalOpen(true)}>
+                <Button variant="primary" size="sm" onClick={() => setIsGroupModalOpen(true)}>
                     <FaPlus />
-                </button>
+                </Button>
             </div>
-
-            {/* Modal thêm nhóm */}
-            {isGroupModalOpen && (
-                <GroupForm closeForm={() => setIsGroupModalOpen(false)} formType="add" data={null} onGroupCreated={onGroupCreated} />
-            )}
 
             {/* Danh sách nhóm */}
             <GroupList onItemClick={onGroupSelected} onBoardCreated={onBoardCreated} />
-        </div>
+
+            {/* Modal thêm nhóm */}
+            <Modal show={isGroupModalOpen} onHide={() => setIsGroupModalOpen(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Thêm Nhóm</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <GroupForm closeForm={() => setIsGroupModalOpen(false)} formType="add" data={null} onGroupCreated={onGroupCreated} />
+                </Modal.Body>
+            </Modal>
+        </Container>
     );
 };
 
