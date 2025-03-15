@@ -1,15 +1,18 @@
 import React from "react";
-import { Container, Navbar, Nav, Button, Badge, Dropdown } from "react-bootstrap";
-import { FaBars, FaBell, FaUser } from "react-icons/fa";
+import { Container, Navbar, Nav, Button, Badge, Dropdown, Image } from "react-bootstrap";
+import { FaBars, FaBell } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const TopMenu = ({ toggleDrawer, notificationCount, setNotificationCount, notifications }) => {
     const navigate = useNavigate();
     const username = localStorage.getItem("username") || "Guest";
+    const avatarUrl = localStorage.getItem("avatar"); // Lấy avatar từ localStorage
 
     const handleLogout = () => {
-        localStorage.removeItem("authToken"); // Xóa token khỏi localStorage
-        navigate("/login"); // Chuyển về trang đăng nhập
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("avatar");
+        localStorage.removeItem("username");
+        navigate("/login");
     };
 
     return (
@@ -20,6 +23,7 @@ const TopMenu = ({ toggleDrawer, notificationCount, setNotificationCount, notifi
                 </Button>
                 <Navbar.Brand className="ms-2">WorkMG</Navbar.Brand>
                 <Nav className="ms-auto d-flex align-items-center">
+                    {/* Thông báo */}
                     <Dropdown align="end" onToggle={(isOpen) => isOpen && setNotificationCount(0)}>
                         <Dropdown.Toggle variant="outline-light">
                             {notificationCount > 0 && <Badge bg="danger">{notificationCount}</Badge>}
@@ -36,10 +40,29 @@ const TopMenu = ({ toggleDrawer, notificationCount, setNotificationCount, notifi
                         </Dropdown.Menu>
                     </Dropdown>
 
-                    {/* Menu Người Dùng */}
+                    {/* Avatar Người Dùng */}
                     <Dropdown align="end" className="ms-3">
-                        <Dropdown.Toggle variant="outline-light">
-                            <FaUser />
+                        <Dropdown.Toggle variant="outline-light" className="d-flex align-items-center">
+                            {avatarUrl ? (
+                                <Image src={avatarUrl} roundedCircle width="30" height="30" alt="Avatar" />
+                            ) : (
+                                <div
+                                    style={{
+                                        width: "30px",
+                                        height: "30px",
+                                        borderRadius: "50%",
+                                        backgroundColor: "#007bff",
+                                        color: "white",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        fontWeight: "bold",
+                                        textTransform: "uppercase",
+                                    }}
+                                >
+                                    {username.charAt(0)}
+                                </div>
+                            )}
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
                             <Dropdown.Item disabled>{username}</Dropdown.Item>
