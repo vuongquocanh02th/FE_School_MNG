@@ -1,10 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
-import groupsReducer from "./groupsSlice.js";
+import rootReducer from "./rootReducer.jsx";
+import createSagaMiddleware from 'redux-saga';
+import rootSaga from "../saga/rootSaga.js";
+
+const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
-    reducer: {
-        groups: groupsReducer,
-    },
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware),
 });
+
+sagaMiddleware.run(rootSaga);
 
 export default store;

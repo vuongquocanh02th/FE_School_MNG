@@ -1,12 +1,12 @@
 import React from "react";
-import { Container, Navbar, Nav, Button, Badge, Dropdown, Image } from "react-bootstrap";
+import { Container, Navbar, Button, Badge, Dropdown, Image } from "react-bootstrap";
 import { FaBars, FaBell } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const TopMenu = ({ toggleDrawer, notificationCount, setNotificationCount, notifications }) => {
     const navigate = useNavigate();
     const username = localStorage.getItem("username") || "Guest";
-    const avatarUrl = localStorage.getItem("avatar"); // Lấy avatar từ localStorage
+    const avatarUrl = localStorage.getItem("avatar");
 
     const handleLogout = () => {
         localStorage.removeItem("authToken");
@@ -15,15 +15,18 @@ const TopMenu = ({ toggleDrawer, notificationCount, setNotificationCount, notifi
         navigate("/login");
     };
 
+    const toHome = () => {
+        navigate("/dashboard/home");
+    }
+
     return (
         <Navbar bg="dark" variant="dark" expand="lg" className="px-3">
             <Container fluid>
                 <Button variant="outline-light" onClick={toggleDrawer}>
                     <FaBars />
                 </Button>
-                <Navbar.Brand className="ms-2">WorkMG</Navbar.Brand>
-                <Nav className="ms-auto d-flex align-items-center">
-                    {/* Thông báo */}
+                <Navbar.Brand className="ms-2" onClick={toHome} style={{ cursor: "pointer" }}>WorkMG</Navbar.Brand>
+                <Navbar className="ms-auto d-flex align-items-center">
                     <Dropdown align="end" onToggle={(isOpen) => isOpen && setNotificationCount(0)}>
                         <Dropdown.Toggle variant="outline-light">
                             {notificationCount > 0 && <Badge bg="danger">{notificationCount}</Badge>}
@@ -40,7 +43,6 @@ const TopMenu = ({ toggleDrawer, notificationCount, setNotificationCount, notifi
                         </Dropdown.Menu>
                     </Dropdown>
 
-                    {/* Avatar Người Dùng */}
                     <Dropdown align="end" className="ms-3">
                         <Dropdown.Toggle variant="outline-light" className="d-flex align-items-center">
                             {avatarUrl ? (
@@ -71,7 +73,7 @@ const TopMenu = ({ toggleDrawer, notificationCount, setNotificationCount, notifi
                             <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
-                </Nav>
+                </Navbar>
             </Container>
         </Navbar>
     );

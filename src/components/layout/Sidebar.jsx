@@ -1,14 +1,12 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import { Button, Modal, ListGroup, Container } from "react-bootstrap";
 import { FaPlus, FaTachometerAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import GroupForm from "../group/GroupForm";
 import GroupList from "../group/GroupList.jsx";
 
-const Sidebar = ({ onGroupCreated, onGroupSelected, onBoardCreated }) => {
+const Sidebar = ({ onGroupCreated, onBoardCreated }) => {
     const navigate = useNavigate();
-    const groups = useSelector((state) => state.groups.list);
     const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
     return (
@@ -26,7 +24,6 @@ const Sidebar = ({ onGroupCreated, onGroupSelected, onBoardCreated }) => {
 
             <hr />
 
-            {/* Tiêu đề và nút thêm nhóm */}
             <div className="d-flex justify-content-between align-items-center mb-2">
                 <span className="fw-bold">Nhóm người dùng</span>
                 <Button variant="primary" size="sm" onClick={() => setIsGroupModalOpen(true)}>
@@ -34,10 +31,8 @@ const Sidebar = ({ onGroupCreated, onGroupSelected, onBoardCreated }) => {
                 </Button>
             </div>
 
-            {/* Danh sách nhóm */}
-            <GroupList onItemClick={onGroupSelected} onBoardCreated={onBoardCreated} />
+            <GroupList onBoardCreated={onBoardCreated} />
 
-            {/* Modal chứa GroupForm */}
             <Modal show={isGroupModalOpen} onHide={() => setIsGroupModalOpen(false)} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Thêm nhóm</Modal.Title>

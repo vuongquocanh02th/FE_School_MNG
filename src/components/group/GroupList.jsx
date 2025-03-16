@@ -1,31 +1,38 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { ListGroup, Badge } from "react-bootstrap";
+import {useEffect} from "react";
+import {ListGroup, Badge} from "react-bootstrap";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
+import {GET_GROUP_LIST} from "../../redux/group/groupAction.js";
+import {useParams} from "react-router";
 
-export default function GroupList({ onItemClick }) {
-    const [data, setData] = useState([]);
-    const [selectedGroupId, setSelectedGroupId] = useState(null);
+export default function GroupList() {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const groupList = useSelector(state => state.group.list);
+    const {groupId} = useParams();
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/group")
-            .then(res => setData(res.data))
-            .catch(err => console.log(err));
-    }, []);
+        dispatch({type: GET_GROUP_LIST});
+    }, [dispatch]);
+
+    useEffect(() => {
+    }, [groupList, groupId])
+
+    const onGroupClick = (group) => {
+        navigate("/dashboard/group/" + group.id);
+    }
 
     return (
         <ListGroup>
-            {data.map((item) => (
-                <ListGroup.Item
-                    key={item.id}
-                    action
-                    active={selectedGroupId === item.id}
-                    onClick={() => {
-                        setSelectedGroupId(item.id);
-                        onItemClick(item);
-                    }}
-                    className="d-flex align-items-center"
+            {groupList.map((item) => (
+                <ListGroup.Item className="d-flex align-items-center"
+                                key={item.id} action active={groupId === item.id.toString()}
+                                onClick={() => {
+                                    onGroupClick(item);
+                                }}
                 >
-                    <Badge bg="primary" className="me-3 rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px', fontSize: '1.2rem' }}>
+                    <Badge bg="primary" className="me-3 rounded-circle d-flex align-items-center justify-content-center"
+                           style={{width: '40px', height: '40px', fontSize: '1.2rem'}}>
                         {item.name.charAt(0)}
                     </Badge>
                     <span>{item.name}</span>

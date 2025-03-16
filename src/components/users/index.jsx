@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Dropdown, Image } from "react-bootstrap";
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
