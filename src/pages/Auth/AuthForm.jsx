@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Container, Card, Form, Button } from "react-bootstrap";
 import axios from "axios";
 import {useFormik} from "formik";
 import * as Yup from 'yup';
+import { useNavigate } from "react-router-dom";
 
 export default function AuthForm() {
     const LOGINTYPE = 'LOGIN';
@@ -16,6 +18,7 @@ export default function AuthForm() {
     };
 
     const [formType, setFormType] = useState(LOGINTYPE);
+    const navigate = useNavigate();
 
     const loginSchema = Yup.object({
         username: Yup.string()
@@ -39,6 +42,7 @@ export default function AuthForm() {
     const handleSubmit = () => {
         if (formType === 'LOGIN') {
             sendHttpRequestLogin(formik.values);
+            navigate("/dashboard/home");
         } else {
             sendHttpRequestRegister(formik.values);
         }
@@ -48,6 +52,8 @@ export default function AuthForm() {
         axios.post("http://localhost:8080/auth/login", data)
             .then((res) => {
                 alert("Đăng nhập thành công");
+                localStorage.setItem("authToken", res.data.token);
+                localStorage.setItem("username", res.data.username);
                 console.log(res);
             })
             .catch((err) => {
@@ -84,64 +90,64 @@ export default function AuthForm() {
     })
 
     return (
-        <div className="d-flex align-items-center justify-content-center vh-100"
+        <Container fluid className="d-flex align-items-center justify-content-center vh-100 w-100 bg-primary"
              style={{backgroundColor: '#0077be'}}>
-            <div className="card p-4 shadow-lg" style={{width: '100%', maxWidth: '400px'}}>
+            <Card className="p-4 shadow-lg" style={{width: '100%', maxWidth: '400px'}}>
                 <h3 className="text-center mb-4">
                     {formType !== LOGINTYPE ? "Đăng ký" : "Đăng nhập"}
                 </h3>
-                <form onSubmit={formik.handleSubmit}>
-                    <div className="mb-3">
-                        <label htmlFor="username" className="form-label">Tên tài khoản</label>
-                        <input type="text" id="username" className="form-control" placeholder="name" name="username"
+                <Form onSubmit={formik.handleSubmit}>
+                    <Form.Group className="mb-3">
+                        <Form.Label htmlFor="username" className="form-label">Tên tài khoản</Form.Label>
+                        <Form.Control type="text" id="username" className="form-control" placeholder="name" name="username"
                                value={formik.values.username} onChange={formik.handleChange} onBlur={formik.handleBlur}
                         />
                         {formik.errors.username && formik.touched.username && (
                             <div className="text-danger">{formik.errors.username}</div>
                         )}
-                    </div>
+                    </Form.Group>
                     {formType !== LOGINTYPE ?
-                        <div className="mb-3">
-                            <label htmlFor="email" className="form-label">Email</label>
-                            <input type="email" id="email" className="form-control" placeholder="example@gmail.com" name="email"
+                        <Form.Group className="mb-3">
+                            <Form.Label htmlFor="email" className="form-label">Email</Form.Label>
+                            <Form.Control type="email" id="email" className="form-control" placeholder="example@gmail.com" name="email"
                                    value={formik.values.email} onChange={formik.handleChange} onBlur={formik.handleBlur}
                             />
                             {formik.errors.email && formik.touched.email && (
                                 <div className="text-danger">{formik.errors.email}</div>
                             )}
-                        </div> : ""
+                        </Form.Group> : ""
                     }
-                    <div className="mb-3">
-                        <label htmlFor="password" className="form-label">Mật khẩu</label>
-                        <input type="password" id="password" className="form-control" placeholder="password" name="password"
+                    <Form.Group className="mb-3">
+                        <Form.Label>Mật khẩu</Form.Label>
+                        <Form.Control type="password" id="password" className="form-control" placeholder="password" name="password"
                                value={formik.values.password} onChange={formik.handleChange} onBlur={formik.handleBlur}
                         />
                         {formik.errors.password && formik.touched.password && (
                             <div className="text-danger">{formik.errors.password}</div>
                         )}
-                    </div>
+                    </Form.Group>
                     {formType !== LOGINTYPE ?
-                        <div className="mb-3">
-                            <label htmlFor="confirmPassword" className="form-label">Xác nhận mật khẩu</label>
-                            <input type="password" id="confirmPassword" className="form-control" placeholder=" confirm password" name="confirmPassword"
+                        <Form.Group className="mb-3">
+                            <Form.Label>Xác nhận mật khẩu</Form.Label>
+                            <Form.Control type="password" id="confirmPassword" className="form-control" placeholder=" confirm password" name="confirmPassword"
                                    value={formik.values.confirmPassword} onChange={formik.handleChange} onBlur={formik.handleBlur}
                             />
                             {formik.errors.confirmPassword && formik.touched.confirmPassword && (
                                 <div className="text-danger">{formik.errors.confirmPassword}</div>
                             )}
-                        </div> : ""
+                        </Form.Group> : ""
                     }
-                    <button type="submit" className="btn btn-primary w-100">
+                    <Button type="submit" className="btn btn-primary w-100">
                         {formType !== LOGINTYPE ? "Đăng ký" : "Đăng nhập"}
-                    </button>
+                    </Button>
                     <p className="mt-3 text-center">
                         {formType === LOGINTYPE ? "Chưa có" : "Đã có"}{' tài khoản? '}
                         <a className="" style={{cursor: "pointer"}} onClick={switchForm}>
                             {formType === LOGINTYPE ? "Đăng ký" : "Đăng nhập"}
                         </a>
                     </p>
-                </form>
-            </div>
-        </div>
+                </Form>
+            </Card>
+        </Container>
     );
 }

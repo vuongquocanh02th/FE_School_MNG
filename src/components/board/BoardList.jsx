@@ -1,67 +1,66 @@
-import React from "react";
-import { Box, Typography, Paper, Grid } from "@mui/material";
-import DashboardIcon from "@mui/icons-material/Dashboard";
+import React, { useState } from "react";
+import { Container, Row, Col, Card, Button, ListGroup, Modal } from "react-bootstrap";
+import { PlusCircle, Users } from "react-feather";
+import BoardForm from "../board/BoardForm";
+import { useOutletContext } from "react-router-dom";
+import GroupMembers from "../groupMember/GroupMember.jsx";
 
-const BoardsList = ({ boards }) => {
+const BoardsList = () => {
+    const [openBoardForm, setOpenBoardForm] = useState(false);
+    const [showMembers, setShowMembers] = useState(false);
+    const { boards, groupId, onBoardCreated, groupName, members } = useOutletContext();
+
     return (
-        <Box sx={{ p: 3, maxWidth: "900px", mx: "auto" }}> {/* Giới hạn chiều rộng danh sách bảng */}
-            <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", color: "#333" }}>
+        <Container className="py-3" style={{ maxWidth: "900px" }}>
+            {groupName && <h5 className="fw-bold text-primary">Tên nhóm: {groupName}</h5>}
+            <h5 className="mb-3 fw-bold text-dark d-flex align-items-center">
                 Danh sách bảng
-            </Typography>
-            <Grid
-                container
-                spacing={2}
-                sx={{
-                    justifyContent: "flex-start", // Căn danh sách về bên trái thay vì dàn đều
-                }}
-            >
+                <PlusCircle
+                    size={24}
+                    className="ms-2 text-primary"
+                    onClick={() => {
+                        if (!groupId) {
+                            alert("Vui lòng chọn nhóm trước!");
+                            return;
+                        }
+                        setOpenBoardForm(true);
+                    }}
+                    style={{ cursor: "pointer" }}
+                />
+                <Button variant="outline-primary" className="ms-3" onClick={() => setShowMembers(true)}>
+                    <Users size={20} className="me-1" /> Danh sách thành viên
+                </Button>
+            </h5>
+
+            <Row className="g-3">
                 {boards.length > 0 ? (
                     boards.map((board) => (
-                        <Grid item xs={12} sm={6} md={3} key={board.id}> {/* Giảm kích thước bảng */}
-                            <Paper
-                                sx={{
-                                    p: 2, // Giảm padding để bảng nhỏ hơn
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 1,
-                                    borderRadius: 2,
-                                    boxShadow: 3,
-                                    bgcolor: "#f5f5f5",
-                                    transition: "0.3s",
-                                    "&:hover": {
-                                        transform: "scale(1.03)",
-                                        boxShadow: 5,
-                                        bgcolor: "#e3f2fd",
-                                    },
-                                    cursor: "pointer",
-                                    width: "100%", // Đảm bảo bảng không bị kéo dài
-                                    minHeight: "80px", // Đặt chiều cao tối thiểu cho bảng
-                                }}
+                        <Col xs={12} sm={6} md={3} key={board.id}>
+                            <Card className="p-2 d-flex align-items-center shadow-sm"
+                                  style={{ borderRadius: "10px", backgroundColor: "#f5f5f5", cursor: "pointer" }}
+                                  onClick={() => console.log("Clicked board", board.name)}
                             >
-                                <DashboardIcon sx={{ color: "#1976d2", fontSize: 32 }} /> {/* Giảm kích thước icon */}
-                                <Typography
-                                    variant="body1"
-                                    sx={{
-                                        fontWeight: "bold",
-                                        color: "#333",
-                                        whiteSpace: "nowrap", // Không cho xuống dòng
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis", // Cắt bớt chữ nếu quá dài
-                                        maxWidth: "120px", // Giới hạn chiều rộng chữ
-                                    }}
-                                >
+                                <p className="mb-0 fw-bold text-dark text-truncate" style={{ maxWidth: "120px" }}>
                                     {board.name}
-                                </Typography>
-                            </Paper>
-                        </Grid>
+                                </p>
+                            </Card>
+                        </Col>
                     ))
                 ) : (
-                    <Typography variant="body1" sx={{ color: "#666", textAlign: "center", width: "100%" }}>
-                        Không có bảng nào.
-                    </Typography>
+                    <p className="text-muted text-center w-100">Không có bảng nào.</p>
                 )}
-            </Grid>
-        </Box>
+            </Row>
+
+            <BoardForm open={openBoardForm} onClose={() => setOpenBoardForm(false)} onBoardCreated={onBoardCreated} groupId={groupId} />
+
+            {/* Modal hiển thị danh sách thành viên */}
+            <Modal size={"lg"} show={showMembers} onHide={() => setShowMembers(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Danh sách thành viên</Modal.Title>
+                </Modal.Header>
+                <GroupMembers groupId={groupId} showMembers={showMembers} />
+            </Modal>
+        </Container>
     );
 };
 

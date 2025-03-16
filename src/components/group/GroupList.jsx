@@ -1,65 +1,36 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { List, ListItem, ListItemAvatar, Avatar, ListItemText, IconButton } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import BoardForm from "../board/BoardForm";
+import { ListGroup, Badge } from "react-bootstrap";
 
-export default function GroupList({ onItemClick, onBoardCreated }) {
+export default function GroupList({ onItemClick }) {
     const [data, setData] = useState([]);
-    const [selectedGroup, setSelectedGroup] = useState(null);
-    const [openBoardForm, setOpenBoardForm] = useState(false);
+    const [selectedGroupId, setSelectedGroupId] = useState(null);
 
     useEffect(() => {
         axios.get("http://localhost:8080/api/group")
-            .then(res => {
-                setData(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+            .then(res => setData(res.data))
+            .catch(err => console.log(err));
     }, []);
 
-    const handleGroupClick = (group) => {
-        onItemClick(group);
-    };
-
-    const handleOpenBoardForm = (e, group) => {
-        e.stopPropagation(); // Chặn sự kiện click lan ra ngoài
-        setSelectedGroup(group);
-        setOpenBoardForm(true);
-    };
-
     return (
-        <>
-            <List>
-                {data.map((item) => (
-                    <ListItem key={item.id} button onClick={() => handleGroupClick(item)}>
-                        <ListItemAvatar>
-                            <Avatar>{item.name.charAt(0)}</Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={item.name} />
-                        <IconButton color="primary" onClick={(e) => handleOpenBoardForm(e, item)}>
-                            <AddIcon />
-                        </IconButton>
-                    </ListItem>
-                ))}
-            </List>
-
-            {/* BoardForm dùng để tạo bảng mới */}
-            <BoardForm
-                open={openBoardForm}
-                onClose={() => setOpenBoardForm(false)}
-                groupId={selectedGroup?.id}
-                onBoardCreated={(board) => {
-                    console.log("✅ Gọi onBoardCreated từ GroupList:", board);
-                    if (onBoardCreated) {
-                        onBoardCreated(board);
-                    } else {
-                        console.error("❌ onBoardCreated không tồn tại!");
-                    }
-                    setOpenBoardForm(false);
-                }}
-            />
-        </>
+        <ListGroup>
+            {data.map((item) => (
+                <ListGroup.Item
+                    key={item.id}
+                    action
+                    active={selectedGroupId === item.id}
+                    onClick={() => {
+                        setSelectedGroupId(item.id);
+                        onItemClick(item);
+                    }}
+                    className="d-flex align-items-center"
+                >
+                    <Badge bg="primary" className="me-3 rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px', fontSize: '1.2rem' }}>
+                        {item.name.charAt(0)}
+                    </Badge>
+                    <span>{item.name}</span>
+                </ListGroup.Item>
+            ))}
+        </ListGroup>
     );
 }

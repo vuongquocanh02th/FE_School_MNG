@@ -1,70 +1,57 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import {
-    Box,
-    List,
-    ListItem,
-    ListItemText,
-    IconButton,
-    Typography,
-    Divider,
-    Avatar,
-    ListItemButton,
-    ListItemIcon
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import { Button, Modal, ListGroup, Container } from "react-bootstrap";
+import { FaPlus, FaTachometerAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import DashboardIcon from "@mui/icons-material/Dashboard";
 import GroupForm from "../group/GroupForm";
-import GroupList from "../group/GroupList.jsx"; // Import GroupForm.jsx
+import GroupList from "../group/GroupList.jsx";
 
-const Sidebar = ({onGroupCreated, onGroupSelected, onBoardCreated, onShowAllBoards}) => {
+const Sidebar = ({ onGroupCreated, onGroupSelected, onBoardCreated }) => {
+    const navigate = useNavigate();
     const groups = useSelector((state) => state.groups.list);
     const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
-    const navigate = useNavigate();
-
     return (
-        <Box
-            sx={{
-                width: 250,
-                height: "100vh",
-                position: "fixed",
-                top: 64,
-                left: 0,
-                bgcolor: "background.paper",
-                boxShadow: 1,
-                p: 2,
-            }}
-        >
-            <List>
-                <ListItem disablePadding>
-                    <ListItemButton onClick={onShowAllBoards}>
-                        <ListItemIcon>
-                            <DashboardIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Bảng" />
-                    </ListItemButton>
-                </ListItem>
+        <Container fluid className="sidebar bg-light p-3">
+            {/* Nút chuyển đến danh sách bảng */}
+            <ListGroup className="mb-3">
+                <ListGroup.Item
+                    action
+                    onClick={() => navigate("/dashboard/boards")}
+                    className="d-flex align-items-center"
+                >
+                    <FaTachometerAlt className="me-2" /> Bảng
+                </ListGroup.Item>
+            </ListGroup>
 
-                <Divider />
-                <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mt: 2, ml: 2, mr: 2 }}>
-                    <Typography variant="subtitle1">Nhóm người dùng</Typography>
-                    <IconButton color="primary" onClick={() => setIsGroupModalOpen(true)}>
-                        <AddIcon />
-                    </IconButton>
-                </Box>
+            <hr />
 
-                {/* Modal thêm nhóm */}
-                {isGroupModalOpen && (
-                    <GroupForm closeForm={() => setIsGroupModalOpen(false)} formType="add" data={null} onGroupCreated={onGroupCreated} />
+            {/* Tiêu đề và nút thêm nhóm */}
+            <div className="d-flex justify-content-between align-items-center mb-2">
+                <span className="fw-bold">Nhóm người dùng</span>
+                <Button variant="primary" size="sm" onClick={() => setIsGroupModalOpen(true)}>
+                    <FaPlus />
+                </Button>
+            </div>
 
-                )}
+            {/* Danh sách nhóm */}
+            <GroupList onItemClick={onGroupSelected} onBoardCreated={onBoardCreated} />
 
-                {/* Danh sách nhóm */}
-                <GroupList onItemClick={onGroupSelected} onBoardCreated={onBoardCreated} />
-            </List>
-        </Box>
+            {/* Modal chứa GroupForm */}
+            <Modal show={isGroupModalOpen} onHide={() => setIsGroupModalOpen(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Thêm nhóm</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <GroupForm
+                        closeForm={() => setIsGroupModalOpen(false)}
+                        formType="add"
+                        data={null}
+                        onGroupCreated={onGroupCreated}
+                    />
+                </Modal.Body>
+            </Modal>
+        </Container>
     );
 };
 
