@@ -9,11 +9,12 @@ export default function GroupList() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const groupList = useSelector(state => state.group.list);
+    const response = useSelector(state => state.group.success);
     const {groupId} = useParams();
 
     useEffect(() => {
         dispatch({type: GET_GROUP_LIST});
-    }, [dispatch]);
+    }, [dispatch,response]);
 
     useEffect(() => {
     }, [groupList, groupId])

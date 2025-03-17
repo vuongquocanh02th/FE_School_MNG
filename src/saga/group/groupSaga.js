@@ -6,7 +6,9 @@ import {
     ADD_GROUP_SUCCESS,
     GET_GROUP_LIST, GET_GROUP_INFO, ADD_GROUP
 } from "../../redux/group/groupAction.js";
-
+//
+////// Các câu gọi API để hết trong saga
+//
 function* getGroupList() {
     try {
         const data = yield call (axiosInstance.get, "/api/group");

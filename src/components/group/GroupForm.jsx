@@ -4,10 +4,11 @@ import { Formik, Form as FormikForm, Field } from "formik";
 import * as Yup from "yup";
 import {useDispatch, useSelector} from "react-redux";
 import {ADD_GROUP, CLOSE_GROUP_FORM} from "../../redux/group/groupAction.js";
+import {toast} from "react-toastify";
 
 export default function GroupForm() {
     const dispatch = useDispatch();
-    const response = useSelector(state => state.group.successChange);
+    const success = useSelector(state => state.group.success);
     const formType = useSelector(state => state.group.formType);
 
     const groupDataTemplate = {
@@ -19,11 +20,11 @@ export default function GroupForm() {
     };
 
     useEffect(() => {
-        if (response.name) {
-            alert(`Thêm nhóm ${response.name} thành công`);
+        if (success.name) {
+            toast.success(`Thêm nhóm ${success.name} thành công`);
             dispatch({type: CLOSE_GROUP_FORM});
         }
-    }, [dispatch, response])
+    }, [dispatch, success])
 
     const initialValues = formType === "add" ? groupDataTemplate : "";
 

@@ -9,10 +9,11 @@ import {
 const initialState = {
     list: [],
     info: {},
-    successChange: {},
+    success: {},
+    error: {},
     formType: "none"
 }
-
+//// Reducer sẽ lưu các dữ liệu mà các component khác sẽ cần
 export const groupReducer = (state = initialState, action) => {
     switch (action.type) {
         case GET_GROUP_LIST_SUCCESS:
@@ -26,7 +27,7 @@ export const groupReducer = (state = initialState, action) => {
         case OPEN_EDIT_GROUP_FORM:
             return {...state, formType: "edit"};
         case CLOSE_GROUP_FORM:
-            return {...state, formType: "none"};
+            return {...state, formType: "none", success: "", error: ""};
         default:
             return state;
     }

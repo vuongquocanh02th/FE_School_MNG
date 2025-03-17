@@ -1,11 +1,11 @@
 import React from "react";
 import {Routes, Route, Navigate} from "react-router-dom";
-import Home from "./pages/Home/Home.jsx";
-import Dashboard from "./pages/Dashboard/Dashboard.jsx";
-import Boards from "./pages/Board/Boards.jsx";
-import Login from "./pages/Auth/Login.jsx";
+import Home from "./pages/home/Home.jsx";
+import Dashboard from "./pages/dashboard/Dashboard.jsx";
+import Boards from "./pages/board/Boards.jsx";
+import Login from "./pages/auth/Login.jsx";
 import {ToastContainer} from "react-toastify";
-import Register from "./pages/Auth/Register.jsx";
+import Register from "./pages/auth/Register.jsx";
 
 const App = () => {
     return (

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Container, Row, Col, Card, Button, Modal} from "react-bootstrap";
-import {PlusCircle, Users} from "react-feather";
+import {Eye, PlusCircle, Users} from "react-feather";
 import BoardForm from "../board/BoardForm";
 import GroupMembers from "../groupMember/GroupMember.jsx";
 import {useDispatch, useSelector} from "react-redux";
@@ -27,6 +27,14 @@ const BoardsList = () => {
     return (
         <Container className="py-3">
             <h5 className="mb-3">Tên nhóm: {groupInfo && groupInfo.name}</h5>
+            <Container className="py-3 px-0">
+                <Button variant="outline-primary" className="me-3">
+                    <Eye size={20} className="me-1"/> Thông tin nhóm
+                </Button>
+                <Button variant="outline-primary" className="me-3">
+                    <Users size={20} className="me-1"/> Thành viên
+                </Button>
+            </Container>
             <h5 className="mb-3 fw-bold text-dark d-flex align-items-center">
                 Danh sách bảng
                 <PlusCircle
@@ -41,9 +49,6 @@ const BoardsList = () => {
                     }}
                     style={{cursor: "pointer"}}
                 />
-                <Button variant="outline-primary" className="ms-3" onClick={() => setShowMembers(true)}>
-                    <Users size={20} className="me-1"/> Danh sách thành viên
-                </Button>
             </h5>
 
             <Row className="g-3">
