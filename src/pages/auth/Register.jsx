@@ -30,17 +30,6 @@ export default function Register() {
             .required("Vui lòng nhập lại mật khẩu")
     });
 
-    useEffect(() => {
-        if (success) {
-            navigate("/login");
-        }
-        if (error) {
-            toast.error(error);
-            formik.setSubmitting(false);
-            dispatch({type: AUTH_RESET});
-        }
-    }, [dispatch, success, error]);
-
     const handleSubmit = async (data) => {
         dispatch({type: REGISTER, payload: data});
     };
@@ -55,6 +44,17 @@ export default function Register() {
         enableReinitialize: true,
         onSubmit: handleSubmit,
     })
+
+    useEffect(() => {
+        if (success) {
+            navigate("/login");
+        }
+        if (error) {
+            toast.error(error);
+            formik.setSubmitting(false);
+            dispatch({type: AUTH_RESET});
+        }
+    }, [dispatch, success, error, navigate, formik]);
 
     return (
         <Container fluid className="d-flex align-items-center justify-content-center vh-100 w-100 bg-primary"

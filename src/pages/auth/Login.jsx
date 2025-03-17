@@ -17,6 +17,20 @@ function Login() {
     const success = useSelector(state => state.auth.user);
     const error = useSelector(state => state.auth.error);
 
+    const handleSubmit = (data) => {
+        dispatch({type: LOGIN, payload: data});
+    };
+
+    const formik = useFormik({
+        initialValues: formDataTemplate,
+        enableReinitialize: true,
+        onSubmit: handleSubmit,
+    })
+
+    const switchForm = () => {
+        navigate("/register");
+    }
+
     useEffect(() => {
         if (success.name) {
             saveUserInfo(success);
@@ -28,21 +42,7 @@ function Login() {
             formik.setSubmitting(false);
             dispatch({type: AUTH_RESET});
         }
-    }, [dispatch, success, error]);
-
-    const handleSubmit = (data) => {
-        dispatch({type: LOGIN, payload: data});
-    };
-
-    const switchForm = () => {
-        navigate("/register");
-    }
-
-    const formik = useFormik({
-        initialValues: formDataTemplate,
-        enableReinitialize: true,
-        onSubmit: handleSubmit,
-    })
+    }, [success, error, navigate, formik, dispatch]);
 
     return (
         <Container fluid className="d-flex align-items-center justify-content-center vh-100 w-100 bg-primary"
