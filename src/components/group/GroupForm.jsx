@@ -1,10 +1,15 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Button, Form } from "react-bootstrap";
-import axios from "axios";
 import { Formik, Form as FormikForm, Field } from "formik";
 import * as Yup from "yup";
+import {useDispatch, useSelector} from "react-redux";
+import {ADD_GROUP, CLOSE_GROUP_FORM} from "../../redux/group/groupAction.js";
 
-export default function GroupForm({ closeForm, formType, data, onGroupCreated }) {
+export default function GroupForm() {
+    const dispatch = useDispatch();
+    const response = useSelector(state => state.group.successChange);
+    const formType = useSelector(state => state.group.formType);
+
     const groupDataTemplate = {
         id: "",
         name: "",
@@ -13,36 +18,36 @@ export default function GroupForm({ closeForm, formType, data, onGroupCreated })
         description: "",
     };
 
-    const initialValues = formType === "add" ? groupDataTemplate : data;
+    useEffect(() => {
+        if (response.name) {
+            alert(`Thêm nhóm ${response.name} thành công`);
+            dispatch({type: CLOSE_GROUP_FORM});
+        }
+    }, [dispatch, response])
+
+    const initialValues = formType === "add" ? groupDataTemplate : "";
 
     const validationSchema = Yup.object({
         name: Yup.string().required("Tên nhóm không được để trống"),
         type: Yup.string().required("Loại nhóm không được để trống"),
     });
 
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            let response;
-            if (formType === "add") {
-                response = await axios.post("http://localhost:8080/api/group", values);
-            } else {
-                response = await axios.put(`http://localhost:8080/api/group/${values.id}`, values);
-            }
-            onGroupCreated(response?.data);
-        } catch (error) {
-            console.error("Lỗi khi xử lý nhóm:", error);
-        } finally {
-            setSubmitting(false);
-            closeForm();
+    const handleSubmit = async (values) => {
+        if (formType === "add") {
+            dispatch({type: ADD_GROUP, payload: values});
         }
     };
+
+    const closeForm = () => {
+        dispatch({type: CLOSE_GROUP_FORM})
+    }
 
     return (
         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
             {({ errors, touched, handleChange, values }) => (
                 <FormikForm>
                     <Form.Group className="mb-3">
-                        <Form.Label>Tên nhóm</Form.Label>
+                        <Form.Label column="">Tên nhóm</Form.Label>
                         <Field
                             name="name"
                             type="text"
@@ -54,7 +59,7 @@ export default function GroupForm({ closeForm, formType, data, onGroupCreated })
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                        <Form.Label>Loại</Form.Label>
+                        <Form.Label column="">Loại</Form.Label>
                         <Field
                             name="type"
                             type="text"
@@ -66,7 +71,7 @@ export default function GroupForm({ closeForm, formType, data, onGroupCreated })
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                        <Form.Label>Truy cập</Form.Label>
+                        <Form.Label column="">Truy cập</Form.Label>
                         <Field
                             as="select"
                             name="access"
@@ -80,7 +85,7 @@ export default function GroupForm({ closeForm, formType, data, onGroupCreated })
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                        <Form.Label>Mô tả</Form.Label>
+                        <Form.Label column="">Mô tả</Form.Label>
                         <Field
                             as="textarea"
                             name="description"

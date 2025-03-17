@@ -1,12 +1,13 @@
 import axios from "axios";
 
-export const apiDomain = "http://localhost:8080";
+const apiDomain = "http://localhost:8080";
 
-const api = axios.create({
+const axiosInstance = axios.create({
     baseURL: apiDomain,
     timeout: 0
 });
-api.interceptors.request.use(
+
+axiosInstance.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -18,7 +19,7 @@ api.interceptors.request.use(
         return Promise.reject(error);
     }
 )
-api.interceptors.response.use(
+axiosInstance.interceptors.response.use(
     (response) => {
         return response.data;
     },
@@ -30,9 +31,14 @@ api.interceptors.response.use(
     }
 );
 
-export default api;
+export default axiosInstance;
 
 export function saveUserInfo(data) {
     localStorage.setItem("token", data.token);
     localStorage.setItem("username", data.username);
+}
+
+export function logout() {
+    localStorage.setItem("token", null);
+    localStorage.setItem("username", null);
 }
