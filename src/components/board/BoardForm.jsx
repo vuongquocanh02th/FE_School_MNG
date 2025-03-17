@@ -1,10 +1,8 @@
 import React from "react";
 import { Modal, Form, Button } from "react-bootstrap";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import {apiDomain} from "../../resources/axiosConfig.js";
 
 const BoardForm = ({ open, onClose, onBoardCreated, groupId }) => {
     const validationSchema = Yup.object().shape({
@@ -28,12 +26,12 @@ const BoardForm = ({ open, onClose, onBoardCreated, groupId }) => {
             };
             console.log(data);
 
-            const response = await axios.post(`${apiDomain}/api/boards`, data);
+            // const response = await axios.post(`${apiDomain}/api/boards`, data);
 
-            if (onBoardCreated) {
-                onBoardCreated(response.data);
-                toast.success(`Bảng "${response.data.name}" đã được tạo!`);
-            }
+            // if (onBoardCreated) {
+            //     onBoardCreated(response.data);
+            //     toast.success(`Bảng "${response.data.name}" đã được tạo!`);
+            // }
             handleClose(resetForm);
         } catch (error) {
             console.error("Lỗi khi tạo bảng:", error.response?.data || error.message);

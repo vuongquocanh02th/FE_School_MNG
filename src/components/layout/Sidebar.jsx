@@ -1,17 +1,27 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, Modal, ListGroup, Container } from "react-bootstrap";
 import { FaPlus, FaTachometerAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import GroupForm from "../group/GroupForm";
 import GroupList from "../group/GroupList.jsx";
+import {useDispatch, useSelector} from "react-redux";
+import {CLOSE_GROUP_FORM, OPEN_ADD_GROUP_FORM} from "../../redux/group/groupAction.js";
 
-const Sidebar = ({ onGroupCreated, onBoardCreated }) => {
+const Sidebar = () => {
     const navigate = useNavigate();
-    const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+    const form = useSelector(state => state.group.formType);
+    const dispatch = useDispatch();
+
+    const openAddGroupForm = () => {
+        dispatch({type: OPEN_ADD_GROUP_FORM})
+    }
+
+    const closeForm = () => {
+        dispatch({type: CLOSE_GROUP_FORM})
+    }
 
     return (
         <Container fluid className="sidebar bg-light p-3">
-            {/* Nút chuyển đến danh sách bảng */}
             <ListGroup className="mb-3">
                 <ListGroup.Item
                     action
@@ -26,24 +36,19 @@ const Sidebar = ({ onGroupCreated, onBoardCreated }) => {
 
             <div className="d-flex justify-content-between align-items-center mb-2">
                 <span className="fw-bold">Nhóm người dùng</span>
-                <Button variant="primary" size="sm" onClick={() => setIsGroupModalOpen(true)}>
+                <Button variant="primary" size="sm" onClick={openAddGroupForm}>
                     <FaPlus />
                 </Button>
             </div>
 
-            <GroupList onBoardCreated={onBoardCreated} />
+            <GroupList/>
 
-            <Modal show={isGroupModalOpen} onHide={() => setIsGroupModalOpen(false)} centered>
+            <Modal show={form !== "none"} onHide={closeForm} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Thêm nhóm</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <GroupForm
-                        closeForm={() => setIsGroupModalOpen(false)}
-                        formType="add"
-                        data={null}
-                        onGroupCreated={onGroupCreated}
-                    />
+                    <GroupForm/>
                 </Modal.Body>
             </Modal>
         </Container>
