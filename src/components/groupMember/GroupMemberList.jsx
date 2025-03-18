@@ -37,7 +37,7 @@ function GroupMemberList() {
         setAdding(true);
         dispatch({
             type: ADD_MEMBERGROUP,
-            payload: { groupId, email, groupRole }
+            payload: { groupId, email, newRole: memberType }
         });
         setLocalMessage("Đã gửi yêu cầu thêm thành viên");
         setEmail("");
@@ -45,11 +45,16 @@ function GroupMemberList() {
         setTimeout(() => setLocalMessage(""), 3000);
     };
 
+
+
     const handleRemoveMember = (memberId) => {
         if (window.confirm("Bạn có chắc muốn xóa thành viên này không?")) {
             dispatch({
                 type: REMOVE_MEMBERGROUP,
-                payload: { groupId, memberId }
+                payload: {
+                    groupId: groupId,
+                    userId: memberId
+                }
             });
         }
     };
@@ -97,7 +102,7 @@ function GroupMemberList() {
                         <div className="d-flex">
                             <button
                                 className="btn btn-success me-2"
-                                onClick={handleAddMember}
+                                onClick={() => handleAddMember(memberType)}
                                 disabled={adding}
                             >
                                 {adding ? "Đang thêm..." : "Thêm"}

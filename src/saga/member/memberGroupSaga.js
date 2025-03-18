@@ -16,55 +16,67 @@ const API_URL = 'http://localhost:8080/api/members';
 // Lấy danh sách thành viên theo groupId
 function* fetchMembers(action) {
     try {
-        const response = yield call(axiosInstance.get, `/api/members/${action.payload}`);
-        console.log("Member list response:", response);
+        const response = yield call(axiosInstance.get, `${API_URL}/${action.payload}`);
+        console.log("📥 Member list response:", response);
         yield put({ type: GET_MEMBERGROUP_LIST_SUCCESS, payload: response });
     } catch (error) {
-        console.error('Fetch member list failed', error);
+        console.error('❌ Fetch member list failed', error);
     }
 }
 
-// Thêm thành viên bằng email
+// Thêm thành viên bằng email (chỉ moderator mới được phép thực hiện, backend sẽ kiểm tra)
 function* addMember(action) {
     try {
-        const { groupId, email, type } = action.payload; // Thêm tham số role
-        console.log("Thêm member với: ", { groupId, email, type });
-        yield call(axiosInstance.post, `${API_URL}/${groupId}`, { email, type }); // Gửi dưới dạng body
+        const { groupId, email, type } = action.payload;
+        console.log("➕ Thêm member với:", { groupId, email, type });
+
+        const body = { type };
+
+        yield call(
+            axiosInstance.post,
+            `${API_URL}/${groupId}?email=${encodeURIComponent(email)}`,
+            body
+        );
+
         yield put({ type: ADD_MEMBERGROUP_SUCCESS });
         yield put({ type: GET_MEMBERGROUP_LIST, payload: groupId });
+        console.log("✅ Đã thêm:", email, type);
     } catch (error) {
-        console.error('Add member failed', error);
+        console.error('❌ Add member failed', error.response?.data || error);
     }
 }
 
-
-// Xóa thành viên
+// Xóa thành viên (chỉ moderator mới được phép thực hiện)
 function* removeMember(action) {
     try {
         const { groupId, userId } = action.payload;
-        console.log("🗑 Xoá member với:", { groupId, userId });
-        yield call(axiosInstance.delete, `/api/members/${groupId}/${userId}`);
+        console.log("🗑 Xoá member:", { groupId, userId });
+
+        yield call(axiosInstance.delete, `${API_URL}/${groupId}/${userId}`);
+
         yield put({ type: REMOVE_MEMBERGROUP_SUCCESS });
         yield put({ type: GET_MEMBERGROUP_LIST, payload: groupId });
     } catch (error) {
-        console.error('Remove member failed', error);
+        console.error('❌ Remove member failed', error.response?.data || error);
     }
 }
 
-// Cập nhật quyền thành viên
+// Cập nhật quyền thành viên (chỉ moderator mới được phép thực hiện)
 function* updateMemberRole(action) {
     try {
         const { groupId, userId, newRole } = action.payload;
-        console.log("🔄 Update role với:", { groupId, userId, newRole });
+        console.log("🔄 Update role:", { groupId, userId, newRole });
+
         yield call(
             axiosInstance.put,
-            `/api/members/${groupId}/${userId}`,
+            `${API_URL}/${groupId}/${userId}`,
             { type: newRole }
         );
+
         yield put({ type: UPDATE_MEMBERGROUP_ROLE_SUCCESS });
         yield put({ type: GET_MEMBERGROUP_LIST, payload: groupId });
     } catch (error) {
-        console.error('Update role failed', error.response?.data || error);
+        console.error('❌ Update role failed', error.response?.data || error);
     }
 }
 
