@@ -1,0 +1,25 @@
+// Action types
+
+// Lấy danh sách thành viên nhóm
+export const GET_MEMBERGROUP_LIST = 'GET_MEMBERGROUP_LIST';
+export const GET_MEMBERGROUP_LIST_SUCCESS = 'GET_MEMBERGROUP_LIST_SUCCESS';
+
+// Lấy thông tin nhóm (nếu muốn dùng riêng)
+export const GET_MEMBERGROUP_INFO_SUCCESS = 'GET_MEMBERGROUP_INFO_SUCCESS';
+
+// Thêm thành viên vào nhóm
+export const ADD_MEMBERGROUP = 'ADD_MEMBERGROUP';
+export const ADD_MEMBERGROUP_SUCCESS = 'ADD_MEMBERGROUP_SUCCESS';
+
+// Xóa thành viên khỏi nhóm
+export const REMOVE_MEMBERGROUP = 'REMOVE_MEMBERGROUP';
+export const REMOVE_MEMBERGROUP_SUCCESS = 'REMOVE_MEMBERGROUP_SUCCESS';
+
+// Cập nhật vai trò thành viên
+export const UPDATE_MEMBERGROUP_ROLE = 'UPDATE_MEMBERGROUP_ROLE';
+export const UPDATE_MEMBERGROUP_ROLE_SUCCESS = 'UPDATE_MEMBERGROUP_ROLE_SUCCESS';
+
+// Hiển thị và đóng form
+export const OPEN_ADD_MEMBERGROUP_FORM = 'OPEN_ADD_MEMBERGROUP_FORM';
+export const OPEN_EDIT_MEMBERGROUP_FORM = 'OPEN_EDIT_MEMBERGROUP_FORM';
+export const CLOSE_MEMBERGROUP_FORM = 'CLOSE_MEMBERGROUP_FORM';
