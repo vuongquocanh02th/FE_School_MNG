@@ -20,11 +20,11 @@ export default function GroupForm() {
     };
 
     useEffect(() => {
-        if (success.name) {
+        if (success && success.name) {
             toast.success(`Thêm nhóm ${success.name} thành công`);
             dispatch({type: CLOSE_GROUP_FORM});
         }
-    }, [dispatch, success])
+    }, [success, dispatch])
 
     const initialValues = formType === "add" ? groupDataTemplate : "";
 
