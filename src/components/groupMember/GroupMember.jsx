@@ -115,7 +115,7 @@ const GroupMembers = ({groupId, onMemberAdded = () => {}}) => {
                         <select className="form-select mb-2" value={groupRole}
                                 onChange={(e) => setGroupRole(e.target.value)} disabled={loading}>
                             <option value="MEMBER">Thành viên</option>
-                            <option value="ADMIN">Quản trị viên</option>
+                            <option value="MODERATOR">Quản trị viên</option>
                         </select>
                         {message1 && <p className="text-success">{message1}</p>}
                         <div className="d-flex align-items-center">
@@ -154,13 +154,13 @@ const GroupMembers = ({groupId, onMemberAdded = () => {}}) => {
                                 height="40"
                             />
                         </td>
-                        <td>{member.userName}</td>
+                        <td>{member.username}</td>
                         <td>{member.email}</td>
                         <td>
                             <select className="form-select" value={member.GroupRole}
                                     onChange={(e) => handleUpdateRole(member.id, e.target.value)}>
                                 <option value="MEMBER">Thành viên</option>
-                                <option value="ADMIN">Quản trị viên</option>
+                                <option value="MODERATOR">Quản trị viên</option>
                             </select>
                         </td>
                         <td>
