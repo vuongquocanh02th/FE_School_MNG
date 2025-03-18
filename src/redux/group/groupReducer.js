@@ -21,7 +21,7 @@ export const groupReducer = (state = initialState, action) => {
         case GET_GROUP_INFO_SUCCESS:
             return {...state, info: action.payload};
         case ADD_GROUP_SUCCESS:
-            return {...state, successChange: action.payload};
+            return {...state, success: action.payload};
         case OPEN_ADD_GROUP_FORM:
             return {...state, formType: "add"};
         case OPEN_EDIT_GROUP_FORM:
