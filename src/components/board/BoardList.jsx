@@ -4,7 +4,7 @@ import {Eye, PlusCircle, Users} from "react-feather";
 import BoardForm from "../board/BoardForm";
 import {useDispatch, useSelector} from "react-redux";
 import {useParams} from "react-router";
-import {GET_BOARD_LIST} from "../../redux/board/boardAction.js";
+import {GET_ALL_BOARDS, GET_BOARD_LIST} from "../../redux/board/boardAction.js";
 import {GET_GROUP_INFO} from "../../redux/group/groupAction.js";
 import * as PropTypes from "prop-types";
 import MemberGroup from "../../pages/member/MemberGroup.jsx";
@@ -25,15 +25,21 @@ const BoardsList = () => {
     const dispatch = useDispatch();
     const groupInfo = useSelector(state => state.group.info);
     const boardList = useSelector(state => state.board.list);
+    const allBoards = useSelector(state => state.board.allBoards);
     const {groupId} = useParams();
 
     useEffect(() => {
         dispatch({type: GET_GROUP_INFO, payload: groupId});
         dispatch({type: GET_BOARD_LIST, payload: groupId});
+        if (!groupId) {
+            dispatch({ type: GET_ALL_BOARDS });
+        }
     }, [dispatch, groupId]);
 
     useEffect(() => {
     }, [boardList, groupInfo]);
+
+    const boardsToDisplay = groupId ? boardList : allBoards;
 
     return (
         <Container className="py-3">
@@ -63,14 +69,14 @@ const BoardsList = () => {
             </h5>
 
             <Row className="g-3">
-                {boardList.length > 0 ? (
-                    boardList.map((board) => (
+                {boardsToDisplay.length > 0 ? (
+                    boardsToDisplay.map((board) => (
                         <Col xs={12} sm={6} md={2} key={board.id}>
                             <Card className="p-2 d-flex align-items-center shadow-sm"
-                                  style={{borderRadius: "10px", backgroundColor: "#f5f5f5", cursor: "pointer"}}
+                                  style={{ borderRadius: "10px", backgroundColor: "#f5f5f5", cursor: "pointer" }}
                                   onClick={() => console.log("Clicked board", board.name)}
                             >
-                                <p className="mb-0 fw-bold text-dark text-truncate" style={{maxWidth: "120px"}}>
+                                <p className="mb-0 fw-bold text-dark text-truncate" style={{ maxWidth: "120px" }}>
                                     {board.name}
                                 </p>
                             </Card>
