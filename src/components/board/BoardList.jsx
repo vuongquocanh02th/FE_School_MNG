@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Container, Row, Col, Card, Button, Modal} from "react-bootstrap";
-import {Eye, PlusCircle, Users} from "react-feather";
+import {Eye, PlusCircle, Settings, Users} from "react-feather";
 import BoardForm from "../board/BoardForm";
 import {useDispatch, useSelector} from "react-redux";
 import {useParams} from "react-router";
@@ -10,6 +10,7 @@ import * as PropTypes from "prop-types";
 import MemberGroup from "../../pages/member/MemberGroup.jsx";
 import GroupMembers from "../groupMember/GroupMember.jsx";
 import GroupMemberList from "../groupMember/GroupMemberList.jsx";
+import {useNavigate} from "react-router-dom";
 
 function GroupMembersList() {
     return null;
@@ -27,6 +28,7 @@ const BoardsList = () => {
     const boardList = useSelector(state => state.board.list);
     const allBoards = useSelector(state => state.board.allBoards);
     const {groupId} = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
         dispatch({type: GET_GROUP_INFO, payload: groupId});
@@ -49,6 +51,9 @@ const BoardsList = () => {
                 </Button>
                 <Button variant="outline-primary" className="me-3" onClick={() => setShowMembers(true)}>
                     <Users size={20} className="me-1"/> Thành viên
+                </Button>
+                <Button variant="outline-primary" className="me-3" onClick={() => navigate(`/dashboard/groupInfo/${groupId}`)}>
+                    <Settings size={20} className="me-1"/> Cài đặt nhóm
                 </Button>
             </Container>
             <h5 className="mb-3 fw-bold text-dark d-flex align-items-center">
