@@ -7,14 +7,20 @@ import {useDispatch, useSelector} from "react-redux";
 import {useParams} from "react-router";
 import {GET_BOARD_LIST} from "../../redux/board/boardAction.js";
 import {GET_GROUP_INFO} from "../../redux/group/groupAction.js";
+import {useNavigate} from "react-router-dom";
 
 const BoardsList = () => {
     const [openBoardForm, setOpenBoardForm] = useState(false);
     const [showMembers, setShowMembers] = useState(false);
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const groupInfo = useSelector(state => state.group.info);
     const boardList = useSelector(state => state.board.list);
     const {groupId} = useParams();
+
+    const showGroupInfo = () => {
+        navigate("info")
+    }
 
     useEffect(() => {
         dispatch({type: GET_GROUP_INFO, payload: groupId});
@@ -28,7 +34,7 @@ const BoardsList = () => {
         <Container className="py-3">
             <h5 className="mb-3">Tên nhóm: {groupInfo && groupInfo.name}</h5>
             <Container className="py-3 px-0">
-                <Button variant="outline-primary" className="me-3">
+                <Button variant="outline-primary" className="me-3" onClick={showGroupInfo}>
                     <Eye size={20} className="me-1"/> Thông tin nhóm
                 </Button>
                 <Button variant="outline-primary" className="me-3">

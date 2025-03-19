@@ -1,24 +1,11 @@
 import React from "react";
-import axios from "axios";
+import { Container, Row, Col, ListGroup, Button } from 'react-bootstrap';
+import {useDispatch, useSelector} from "react-redux";
+import {OPEN_EDIT_GROUP_FORM} from "../../redux/group/groupAction.js";
 
-export default function GroupInfo({data, closeInfo, openForm}) {
-    const sendHttpRequestDeleteGroup = (id) => {
-        axios.delete("http://localhost:8080/api/group/" + id)
-            .then(() => {
-                alert("Xóa nhóm thành công");
-                closeInfo();
-            })
-            .catch((err) => {
-                alert("Bị lỗi khi xóa nhóm, vui lòng thử lại")
-                console.log(err);
-            })
-    }
-
-    const onDeleteClick = () => {
-        if (confirm(`Bạn chắc chắn muốn xóa nhóm ${data.name}`)) {
-            sendHttpRequestDeleteGroup(data.id);
-        }
-    }
+export default function GroupInfo() {
+    const info = useSelector(state => state.group.info);
+    const dispatch = useDispatch();
 
     const reformatDate = (date) => {
         try {
@@ -35,46 +22,52 @@ export default function GroupInfo({data, closeInfo, openForm}) {
         }
     }
 
+    const openEditForm = () => {
+        dispatch({type: OPEN_EDIT_GROUP_FORM})
+    }
+
     return (
-        <>
-            <div className="my-2">
-                <h2 className="mb-4">Thông tin chi tiết</h2>
-                <div className="mb-3">
-                    <strong>Tên nhóm:</strong>
-                    <p className="mb-0">{data.name}</p>
-                </div>
-                <div className="mb-3">
-                    <strong>Loại:</strong>
-                    <p className="mb-0">{data.type}</p>
-                </div>
-                <div className="mb-3">
-                    <strong>Quyền truy cập:</strong>
-                    <p className="mb-0">{data.access}</p>
-                </div>
-                <div className="mb-3">
-                    <strong>Thời điểm tạo:</strong>
-                    <p className="mb-0">{reformatDate(data.created_at)}</p>
-                </div>
-                <div className="mb-3">
-                    <strong>Người tạo:</strong>
-                    <p className="mb-0">{data.created_by}</p>
-                </div>
-                <div className="mb-3">
-                    <strong>Mô tả:</strong>
-                    <p className="mb-0">{data.description}</p>
-                </div>
-                <div className="d-flex justify-content-start mt-4">
-                    <button className="btn btn-primary me-2" onClick={openForm}>
-                        Sửa
-                    </button>
-                    <button className="btn btn-danger me-2" onClick={onDeleteClick}>
-                        Xóa
-                    </button>
-                    <button className="btn btn-secondary me-2" onClick={closeInfo}>
-                        Quay lại
-                    </button>
-                </div>
-            </div>
-        </>
+        <Container className="my-2">
+            <h2 className="mb-4">Thông tin chi tiết</h2>
+
+            <ListGroup variant="flush">
+                <ListGroup.Item>
+                    <strong>Tên nhóm: </strong>
+                    <span>{info.name}</span>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Loại: </strong>
+                    <span>{info.type}</span>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Quyền truy cập: </strong>
+                    <span>{info.access}</span>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Thời điểm tạo: </strong>
+                    <span>{reformatDate(info.createdAt)}</span>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Người tạo: </strong>
+                    <span>{info.createdBy}</span>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <strong>Mô tả: </strong>
+                    <span>{info.description}</span>
+                </ListGroup.Item>
+            </ListGroup>
+
+            <Row className="mt-4">
+                <Col xs="auto">
+                    <Button variant="primary" onClick={openEditForm}>Sửa</Button>
+                </Col>
+                <Col xs="auto">
+                    <Button variant="danger">Xóa</Button>
+                </Col>
+                <Col xs="auto">
+                    <Button variant="secondary">Quay lại</Button>
+                </Col>
+            </Row>
+        </Container>
     )
 }
