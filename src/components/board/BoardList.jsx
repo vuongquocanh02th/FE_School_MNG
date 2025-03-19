@@ -36,10 +36,9 @@ const BoardsList = () => {
         }
     }, [dispatch, groupId]);
 
-    useEffect(() => {
-    }, [boardList, groupInfo]);
-
-    const boardsToDisplay = groupId ? boardList : allBoards;
+    let boardsToDisplay = groupId ? boardList : allBoards;
+    // Sắp xếp bảng theo alphabet của tên nhóm
+    boardsToDisplay = [...boardsToDisplay].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
         <Container className="py-3">
