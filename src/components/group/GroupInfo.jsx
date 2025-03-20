@@ -1,11 +1,20 @@
-import React from "react";
-import { Container, Row, Col, ListGroup, Button } from 'react-bootstrap';
+import React, {useEffect, useState} from "react";
+import {Container, Row, Col, ListGroup, Button, Modal} from 'react-bootstrap';
 import {useDispatch, useSelector} from "react-redux";
-import {OPEN_EDIT_GROUP_FORM} from "../../redux/group/groupAction.js";
+import {DELETE_GROUP, GET_GROUP_INFO, OPEN_EDIT_GROUP_FORM} from "../../redux/group/groupAction.js";
+import {useParams} from "react-router";
+import {useNavigate} from "react-router-dom";
 
 export default function GroupInfo() {
     const info = useSelector(state => state.group.info);
+    const {groupId} = useParams();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [deletePrompt,setDeletePrompt] = useState(false);
+
+    useEffect(() => {
+        dispatch({type: GET_GROUP_INFO, payload: groupId});
+    }, [dispatch, groupId]);
 
     const reformatDate = (date) => {
         try {
@@ -22,14 +31,29 @@ export default function GroupInfo() {
         }
     }
 
+    const handleReturn = () => {
+        navigate("/dashboard/group/" + groupId);
+    }
+
     const openEditForm = () => {
         dispatch({type: OPEN_EDIT_GROUP_FORM})
     }
 
+    const handleDelete = () => {
+        setDeletePrompt(true);
+    }
+
+    const cancelDelete = () => {
+        setDeletePrompt(false);
+    }
+
+    const acceptDelete = () => {
+        dispatch({type: DELETE_GROUP, payload: groupId});
+        setDeletePrompt(false);
+    }
     return (
         <Container className="my-2">
             <h2 className="mb-4">Thông tin chi tiết</h2>
-
             <ListGroup variant="flush">
                 <ListGroup.Item>
                     <strong>Tên nhóm: </strong>
@@ -62,12 +86,30 @@ export default function GroupInfo() {
                     <Button variant="primary" onClick={openEditForm}>Sửa</Button>
                 </Col>
                 <Col xs="auto">
-                    <Button variant="danger">Xóa</Button>
+                    <Button variant="danger" onClick={handleDelete}>Xóa</Button>
                 </Col>
                 <Col xs="auto">
-                    <Button variant="secondary">Quay lại</Button>
+                    <Button variant="secondary" onClick={handleReturn}>Quay lại</Button>
                 </Col>
             </Row>
+
+
+            <Modal show={deletePrompt} onHide={cancelDelete} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Xóa nhóm</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Bạn có chắc chắn muốn xóa nhóm {info.name}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={cancelDelete}>
+                        Không
+                    </Button>
+                    <Button variant="primary" onClick={acceptDelete}>
+                        Có
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     )
 }

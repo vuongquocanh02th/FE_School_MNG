@@ -6,13 +6,12 @@ import {
     CREATE_BOARD,
     CREATE_BOARD_SUCCESS,
     CREATE_BOARD_FAIL,
-    GET_ALL_BOARDS,
+    GET_ALL_BOARDS, SET_ALL_BOARDS,
 } from "../../redux/board/boardAction.js";
 
 function* getBoardList(action) {
     try {
         const response = yield call(axiosInstance.get, "/api/boards/" + action.payload);
-        console.log("API response:", response);
         yield put({ type: GET_BOARD_LIST_SUCCESS, payload: response });
     } catch (err) {
         console.error(err);
@@ -22,7 +21,6 @@ function* getBoardList(action) {
 function* createBoard(action) {
     try {
         const response = yield call(axiosInstance.post, "/api/boards", action.payload);
-        console.log("API response:", response);
         yield put({ type: CREATE_BOARD_SUCCESS, payload: response });
     } catch (err) {
         yield put({ type: CREATE_BOARD_FAIL, payload: err.message });

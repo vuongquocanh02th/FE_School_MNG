@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import GroupForm from "../group/GroupForm";
 import GroupList from "../group/GroupList.jsx";
 import {useDispatch, useSelector} from "react-redux";
-import {CLOSE_GROUP_FORM, OPEN_ADD_GROUP_FORM} from "../../redux/group/groupAction.js";
+import {RESET_GROUP, OPEN_ADD_GROUP_FORM} from "../../redux/group/groupAction.js";
 import {GET_ALL_BOARDS} from "../../redux/board/boardAction.js";
 
 const Sidebar = () => {
@@ -18,7 +18,7 @@ const Sidebar = () => {
     }
 
     const closeForm = () => {
-        dispatch({type: CLOSE_GROUP_FORM})
+        dispatch({type: RESET_GROUP})
     }
     const handleShowAllBoards = () => {
         dispatch({ type: GET_ALL_BOARDS });
@@ -26,7 +26,7 @@ const Sidebar = () => {
     };
 
     return (
-        <Container fluid className="sidebar bg-light p-3">
+        <Container fluid className="sidebar bg-light p-3 overflow-y-auto">
             <ListGroup className="mb-3">
                 <ListGroup.Item
                     action
@@ -50,7 +50,7 @@ const Sidebar = () => {
 
             <Modal show={form !== "none"} onHide={closeForm} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Thêm nhóm</Modal.Title>
+                    <Modal.Title>{form === "add" ? "Thêm" : "Sửa"} nhóm</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <GroupForm/>

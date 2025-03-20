@@ -18,11 +18,11 @@ const Dashboard = () => {
             <TopMenu/>
 
             <Row className="flex-grow-1 g-0">
-                <Col xs={12} sm={6} md={4} lg={3} xl={2} className={`h-100 overflow-auto bg-dark-subtle position-fixed-xs ${openDrawer ? "d-block" : "d-none"}`}>
+                <Col xs={12} sm={6} md={4} lg={3} xl={2} className={`h-100 bg-dark-subtle position-fixed-xs ${openDrawer ? "d-block" : "d-none"}`}>
                     <Sidebar/>
                 </Col>
 
-                <Col sm={6} md={8} lg={9} xl={10} className="p-0 d-flex flex-column m-0">
+                <Col sm={6} md={8} lg={9} xl={10} className="p-0 d-flex flex-column m-0 overflow-y-hidden overflow-x-auto">
                     <Outlet/>
                 </Col>
             </Row>

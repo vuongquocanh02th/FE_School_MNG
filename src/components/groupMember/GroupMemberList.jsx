@@ -54,9 +54,10 @@ function GroupMemberList() {
             setLocalMessage("Vui lòng nhập email");
             return;
         }
+        console.log(memberType)
         dispatch({
             type: ADD_MEMBERGROUP,
-            payload: { groupId, email, newRole: memberType }
+            payload: { groupId, email, memberType: memberType }
         });
     };
 
@@ -153,10 +154,10 @@ function GroupMemberList() {
                         <tr key={member.id}>
                             <td>
                                 <Image
-                                    src={
-                                        member.imagePath ||
-                                        "https://via.placeholder.com/40"
-                                    }
+                                    // src={
+                                    //     member.imagePath ||
+                                    //     "https://via.placeholder.com/40"
+                                    // }
                                     roundedCircle
                                     width="40"
                                     height="40"
