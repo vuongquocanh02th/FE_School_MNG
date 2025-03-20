@@ -1,10 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal, Form, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import { CREATE_BOARD, RESET_CREATE_BOARD_STATUS } from "../../redux/board/boardAction";
 
 const BoardForm = ({ open, onClose, onBoardCreated, groupId }) => {
+    const dispatch = useDispatch();
+    const createSuccess = useSelector((state) => state.board.createSuccess);
+    const createError = useSelector((state) => state.board.createError);
+
+    useEffect(() => {
+        if (createSuccess) {
+            toast.success(`Bảng "${createSuccess.name}" đã được tạo!`);
+            onBoardCreated?.(createSuccess);
+            onClose();
+            dispatch({ type: RESET_CREATE_BOARD_STATUS }); // reset sau khi tạo thành công
+        }
+    }, [createSuccess]);
+
+    useEffect(() => {
+        if (createError) {
+            toast.error("Lỗi khi tạo bảng, vui lòng thử lại!");
+        }
+    }, [createError]);
+
     const validationSchema = Yup.object().shape({
         name: Yup.string()
             .trim()
@@ -16,50 +37,36 @@ const BoardForm = ({ open, onClose, onBoardCreated, groupId }) => {
             .required("Vui lòng chọn loại bảng"),
     });
 
-    const handleCreateBoard = async (values, { setSubmitting, resetForm }) => {
+    const handleCreateBoard = (values, { setSubmitting, resetForm }) => {
         if (!groupId) return;
-        try {
-            const data = {
-                name: values.name,
+        dispatch({
+            type: CREATE_BOARD,
+            payload: {
+                name: values.name.trim(),
                 group_id: groupId,
-                created_by: 1
-            };
-            console.log(data);
-
-            // const response = await axios.post(`${apiDomain}/api/boards`, data);
-
-            // if (onBoardCreated) {
-            //     onBoardCreated(response.data);
-            //     toast.success(`Bảng "${response.data.name}" đã được tạo!`);
-            // }
-            handleClose(resetForm);
-        } catch (error) {
-            console.error("Lỗi khi tạo bảng:", error.response?.data || error.message);
-            toast.error("Lỗi khi tạo bảng, vui lòng thử lại!");
-        }
+                created_by: 1,
+                type: values.type,
+            },
+        });
         setSubmitting(false);
-    };
-
-    const handleClose = (resetForm) => {
         resetForm();
-        onClose();
     };
 
     return (
         <Formik
-            initialValues={{ name: "", type: "private" }}
+            initialValues={{ name: "", type: "PRIVATE" }}
             validationSchema={validationSchema}
             onSubmit={handleCreateBoard}
         >
             {({ values, errors, touched, handleChange, handleSubmit, handleBlur, isSubmitting, resetForm }) => (
-                <Modal show={open} onHide={() => handleClose(resetForm)} centered>
-                    <Modal.Header closeButton>
+                <Modal show={open} onHide={onClose} centered onExited={resetForm}>
+                <Modal.Header closeButton>
                         <Modal.Title>Tạo Bảng Mới</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form noValidate onSubmit={handleSubmit}>
                             <Form.Group className="mb-3">
-                                <Form.Label column="">Tiêu đề</Form.Label>
+                                <Form.Label>Tiêu đề</Form.Label>
                                 <Form.Control
                                     type="text"
                                     placeholder="Nhập tiêu đề..."
@@ -72,7 +79,7 @@ const BoardForm = ({ open, onClose, onBoardCreated, groupId }) => {
                                 <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group className="mb-3">
-                                <Form.Label column="">Loại bảng</Form.Label>
+                                <Form.Label>Loại bảng</Form.Label>
                                 <Form.Select
                                     name="type"
                                     value={values.type}
@@ -88,7 +95,7 @@ const BoardForm = ({ open, onClose, onBoardCreated, groupId }) => {
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={() => handleClose(resetForm)}>
+                        <Button variant="secondary" onClick={onClose}>
                             Hủy
                         </Button>
                         <Button variant="primary" onClick={handleSubmit} disabled={isSubmitting || !groupId}>

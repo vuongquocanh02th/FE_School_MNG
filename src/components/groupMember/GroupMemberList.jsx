@@ -1,51 +1,64 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { toast } from 'react-toastify';
 import {
     GET_MEMBERGROUP_LIST,
     ADD_MEMBERGROUP,
     REMOVE_MEMBERGROUP,
     UPDATE_MEMBERGROUP_ROLE
 } from "../../redux/member/memberAction.js";
-import {GET_GROUP_INFO} from "../../redux/group/groupAction.js";
+import { GET_GROUP_INFO } from "../../redux/group/groupAction.js";
+import {
+    Container,
+    Button,
+    Form,
+    Card,
+    Table,
+    Image,
+    Alert,
+    Row,
+    Col
+} from "react-bootstrap";
+import { Users } from "react-feather";
 
 function GroupMemberList() {
-    const { groupId  } = useParams();
+    const { groupId } = useParams();
     const dispatch = useDispatch();
 
-    const members = useSelector(state => state.membersGroup.members) || [];
-    const loading = useSelector(state => state.membersGroup.loading);
+    const members = useSelector((state) => state.membersGroup.members) || [];
+    const addMemberSuccess = useSelector((state) => state.membersGroup.addMemberSuccess);
 
     const [showForm, setShowForm] = useState(false);
     const [email, setEmail] = useState("");
     const [memberType, setMemberType] = useState("MEMBER");
-    const [adding, setAdding] = useState(false);
     const [localMessage, setLocalMessage] = useState("");
 
     useEffect(() => {
-        dispatch({type: GET_GROUP_INFO, payload: groupId});
-        dispatch({type: GET_MEMBERGROUP_LIST, payload: groupId });
-        console.log(members);
+        dispatch({ type: GET_GROUP_INFO, payload: groupId });
+        dispatch({ type: GET_MEMBERGROUP_LIST, payload: groupId });
     }, [dispatch, groupId]);
+
+    // Khi thêm thành viên thành công -> reset form và đóng
+    useEffect(() => {
+        if (addMemberSuccess) {
+            setEmail("");
+            setMemberType("MEMBER");
+            setShowForm(false);
+            toast.success("Thêm thành viên thành công!");
+        }
+    }, [addMemberSuccess]);
 
     const handleAddMember = () => {
         if (!email.trim()) {
             setLocalMessage("Vui lòng nhập email");
             return;
         }
-
-        setAdding(true);
         dispatch({
             type: ADD_MEMBERGROUP,
             payload: { groupId, email, newRole: memberType }
         });
-        setLocalMessage("Đã gửi yêu cầu thêm thành viên");
-        setEmail("");
-        setAdding(false);
-        setTimeout(() => setLocalMessage(""), 3000);
     };
-
-
 
     const handleRemoveMember = (memberId) => {
         if (window.confirm("Bạn có chắc muốn xóa thành viên này không?")) {
@@ -56,6 +69,7 @@ function GroupMemberList() {
                     userId: memberId
                 }
             });
+            toast.success("Thành viên đã bị xóa!");
         }
     };
 
@@ -63,68 +77,68 @@ function GroupMemberList() {
         dispatch({
             type: UPDATE_MEMBERGROUP_ROLE,
             payload: {
-                groupId: groupId, // lấy đúng groupId
-                userId: memberId,        // memberId chính là userId
+                groupId: groupId,
+                userId: memberId,
                 newRole: newRole
             }
         });
+        toast.success(`Đã cập nhật vai trò thành "${newRole === 'MODERATOR' ? 'Quản trị viên' : 'Thành viên'}"!`);
     };
 
-
-
     return (
-        <div className="container mt-4">
+        <Container className="mt-4">
             <div className="mb-3">
                 {!showForm ? (
-                    <button className="btn btn-primary" onClick={() => setShowForm(true)}>
-                        Thêm thành viên
-                    </button>
+                    <Button variant="outline-primary" className="me-3" onClick={() => setShowForm(true)}>
+                        <Users size={20} className="me-1" /> Thêm thành viên
+                    </Button>
                 ) : (
-                    <div className="card p-3 mt-2">
-                        <input
-                            type="email"
-                            className="form-control mb-2"
-                            placeholder="Nhập email thành viên..."
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            disabled={adding}
-                        />
-                        <select
-                            className="form-select mb-2"
-                            value={memberType}
-                            onChange={(e) => setMemberType(e.target.value)}
-                            disabled={adding}
-                        >
-                            <option value="MEMBER">Thành viên</option>
-                            <option value="MODERATOR">Quản trị viên</option>
-                        </select>
-                        {localMessage && <p className="text-success">{localMessage}</p>}
-                        <div className="d-flex">
-                            <button
-                                className="btn btn-success me-2"
-                                onClick={() => handleAddMember(memberType)}
-                                disabled={adding}
+                    <Card className="p-3 mt-3">
+                        <Form.Group className="mb-2">
+                            <Form.Control
+                                type="email"
+                                placeholder="Nhập email thành viên..."
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-2">
+                            <Form.Select
+                                value={memberType}
+                                onChange={(e) => setMemberType(e.target.value)}
                             >
-                                {adding ? "Đang thêm..." : "Thêm"}
-                            </button>
-                            <button
-                                className="btn btn-secondary"
-                                onClick={() => setShowForm(false)}
-                                disabled={adding}
-                            >
-                                Hủy
-                            </button>
-                        </div>
-                    </div>
+                                <option value="MEMBER">Thành viên</option>
+                                <option value="MODERATOR">Quản trị viên</option>
+                            </Form.Select>
+                        </Form.Group>
+                        {localMessage && (
+                            <Alert variant="danger">{localMessage}</Alert>
+                        )}
+                        <Row>
+                            <Col>
+                                <Button
+                                    variant="success"
+                                    onClick={handleAddMember}
+                                    className="me-2"
+                                >
+                                    Thêm
+                                </Button>
+                                <Button
+                                    variant="secondary"
+                                    onClick={() => setShowForm(false)}
+                                >
+                                    Hủy
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Card>
                 )}
             </div>
 
-            {loading ? (
-                <p>Đang tải danh sách thành viên...</p>
-            ) : members.length === 0 ? (
+            {members.length === 0 ? (
                 <p>Không có thành viên nào trong nhóm.</p>
             ) : (
-                <table className="table table-bordered">
+                <Table striped bordered hover>
                     <thead>
                     <tr>
                         <th>Ảnh</th>
@@ -138,40 +152,49 @@ function GroupMemberList() {
                     {members.map((member) => (
                         <tr key={member.id}>
                             <td>
-                                <img
-                                    src={member.imagePath || "https://via.placeholder.com/40"}
-                                    alt="Avatar"
+                                <Image
+                                    src={
+                                        member.imagePath ||
+                                        "https://via.placeholder.com/40"
+                                    }
+                                    roundedCircle
                                     width="40"
                                     height="40"
-                                    className="rounded-circle"
                                 />
                             </td>
                             <td>{member.username}</td>
                             <td>{member.email}</td>
                             <td>
-                                <select
-                                    className="form-select"
+                                <Form.Select
                                     value={member.memberType}
-                                    onChange={(e) => handleUpdateRole(member.id, e.target.value)}
+                                    onChange={(e) =>
+                                        handleUpdateRole(
+                                            member.id,
+                                            e.target.value
+                                        )
+                                    }
                                 >
                                     <option value="MEMBER">Thành viên</option>
                                     <option value="MODERATOR">Quản trị viên</option>
-                                </select>
+                                </Form.Select>
                             </td>
                             <td>
-                                <button
-                                    className="btn btn-danger btn-sm"
-                                    onClick={() => handleRemoveMember(member.id)}
+                                <Button
+                                    variant="danger"
+                                    size="sm"
+                                    onClick={() =>
+                                        handleRemoveMember(member.id)
+                                    }
                                 >
                                     Xóa
-                                </button>
+                                </Button>
                             </td>
                         </tr>
                     ))}
                     </tbody>
-                </table>
+                </Table>
             )}
-        </div>
+        </Container>
     );
 }
 

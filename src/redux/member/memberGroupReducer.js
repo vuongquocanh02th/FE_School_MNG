@@ -15,19 +15,21 @@ const initialState = {
     message: "",
     error: "",
     formType: "none",
-    loading: false
+    loading: false,
+    addMemberSuccess: false
+
 };
 
 export const memberGroupReducer = (state = initialState, action) => {
     switch (action.type) {
         case GET_MEMBERGROUP_LIST_SUCCESS:
-            return { ...state, members: action.payload, loading: false };
+            return { ...state, members: action.payload, loading: false, addMemberSuccess: false };
 
         case GET_MEMBERGROUP_INFO_SUCCESS:
             return { ...state, info: action.payload };
 
         case ADD_MEMBERGROUP_SUCCESS:
-            return { ...state, message: "Thêm thành viên thành công" };
+            return { ...state, message: "Thêm thành viên thành công", addMemberSuccess: true  };
 
         case REMOVE_MEMBERGROUP_SUCCESS:
             return { ...state, message: "Xóa thành viên thành công" };
@@ -42,7 +44,7 @@ export const memberGroupReducer = (state = initialState, action) => {
             return { ...state, formType: "edit", info: action.payload };
 
         case CLOSE_MEMBERGROUP_FORM:
-            return { ...state, formType: "none", message: "", error: "", info: {} };
+            return { ...state, formType: "none", message: "", error: "", info: {}, addMemberSuccess: false };
 
         default:
             return state;

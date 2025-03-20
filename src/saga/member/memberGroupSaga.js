@@ -17,10 +17,10 @@ const API_URL = 'http://localhost:8080/api/members';
 function* fetchMembers(action) {
     try {
         const response = yield call(axiosInstance.get, `${API_URL}/${action.payload}`);
-        console.log("📥 Member list response:", response);
+        console.log("Member list response:", response);
         yield put({ type: GET_MEMBERGROUP_LIST_SUCCESS, payload: response });
     } catch (error) {
-        console.error('❌ Fetch member list failed', error);
+        console.error('Fetch member list failed', error);
     }
 }
 
@@ -28,7 +28,7 @@ function* fetchMembers(action) {
 function* addMember(action) {
     try {
         const { groupId, email, type } = action.payload;
-        console.log("➕ Thêm member với:", { groupId, email, type });
+        console.log("Thêm member với:", { groupId, email, type });
 
         const body = { type };
 
@@ -40,9 +40,9 @@ function* addMember(action) {
 
         yield put({ type: ADD_MEMBERGROUP_SUCCESS });
         yield put({ type: GET_MEMBERGROUP_LIST, payload: groupId });
-        console.log("✅ Đã thêm:", email, type);
+        console.log("Đã thêm:", email, type);
     } catch (error) {
-        console.error('❌ Add member failed', error.response?.data || error);
+        console.error('Add member failed', error.response?.data || error);
     }
 }
 
@@ -50,14 +50,14 @@ function* addMember(action) {
 function* removeMember(action) {
     try {
         const { groupId, userId } = action.payload;
-        console.log("🗑 Xoá member:", { groupId, userId });
+        console.log("Xoá member:", { groupId, userId });
 
         yield call(axiosInstance.delete, `${API_URL}/${groupId}/${userId}`);
 
         yield put({ type: REMOVE_MEMBERGROUP_SUCCESS });
         yield put({ type: GET_MEMBERGROUP_LIST, payload: groupId });
     } catch (error) {
-        console.error('❌ Remove member failed', error.response?.data || error);
+        console.error('Remove member failed', error.response?.data || error);
     }
 }
 
@@ -65,7 +65,7 @@ function* removeMember(action) {
 function* updateMemberRole(action) {
     try {
         const { groupId, userId, newRole } = action.payload;
-        console.log("🔄 Update role:", { groupId, userId, newRole });
+        console.log("Update role:", { groupId, userId, newRole });
 
         yield call(
             axiosInstance.put,
@@ -76,7 +76,7 @@ function* updateMemberRole(action) {
         yield put({ type: UPDATE_MEMBERGROUP_ROLE_SUCCESS });
         yield put({ type: GET_MEMBERGROUP_LIST, payload: groupId });
     } catch (error) {
-        console.error('❌ Update role failed', error.response?.data || error);
+        console.error('Update role failed', error.response?.data || error);
     }
 }
 
