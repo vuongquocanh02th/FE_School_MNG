@@ -155,7 +155,7 @@ function GroupMemberList() {
                                 <Image
                                     src={
                                         member.imagePath ||
-                                        "https://via.placeholder.com/40"
+                                        "https://tintuc.dienthoaigiakho.vn/wp-content/uploads/2024/01/c39af4399a87bc3d7701101b728cddc9.jpg?_gl=1*fqu1a6*_gcl_au*MTMzMDY5MTcyMS4xNzM1NDc4ODU1"
                                     }
                                     roundedCircle
                                     width="40"

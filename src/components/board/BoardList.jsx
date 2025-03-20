@@ -4,10 +4,12 @@ import {Eye, PlusCircle, Users} from "react-feather";
 import BoardForm from "../board/BoardForm";
 import {useDispatch, useSelector} from "react-redux";
 import {useParams} from "react-router";
-import {GET_BOARD_LIST} from "../../redux/board/boardAction.js";
+import {GET_ALL_BOARDS, GET_BOARD_LIST} from "../../redux/board/boardAction.js";
 import {GET_GROUP_INFO} from "../../redux/group/groupAction.js";
 import * as PropTypes from "prop-types";
 import GroupMemberList from "../groupMember/GroupMemberList.jsx";
+import {useNavigate} from "react-router-dom";
+import { Settings } from 'lucide-react';
 
 function GroupMembersList() {
     return null;
@@ -24,15 +26,21 @@ const BoardsList = () => {
     const boardList = useSelector(state => state.board.list || []);
     const groupInfo = useSelector(state => state.group.info || {});
 
+    const allBoards = useSelector(state => state.board.allBoards);
     const {groupId} = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
         dispatch({type: GET_GROUP_INFO, payload: groupId});
         dispatch({type: GET_BOARD_LIST, payload: groupId});
+        if (!groupId) {
+            dispatch({ type: GET_ALL_BOARDS });
+        }
     }, [dispatch, groupId]);
 
-    useEffect(() => {
-    }, [boardList, groupInfo]);
+    let boardsToDisplay = groupId ? boardList : allBoards;
+    // Sắp xếp bảng theo alphabet của tên nhóm
+    boardsToDisplay = [...boardsToDisplay].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
         <Container className="py-3">
@@ -43,6 +51,9 @@ const BoardsList = () => {
                 </Button>
                 <Button variant="outline-primary" className="me-3" onClick={() => setShowMembers(true)}>
                     <Users size={20} className="me-1"/> Thành viên
+                </Button>
+                <Button variant="outline-primary" className="me-3" onClick={() => navigate(`/dashboard/groupInfo/${groupId}`)}>
+                    <Settings size={20} className="me-1"/> Cài đặt nhóm
                 </Button>
             </Container>
             <h5 className="mb-3 fw-bold text-dark d-flex align-items-center">
@@ -62,14 +73,14 @@ const BoardsList = () => {
             </h5>
 
             <Row className="g-3">
-                {boardList.length > 0 ? (
-                    boardList.map((board) => (
+                {boardsToDisplay.length > 0 ? (
+                    boardsToDisplay.map((board) => (
                         <Col xs={12} sm={6} md={2} key={board.id}>
                             <Card className="p-2 d-flex align-items-center shadow-sm"
-                                  style={{borderRadius: "10px", backgroundColor: "#f5f5f5", cursor: "pointer"}}
+                                  style={{ borderRadius: "10px", backgroundColor: "#f5f5f5", cursor: "pointer" }}
                                   onClick={() => console.log("Clicked board", board.name)}
                             >
-                                <p className="mb-0 fw-bold text-dark text-truncate" style={{maxWidth: "120px"}}>
+                                <p className="mb-0 fw-bold text-dark text-truncate" style={{ maxWidth: "120px" }}>
                                     {board.name}
                                 </p>
                             </Card>

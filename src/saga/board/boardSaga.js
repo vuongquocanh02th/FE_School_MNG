@@ -5,7 +5,12 @@ import {
     GET_BOARD_LIST_SUCCESS,
     CREATE_BOARD,
     CREATE_BOARD_SUCCESS,
-    CREATE_BOARD_FAIL
+    CREATE_BOARD_FAIL,
+    GET_ALL_BOARDS,
+    SET_ALL_BOARDS,
+    UPDATE_BOARD,
+    UPDATE_BOARD_SUCCESS,
+    UPDATE_BOARD_FAIL
 } from "../../redux/board/boardAction.js";
 
 function* getBoardList(action) {
@@ -15,6 +20,19 @@ function* getBoardList(action) {
         yield put({ type: GET_BOARD_LIST_SUCCESS, payload: response });
     } catch (err) {
         console.error(err);
+    }
+}
+
+function* fetchAllBoards() {
+    try {
+        const boardData = yield call(axiosInstance.get, "/api/boards");
+        if (Array.isArray(boardData)) {
+            yield put({ type: SET_ALL_BOARDS, payload: boardData });
+        } else {
+            console.error("Lỗi: API trả về không phải mảng", boardData);
+        }
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách tất cả bảng:", error);
     }
 }
 
@@ -29,8 +47,23 @@ function* createBoard(action) {
     }
 }
 
+function* updateBoard(action) {
+    try {
+        const response = yield call(
+            axiosInstance.put,
+            `/api/boards/${action.payload.id}`,
+            action.payload
+        );
+        yield put({ type: UPDATE_BOARD_SUCCESS, payload: response });
+    } catch (err) {
+        yield put({ type: UPDATE_BOARD_FAIL, payload: err.message });
+        console.error("Lỗi khi cập nhật bảng:", err);
+    }
+}
 
 export default function* boardSaga() {
     yield takeLatest(GET_BOARD_LIST, getBoardList);
+    yield takeLatest(GET_ALL_BOARDS, fetchAllBoards);
     yield takeLatest(CREATE_BOARD, createBoard);
+    yield takeLatest(UPDATE_BOARD, updateBoard);
 }
