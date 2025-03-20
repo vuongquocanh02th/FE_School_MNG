@@ -2,13 +2,13 @@ import React, {useEffect, useState} from "react";
 import {Container, Row, Col, Card, Button, Modal} from "react-bootstrap";
 import {Eye, PlusCircle, Settings, Users} from "react-feather";
 import BoardForm from "../board/BoardForm";
+import GroupMembers from "../groupMember/GroupMember.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {useParams} from "react-router";
 import {GET_ALL_BOARDS, GET_BOARD_LIST} from "../../redux/board/boardAction.js";
 import {GET_GROUP_INFO} from "../../redux/group/groupAction.js";
 import * as PropTypes from "prop-types";
 import MemberGroup from "../../pages/member/MemberGroup.jsx";
-import GroupMembers from "../groupMember/GroupMember.jsx";
 import GroupMemberList from "../groupMember/GroupMemberList.jsx";
 import {useNavigate} from "react-router-dom";
 
@@ -23,12 +23,16 @@ GroupMembersList.propTypes = {
 const BoardsList = () => {
     const [openBoardForm, setOpenBoardForm] = useState(false);
     const [showMembers, setShowMembers] = useState(false);
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const groupInfo = useSelector(state => state.group.info);
     const boardList = useSelector(state => state.board.list);
     const allBoards = useSelector(state => state.board.allBoards);
     const {groupId} = useParams();
-    const navigate = useNavigate();
+
+    const showGroupInfo = () => {
+        navigate("info")
+    }
 
     useEffect(() => {
         dispatch({type: GET_GROUP_INFO, payload: groupId});
@@ -46,7 +50,7 @@ const BoardsList = () => {
         <Container className="py-3">
             <h5 className="mb-3">Tên nhóm: {groupInfo && groupInfo.name}</h5>
             <Container className="py-3 px-0">
-                <Button variant="outline-primary" className="me-3">
+                <Button variant="outline-primary" className="me-3" onClick={showGroupInfo}>
                     <Eye size={20} className="me-1"/> Thông tin nhóm
                 </Button>
                 <Button variant="outline-primary" className="me-3" onClick={() => setShowMembers(true)}>
@@ -99,7 +103,6 @@ const BoardsList = () => {
                     <GroupMemberList/>
                 </Modal.Body>
             </Modal>
-
         </Container>
     );
 };

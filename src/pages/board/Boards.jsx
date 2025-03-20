@@ -3,9 +3,7 @@ import BoardList from "../../components/board/BoardList.jsx";
 
 const Boards = () => {
     return (
-        <div>
-            <BoardList/>
-        </div>
+        <BoardList/>
     );
 };
 
