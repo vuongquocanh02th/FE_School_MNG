@@ -22,7 +22,8 @@ const App = () => {
                     <Route path="home" element={<></>}/>
                     <Route path="group/:groupId" element={<Boards/>}/>
                     <Route path="group/:groupId/info" element={<Group/>}/>
-                    <Route path="board" element={<BoardMain/>}/>
+                    <Route path="board/:boardId" element={<BoardMain/>}/>
+                    <Route path="boards" element={<Boards />}/>
                 </Route>
 
                 <Route path="*" element={<Navigate to="/dashboard/home" replace/>}/>
