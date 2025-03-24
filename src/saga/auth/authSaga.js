@@ -1,6 +1,7 @@
 import axiosInstance from "../../resources/axiosConfig.js";
 import {call, put, takeLatest} from "redux-saga/effects";
 import {
+    GET_USER_INFO,
     LOGIN,
     LOGIN_ERROR,
     LOGIN_SUCCESS,
@@ -29,7 +30,18 @@ function* register(action) {
     }
 }
 
+function* getUserInfo() {
+    try {
+        const data = yield call (axiosInstance.get, "/auth/info");
+        toast.success("Đăng nhập thành công");
+        yield put({type: LOGIN_SUCCESS, payload: data});
+    } catch (err) {
+        yield put({type: LOGIN_ERROR, payload: err})
+    }
+}
+
 export default function* authSaga() {
-    yield takeLatest(LOGIN, login)
-    yield takeLatest(REGISTER, register)
+    yield takeLatest(LOGIN, login);
+    yield takeLatest(REGISTER, register);
+    yield takeLatest(GET_USER_INFO, getUserInfo);
 }

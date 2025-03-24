@@ -34,7 +34,6 @@ function Login() {
     useEffect(() => {
         if (success.name) {
             saveUserInfo(success);
-            toast.success("Đăng nhập thành công");
             navigate("/dashboard/home");
         }
         if (error) {

@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {DELETE_GROUP, GET_GROUP_INFO, OPEN_EDIT_GROUP_FORM} from "../../redux/group/groupAction.js";
 import {useParams} from "react-router";
 import {useNavigate} from "react-router-dom";
+import {reformatDate, reformatGroupAccess} from "../../util/ReformatData.js";
 
 export default function GroupInfo() {
     const info = useSelector(state => state.group.info);
@@ -15,21 +16,6 @@ export default function GroupInfo() {
     useEffect(() => {
         dispatch({type: GET_GROUP_INFO, payload: groupId});
     }, [dispatch, groupId]);
-
-    const reformatDate = (date) => {
-        try {
-            let str = "";
-            let arr = date.split("-");
-            str += `${arr[0]}-${arr[1]}-`;
-            arr = arr[2].split("T");
-            str += arr[0];
-            arr = arr[1].split(":");
-            str += ` ${arr[0]}:${arr[1]}:${arr[2].split(".")[0]}`;
-            return str;
-        } catch {
-            return "";
-        }
-    }
 
     const handleReturn = () => {
         navigate("/dashboard/group/" + groupId);
@@ -65,7 +51,7 @@ export default function GroupInfo() {
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Quyền truy cập: </strong>
-                    <span>{info.access}</span>
+                    <span>{reformatGroupAccess(info.access)}</span>
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Thời điểm tạo: </strong>
@@ -73,7 +59,7 @@ export default function GroupInfo() {
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Người tạo: </strong>
-                    <span>{info.createdBy}</span>
+                    <span>{info.createdByName}</span>
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Mô tả: </strong>
@@ -87,9 +73,6 @@ export default function GroupInfo() {
                 </Col>
                 <Col xs="auto">
                     <Button variant="danger" onClick={handleDelete}>Xóa</Button>
-                </Col>
-                <Col xs="auto">
-                    <Button variant="secondary" onClick={handleReturn}>Quay lại</Button>
                 </Col>
             </Row>
 
