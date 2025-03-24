@@ -9,7 +9,8 @@ import Register from "./pages/auth/Register.jsx";
 import Group from "./pages/group/Group.jsx";
 import {BoardMain} from "./components/board/BoardMain.jsx";
 import UserDetail from "./pages/user/UserDetail.jsx";
-import UserEdit from "./components/users/UserEdit.jsx";
+import UserEditFrom from "./pages/user/UserFromEdit.jsx";
+import ChangePassword from "./pages/user/ChangePassword.jsx";
 
 const App = () => {
     return (
@@ -18,13 +19,16 @@ const App = () => {
                 <Route path="/home" element={<Home/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/register" element={<Register/>}/>
-                <Route path="/user" element={<UserDetail/>}/>
+                <Route path="/users/:userId" element={<UserDetail />} />
+                <Route path="/users/:userId/change-password" element={<ChangePassword />} />
+                <Route path="/users/:userId/edit" element={<UserEditFrom />} />
                 <Route path="/dashboard/*" element={<Dashboard/>}>
                     <Route index element={<Navigate to="home" replace/>}/>
                     <Route path="home" element={<></>}/>
                     <Route path="user" element={<UserDetail/>}/>
                     <Route path="users/:userId" element={<UserDetail />} />
-                    <Route path="users/:userId/edit" element={<UserEdit />} />
+                    <Route path="users/:userId/edit" element={<UserEditFrom />} />
+                    <Route path="users/:userId/change-password" element={<ChangePassword />} />
                     <Route path="group/:groupId" element={<Boards/>}/>
                     <Route path="group/:groupId/info" element={<Group/>}/>
                     <Route path="board" element={<BoardMain/>}/>

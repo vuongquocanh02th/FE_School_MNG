@@ -19,12 +19,12 @@ const TopMenu = () => {
         navigate("/login");
     };
 
-    const user = useSelector((state) => state.auth.user); // hoặc state.user.detail nếu đang lưu user đăng nhập ở đó
+    const user = useSelector((state) => state.auth.user);
+    const userId = user.id || localStorage.getItem("id");
+
 
     const handleProfileClick = () => {
-        if (user && user.id) {
-            navigate(`/users/${user.id}`);
-        }
+            navigate(`/dashboard/users/${userId}`);
     };
 
     const toHome = () => {
@@ -33,6 +33,10 @@ const TopMenu = () => {
 
     const toggleDrawer = () => {
         dispatch({type: TOGGLE_DRAWER});
+    }
+
+    function handlePasswordClick() {
+            navigate(`/dashboard/users/${userId}/change-password`);
     }
 
     return (
@@ -76,6 +80,7 @@ const TopMenu = () => {
                             <Dropdown.Item disabled>{username}</Dropdown.Item>
                             <Dropdown.Divider/>
                             <Dropdown.Item onClick={handleProfileClick}>Profile</Dropdown.Item>
+                            <Dropdown.Item onClick={handlePasswordClick}>Change password</Dropdown.Item>
                             <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>

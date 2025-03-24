@@ -10,7 +10,7 @@ import {
     Button,
     Alert,
 } from "react-bootstrap";
-import { GET_USER_DETAIL, RESET_USER_DETAIL } from "../../redux/user/UserAction.js";
+import {GET_USER_DETAIL, OPEN_FROM_EDIT_USER, RESET_USER_DETAIL} from "../../redux/user/UserAction.js";
 import { FaArrowLeft, FaEdit } from "react-icons/fa";
 
 function UserDetail() {
@@ -47,6 +47,10 @@ function UserDetail() {
                 <p>Không có thông tin người dùng.</p>
             </Container>
         );
+
+    function openEditForm() {
+        navigate(`/dashboard/users/${detail.id}/edit`);
+    }
 
     return (
         <Container className="mt-5">
@@ -88,7 +92,7 @@ function UserDetail() {
                     </Button>
                     <Button
                         variant="primary"
-                        onClick={() => navigate(`/user/${userId}/edit`)}
+                        onClick={openEditForm}
                         className="d-flex align-items-center gap-2"
                     >
                         <FaEdit /> Chỉnh sửa

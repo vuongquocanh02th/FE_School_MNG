@@ -16,11 +16,9 @@ function* fetchUserDetail(action) {
     try {
         const response = yield call(axiosInstance.get, `${API_URL}/${action.payload}`);
         yield put({ type: GET_USER_DETAIL_SUCCESS, payload: response });
-        console.log("✅ Lấy chi tiết user thành công: ", response);
     } catch (error) {
         const errorMsg = error.response?.data?.message || "Lỗi khi tải thông tin người dùng!";
         yield put({ type: GET_USER_DETAIL_FAIL, payload: errorMsg });
-        console.error("❌ Lỗi lấy thông tin user:", errorMsg);
     }
 }
 
@@ -34,12 +32,8 @@ function* updateUserSaga(action) {
         if (data.avatar) {
             formData.append("avatar", data.avatar);
         }
-        for (let pair of formData.entries()) {
-            console.log(pair[0], pair[1]);
-        }
 
-        // Không thêm headers content-type thủ công!
-        const response = yield call(axiosInstance.post, `http://localhost:8080/api/users/${id}`, formData);
+        const response = yield call(axiosInstance.post, `${API_URL}/${id}`, formData);
 
         yield put({ type: "UPDATE_USER_SUCCESS", payload: response.data });
     } catch (error) {

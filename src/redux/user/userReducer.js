@@ -5,7 +5,7 @@ import {
     RESET_USER_DETAIL,
     UPDATE_USER,
     UPDATE_USER_SUCCESS,
-    UPDATE_USER_FAIL,
+    UPDATE_USER_FAIL, OPEN_FROM_EDIT_USER,
 } from './UserAction';
 
 const initialState = {
@@ -42,7 +42,8 @@ export const userReducer = (state = initialState, action) => {
             };
         case UPDATE_USER_FAIL:
             return { ...state, updateError: action.payload };
-
+        case OPEN_FROM_EDIT_USER:
+            return {...state, updateSuccess: false };
         default:
             return state;
     }

@@ -3,15 +3,17 @@ import {saveUserInfo} from "../../resources/axiosConfig.js";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 import {Button, Card, Container, Form} from "react-bootstrap";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AUTH_RESET, LOGIN} from "../../redux/auth/authAction.js";
+import {Eye, EyeOff} from 'lucide-react'; // Thêm icon từ lucide-react (nếu bạn đã cài)
 
 function Login() {
     const formDataTemplate = {
         username: '', password: ''
     };
 
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const success = useSelector(state => state.auth.user);
@@ -32,8 +34,11 @@ function Login() {
     }
 
     useEffect(() => {
-        if (success.name) {
+        if (success && success.name) {
             saveUserInfo(success);
+            localStorage.setItem("userId", success.id);
+            localStorage.setItem("userName", success.name);
+            localStorage.setItem("userEmail", success.email);
             toast.success("Đăng nhập thành công");
             navigate("/dashboard/home");
         }
@@ -51,25 +56,39 @@ function Login() {
                 <h3 className="text-center mb-4">Đăng nhập</h3>
                 <Form onSubmit={formik.handleSubmit}>
                     <Form.Group className="mb-3">
-                        <Form.Label column="">Tên tài khoản</Form.Label>
-                        <Form.Control type="text" id="username" className="form-control" placeholder="name"
-                                      name="username"
+                        <Form.Label>Tên tài khoản</Form.Label>
+                        <Form.Control type="text" id="username" placeholder="name" name="username"
                                       value={formik.values.username} onChange={formik.handleChange}
                                       onBlur={formik.handleBlur}
                         />
                     </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label column="">Mật khẩu</Form.Label>
-                        <Form.Control type="password" id="password" className="form-control" placeholder="password"
-                                      name="password"
-                                      value={formik.values.password} onChange={formik.handleChange}
-                                      onBlur={formik.handleBlur}
+                    <Form.Group className="mb-3 position-relative">
+                        <Form.Label>Mật khẩu</Form.Label>
+                        <Form.Control
+                            type={showPassword ? "text" : "password"}
+                            id="password"
+                            placeholder="password"
+                            name="password"
+                            value={formik.values.password}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                         />
+                        <div
+                            onClick={() => setShowPassword(!showPassword)}
+                            style={{
+                                position: 'absolute',
+                                top: '38px',
+                                right: '10px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            {showPassword ? <EyeOff size={20}/> : <Eye size={20}/>}
+                        </div>
                     </Form.Group>
                     <Button type="submit" className="btn btn-primary w-100">Đăng nhập</Button>
                     <p className="mt-3 text-center">Chưa có tài khoản?
                         <a className="" style={{cursor: "pointer"}} onClick={switchForm}>
-                            Đăng ký
+                            &nbsp;Đăng ký
                         </a>
                     </p>
                 </Form>

@@ -7,6 +7,7 @@ import {
     RESET_USER_DETAIL,
     UPDATE_USER,
 } from "../../redux/user/UserAction";
+import {toast} from "react-toastify";
 
 const UserEdit = () => {
     const { userId } = useParams();
@@ -45,7 +46,7 @@ const UserEdit = () => {
 
     useEffect(() => {
         if (updateSuccess) {
-            alert("✅ Cập nhật người dùng thành công!");
+            toast.success("Cập nhật người dùng thành công!");
             navigate(`/dashboard/users/${userId}`);
         }
     }, [updateSuccess, navigate, userId]);
@@ -91,14 +92,16 @@ const UserEdit = () => {
                     <div className="mb-4 text-center">
                         <Image
                             src={
-                                detail?.imagePath
+                                previewImage ||
+                                (detail?.imagePath
                                     ? `http://localhost:8080${detail.imagePath}`
-                                    : "https://tintuc.dienthoaigiakho.vn/wp-content/uploads/2024/01/c39af4399a87bc3d7701101b728cddc9.jpg"
+                                    : "https://tintuc.dienthoaigiakho.vn/wp-content/uploads/2024/01/c39af4399a87bc3d7701101b728cddc9.jpg")
                             }
                             alt="Avatar Preview"
                             roundedCircle
                             style={{ width: "150px", height: "150px", objectFit: "cover" }}
                         />
+
                         <div className="text-muted mt-2">Xem trước ảnh đại diện</div>
                     </div>
                 )}
