@@ -4,7 +4,7 @@ import {
     RESET_CREATE_BOARD_STATUS,
     GET_BOARD_LIST,
     SET_ALL_BOARDS,
-    UPDATE_BOARD_SUCCESS
+    UPDATE_BOARD_SUCCESS,
 } from "./boardAction.js";
 import {GET_GROUP_INFO_SUCCESS} from "../group/groupAction.js";
 
@@ -13,7 +13,7 @@ const initialState = {
     createSuccess: null,
     createError: null,
     info: {},
-    allBoards: [], //them trang thai luu tat ca bang
+    allBoards: [],
 };
 
 export const boardReducer = (state = initialState, action) => {
@@ -24,10 +24,10 @@ export const boardReducer = (state = initialState, action) => {
             return {...state, list: [...state.list, action.payload], createSuccess: action.payload, Error: null};
         case GET_GROUP_INFO_SUCCESS:
             return {...state, info: action.payload};
-        case RESET_CREATE_BOARD_STATUS:
-            return {...state, createSuccess: null, createError: null,};
         case SET_ALL_BOARDS:
             return { ...state, allBoards: Array.isArray(action.payload) ? action.payload : [] };
+        case RESET_CREATE_BOARD_STATUS:
+            return {...state, createSuccess: null, createError: null,};
         case GET_BOARD_LIST:
             return { ...state, list: [] };
         case UPDATE_BOARD_SUCCESS:

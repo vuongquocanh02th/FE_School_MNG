@@ -3,13 +3,14 @@ import { Button, Form } from "react-bootstrap";
 import { Formik, Form as FormikForm, Field } from "formik";
 import * as Yup from "yup";
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_GROUP, CLOSE_GROUP_FORM} from "../../redux/group/groupAction.js";
+import {ADD_GROUP, EDIT_GROUP, RESET_GROUP} from "../../redux/group/groupAction.js";
 import {toast} from "react-toastify";
 
 export default function GroupForm() {
     const dispatch = useDispatch();
     const success = useSelector(state => state.group.success);
     const formType = useSelector(state => state.group.formType);
+    const info = useSelector(state => state.group.info);
 
     const groupDataTemplate = {
         id: "",
@@ -22,11 +23,11 @@ export default function GroupForm() {
     useEffect(() => {
         if (success && success.name) {
             toast.success(`Thêm nhóm ${success.name} thành công`);
-            dispatch({type: CLOSE_GROUP_FORM});
+            dispatch({type: RESET_GROUP});
         }
     }, [success, dispatch])
 
-    const initialValues = formType === "add" ? groupDataTemplate : "";
+    const initialValues = formType === "add" ? groupDataTemplate : info;
 
     const validationSchema = Yup.object({
         name: Yup.string().required("Tên nhóm không được để trống"),
@@ -36,16 +37,18 @@ export default function GroupForm() {
     const handleSubmit = async (values) => {
         if (formType === "add") {
             dispatch({type: ADD_GROUP, payload: values});
+        } else if (formType === "edit") {
+            dispatch({type: EDIT_GROUP, payload: values});
         }
     };
 
     const closeForm = () => {
-        dispatch({type: CLOSE_GROUP_FORM})
+        dispatch({type: RESET_GROUP})
     }
 
     return (
         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-            {({ errors, touched, handleChange, values }) => (
+            {({ errors, touched, handleChange, values}) => (
                 <FormikForm>
                     <Form.Group className="mb-3">
                         <Form.Label column="">Tên nhóm</Form.Label>

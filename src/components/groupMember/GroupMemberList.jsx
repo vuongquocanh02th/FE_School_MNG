@@ -18,7 +18,8 @@ import {
     Image,
     Alert,
     Row,
-    Col
+    Col,
+    Modal
 } from "react-bootstrap";
 import { Users } from "react-feather";
 
@@ -34,12 +35,28 @@ function GroupMemberList() {
     const [memberType, setMemberType] = useState("MEMBER");
     const [localMessage, setLocalMessage] = useState("");
 
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedMember, setSelectedMember] = useState(null);
+    const addMemberError = useSelector((state) => state.membersGroup.addMemberError);
+
     useEffect(() => {
         dispatch({ type: GET_GROUP_INFO, payload: groupId });
         dispatch({ type: GET_MEMBERGROUP_LIST, payload: groupId });
     }, [dispatch, groupId]);
 
-    // Khi thêm thành viên thành công -> reset form và đóng
+    useEffect(() => {
+        if (addMemberError) {
+            setLocalMessage(addMemberError);
+        }
+    }, [addMemberError]);
+
+    const isValidEmail = (email) => {
+        // Regex kiểm tra định dạng email
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    };
+
+
     useEffect(() => {
         if (addMemberSuccess) {
             setEmail("");
@@ -54,22 +71,28 @@ function GroupMemberList() {
             setLocalMessage("Vui lòng nhập email");
             return;
         }
+        if (!isValidEmail(email.trim())) {
+            setLocalMessage("Email không đúng định dạng");
+            return;
+        }
+        setLocalMessage(""); // reset lỗi cục bộ nếu có
         dispatch({
             type: ADD_MEMBERGROUP,
-            payload: { groupId, email, newRole: memberType }
+            payload: { groupId, email, memberType: memberType }
         });
     };
 
-    const handleRemoveMember = (memberId) => {
-        if (window.confirm("Bạn có chắc muốn xóa thành viên này không?")) {
+    const handleConfirmRemoveMember = () => {
+        if (selectedMember) {
             dispatch({
                 type: REMOVE_MEMBERGROUP,
                 payload: {
                     groupId: groupId,
-                    userId: memberId
+                    userId: selectedMember.id
                 }
             });
-            toast.success("Thành viên đã bị xóa!");
+            toast.success(`Đã xóa thành viên ${selectedMember.username}`);
+            setShowDeleteModal(false);
         }
     };
 
@@ -83,6 +106,11 @@ function GroupMemberList() {
             }
         });
         toast.success(`Đã cập nhật vai trò thành "${newRole === 'MODERATOR' ? 'Quản trị viên' : 'Thành viên'}"!`);
+    };
+
+    const handleRemoveClick = (member) => {
+        setSelectedMember(member);
+        setShowDeleteModal(true);
     };
 
     return (
@@ -154,8 +182,9 @@ function GroupMemberList() {
                             <td>
                                 <Image
                                     src={
-                                        member.imagePath ||
-                                        "https://tintuc.dienthoaigiakho.vn/wp-content/uploads/2024/01/c39af4399a87bc3d7701101b728cddc9.jpg?_gl=1*fqu1a6*_gcl_au*MTMzMDY5MTcyMS4xNzM1NDc4ODU1"
+                                        member?.imagePath
+                                            ? `http://localhost:8080${member.imagePath}`
+                                            : "https://tintuc.dienthoaigiakho.vn/wp-content/uploads/2024/01/c39af4399a87bc3d7701101b728cddc9.jpg"
                                     }
                                     roundedCircle
                                     width="40"
@@ -182,9 +211,7 @@ function GroupMemberList() {
                                 <Button
                                     variant="danger"
                                     size="sm"
-                                    onClick={() =>
-                                        handleRemoveMember(member.id)
-                                    }
+                                    onClick={() => handleRemoveClick(member)}
                                 >
                                     Xóa
                                 </Button>
@@ -194,6 +221,26 @@ function GroupMemberList() {
                     </tbody>
                 </Table>
             )}
+
+            {/* Modal confirm xóa */}
+            <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Xóa thành viên</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {selectedMember && (
+                        <>Bạn có chắc chắn muốn xóa thành viên <strong>{selectedMember.username}</strong> không?</>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                        Không
+                    </Button>
+                    <Button variant="danger" onClick={handleConfirmRemoveMember}>
+                        Xóa
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     );
 }

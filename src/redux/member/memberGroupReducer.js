@@ -6,7 +6,8 @@ import {
     UPDATE_MEMBERGROUP_ROLE_SUCCESS,
     OPEN_ADD_MEMBERGROUP_FORM,
     OPEN_EDIT_MEMBERGROUP_FORM,
-    CLOSE_MEMBERGROUP_FORM
+    CLOSE_MEMBERGROUP_FORM,
+    ADD_MEMBERGROUP_FAILED
 } from "./memberAction.js";
 
 const initialState = {
@@ -45,7 +46,12 @@ export const memberGroupReducer = (state = initialState, action) => {
 
         case CLOSE_MEMBERGROUP_FORM:
             return { ...state, formType: "none", message: "", error: "", info: {}, addMemberSuccess: false };
-
+        case ADD_MEMBERGROUP_FAILED:
+            return {
+                ...state,
+                addMemberSuccess: false,
+                addMemberError: action.payload
+            };
         default:
             return state;
     }

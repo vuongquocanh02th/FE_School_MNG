@@ -2,7 +2,7 @@ import React from "react";
 import {Container, Navbar, Button, Dropdown, Image} from "react-bootstrap";
 import {FaBars, FaBell} from "react-icons/fa";
 import {useNavigate} from "react-router-dom";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../../resources/axiosConfig.js";
 import {LOGOUT} from "../../redux/auth/authAction.js";
 import {TOGGLE_DRAWER} from "../../redux/dashboard/dashboardAction.js";
@@ -17,6 +17,14 @@ const TopMenu = () => {
         logout();
         dispatch({type: LOGOUT})
         navigate("/login");
+    };
+
+    const user = useSelector((state) => state.auth.user); // hoặc state.user.detail nếu đang lưu user đăng nhập ở đó
+
+    const handleProfileClick = () => {
+        if (user && user.id) {
+            navigate(`/users/${user.id}`);
+        }
     };
 
     const toHome = () => {
@@ -67,7 +75,7 @@ const TopMenu = () => {
                         <Dropdown.Menu>
                             <Dropdown.Item disabled>{username}</Dropdown.Item>
                             <Dropdown.Divider/>
-                            <Dropdown.Item>Profile</Dropdown.Item>
+                            <Dropdown.Item onClick={handleProfileClick}>Profile</Dropdown.Item>
                             <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>

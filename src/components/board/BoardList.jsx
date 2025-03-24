@@ -30,6 +30,10 @@ const BoardsList = () => {
     const {groupId} = useParams();
     const navigate = useNavigate();
 
+    const showGroupInfo = () => {
+        navigate("info")
+    }
+
     useEffect(() => {
         dispatch({type: GET_GROUP_INFO, payload: groupId});
         dispatch({type: GET_BOARD_LIST, payload: groupId});
@@ -46,7 +50,7 @@ const BoardsList = () => {
         <Container className="py-3">
             <h5 className="mb-3">Tên nhóm: {groupInfo && groupInfo.name}</h5>
             <Container className="py-3 px-0">
-                <Button variant="outline-primary" className="me-3">
+                <Button variant="outline-primary" className="me-3" onClick={showGroupInfo}>
                     <Eye size={20} className="me-1"/> Thông tin nhóm
                 </Button>
                 <Button variant="outline-primary" className="me-3" onClick={() => setShowMembers(true)}>
@@ -73,8 +77,8 @@ const BoardsList = () => {
             </h5>
 
             <Row className="g-3">
-                {boardsToDisplay.length > 0 ? (
-                    boardsToDisplay.map((board) => (
+                {boardList.length > 0 ? (
+                    boardList.map((board) => (
                         <Col xs={12} sm={6} md={2} key={board.id}>
                             <Card className="p-2 d-flex align-items-center shadow-sm"
                                   style={{ borderRadius: "10px", backgroundColor: "#f5f5f5", cursor: "pointer" }}
@@ -99,7 +103,6 @@ const BoardsList = () => {
                     <GroupMemberList/>
                 </Modal.Body>
             </Modal>
-
         </Container>
     );
 };

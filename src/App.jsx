@@ -6,7 +6,10 @@ import Boards from "./pages/board/Boards.jsx";
 import Login from "./pages/auth/Login.jsx";
 import {ToastContainer} from "react-toastify";
 import Register from "./pages/auth/Register.jsx";
-import GroupInfo from "./components/group/GroupInfo.jsx";
+import Group from "./pages/group/Group.jsx";
+import {BoardMain} from "./components/board/BoardMain.jsx";
+import UserDetail from "./pages/user/UserDetail.jsx";
+import UserEdit from "./components/users/UserEdit.jsx";
 
 const App = () => {
     return (
@@ -15,13 +18,16 @@ const App = () => {
                 <Route path="/home" element={<Home/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/register" element={<Register/>}/>
-
+                <Route path="/user" element={<UserDetail/>}/>
                 <Route path="/dashboard/*" element={<Dashboard/>}>
                     <Route index element={<Navigate to="home" replace/>}/>
                     <Route path="home" element={<></>}/>
+                    <Route path="user" element={<UserDetail/>}/>
+                    <Route path="users/:userId" element={<UserDetail />} />
+                    <Route path="users/:userId/edit" element={<UserEdit />} />
                     <Route path="group/:groupId" element={<Boards/>}/>
-                    <Route path="boards" element={<Boards/>}/>
-                    <Route path="groupInfo/:groupId" element={<GroupInfo/>}/>
+                    <Route path="group/:groupId/info" element={<Group/>}/>
+                    <Route path="board" element={<BoardMain/>}/>
                 </Route>
 
                 <Route path="*" element={<Navigate to="/dashboard/home" replace/>}/>
