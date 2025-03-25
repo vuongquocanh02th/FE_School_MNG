@@ -51,7 +51,7 @@ const BoardsList = () => {
                         <Col xs={12} sm={6} md={2} key={board.id}>
                             <Card className="p-2 d-flex align-items-center shadow-sm"
                                   style={{ borderRadius: "10px", backgroundColor: "#f5f5f5", cursor: "pointer" }}
-                                  onClick={() => console.log("Clicked board", board.name)}
+                                  onClick={() => navigate(`/dashboard/board/${board.id}`)}
                             >
                                 <p className="mb-0 fw-bold text-dark text-truncate" style={{ maxWidth: "120px" }}>
                                     {board.name}

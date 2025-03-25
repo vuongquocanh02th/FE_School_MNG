@@ -2,6 +2,8 @@ import {all} from 'redux-saga/effects';
 import groupSaga from "./group/groupSaga.js";
 import boardSaga from "./board/boardSaga.js";
 import authSaga from "./auth/authSaga.js";
+import {listSaga} from "./list/listSaga.js";
+import cardSaga from "./card/cardSaga.js";
 import groupMemberSaga from "./member/groupMemberSaga.js";
 
 export default function* rootSaga() {
@@ -9,6 +11,8 @@ export default function* rootSaga() {
         groupSaga(),
         boardSaga(),
         authSaga(),
-        groupMemberSaga()
+        groupMemberSaga(),
+        listSaga(),
+        cardSaga(),
     ])
 }

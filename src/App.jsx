@@ -9,8 +9,8 @@ import GroupIndex from "./pages/group/GroupIndex.jsx";
 import {BoardMain} from "./components/board/BoardMain.jsx";
 import GroupInfo from "./components/group/GroupInfo.jsx";
 import GroupMemberList from "./components/groupMember/GroupMemberList.jsx";
+import Boards from "./pages/board/Boards.jsx";
 import BoardList from "./components/board/BoardList.jsx";
-import DraggableCard from "./components/List/DraggableCard.jsx";
 import ListCardTest from "./components/List/ListCardTest.jsx";
 
 const App = () => {
@@ -29,7 +29,8 @@ const App = () => {
                         <Route path="member" element={<GroupMemberList/>}/>
                         <Route path="board" element={<BoardList/>}/>
                     </Route>
-                    <Route path="board" element={<BoardMain/>}/>
+                    <Route path="board/:boardId" element={<BoardMain/>}/>
+                    <Route path="boards" element={<Boards />}/>
                     <Route path="test" element={<ListCardTest/>}/>
                 </Route>
 

@@ -9,22 +9,13 @@ export const BoardMain = () => {
                 <div className="container-fluid overflow-auto" style={{whiteSpace: 'nowrap'}}>
                     <ul className="navbar-nav flex-row">
                         <li className="nav-item d-inline-block text-center" style={{width: '50px'}}>
-                            Thêm
+                            Quản lý công việc
                         </li>
                     </ul>
                 </div>
             </Navbar>
             <Container fluid className="w-100" style={{backgroundColor: 'wheat'}}>
                 <Row className="overflow-x-scroll overflow-y-hidden" style={{flexWrap: 'nowrap', flexFlow: 'row', height: "580px"}}>
-                    <List></List>
-                    <List></List>
-                    <List></List>
-                    <List></List>
-                    <List></List>
-                    <List></List>
-                    <List></List>
-                    <List></List>
-                    <List></List>
                     <List></List>
                 </Row>
             </Container>
