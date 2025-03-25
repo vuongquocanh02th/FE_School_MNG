@@ -14,7 +14,6 @@ import {GET_USER_DETAIL, OPEN_FROM_EDIT_USER, RESET_USER_DETAIL} from "../../red
 import { FaArrowLeft, FaEdit } from "react-icons/fa";
 
 function UserDetail() {
-    const { userId } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -22,17 +21,23 @@ function UserDetail() {
     const [localError, setLocalError] = useState(null);
 
     useEffect(() => {
+        const userId = localStorage.getItem("userId");
+
         if (userId) {
             dispatch({ type: GET_USER_DETAIL, payload: userId });
         }
         return () => {
             dispatch({ type: RESET_USER_DETAIL });
         };
-    }, [dispatch, userId]);
+    }, [dispatch]);
 
     useEffect(() => {
         if (error) setLocalError(error);
     }, [error]);
+
+    const toHome = () => {
+        navigate("/dashboard/home");
+    }
 
     if (localError)
         return (
@@ -85,7 +90,7 @@ function UserDetail() {
                 <div className="mt-4 d-flex gap-3 justify-content-end">
                     <Button
                         variant="outline-secondary"
-                        onClick={() => navigate(-1)}
+                        onClick={toHome}
                         className="d-flex align-items-center gap-2"
                     >
                         <FaArrowLeft /> Quay lại

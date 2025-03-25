@@ -30,13 +30,11 @@ function* addMember(action) {
     try {
         const { groupId, email, memberType } = action.payload;
         const body = { type: memberType };
-
         yield call(
             axiosInstance.post,
             `${API_URL}/${groupId}?email=${encodeURIComponent(email)}`,
             body
         );
-
         yield put({ type: ADD_MEMBERGROUP_SUCCESS });
         yield put({ type: GET_MEMBERGROUP_LIST, payload: groupId });
     } catch (error) {
