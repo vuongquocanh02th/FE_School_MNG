@@ -65,7 +65,7 @@ export default function GroupInfo() {
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Quyền truy cập: </strong>
-                    <span>{info.access}</span>
+                    <span>{info.access === "PUBLIC" ? "Công khai" : "Riêng tư"}</span>
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Thời điểm tạo: </strong>
@@ -73,7 +73,7 @@ export default function GroupInfo() {
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Người tạo: </strong>
-                    <span>{info.createdBy}</span>
+                    <span>{info.createdByName}</span>
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <strong>Mô tả: </strong>
