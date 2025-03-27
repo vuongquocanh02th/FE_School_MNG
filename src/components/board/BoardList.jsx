@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Container, Row, Col, Card, Button, Modal} from "react-bootstrap";
-import {Eye, PlusCircle, Users} from "react-feather";
+import {Container, Row, Col, Card, Modal} from "react-bootstrap";
+import {PlusCircle} from "react-feather";
 import BoardForm from "../board/BoardForm";
 import {useDispatch, useSelector} from "react-redux";
 import {useParams} from "react-router";
@@ -21,16 +21,12 @@ GroupMembersList.propTypes = {
 const BoardsList = () => {
     const [openBoardForm, setOpenBoardForm] = useState(false);
     const [showMembers, setShowMembers] = useState(false);
-    const navigate = useNavigate();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const groupInfo = useSelector(state => state.group.info);
     const boardList = useSelector(state => state.board.list);
     const allBoards = useSelector(state => state.board.allBoards);
     const {groupId} = useParams();
-
-    const showGroupInfo = () => {
-        navigate("info")
-    }
 
     useEffect(() => {
         dispatch({type: GET_GROUP_INFO, payload: groupId});
@@ -41,34 +37,14 @@ const BoardsList = () => {
     }, [dispatch, groupId]);
 
     let boardsToDisplay = groupId ? boardList : allBoards;
-    // Sắp xếp bảng theo alphabet của tên nhóm
     boardsToDisplay = [...boardsToDisplay].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
-        <Container className="py-3">
-            <h5 className="mb-3">Tên nhóm: {groupInfo && groupInfo.name}</h5>
-            <Container className="py-3 px-0">
-                <Button variant="outline-primary" className="me-3" onClick={showGroupInfo}>
-                    <Eye size={20} className="me-1"/> Thông tin nhóm
-                </Button>
-                <Button variant="outline-primary" className="me-3" onClick={() => setShowMembers(true)}>
-                    <Users size={20} className="me-1"/> Thành viên
-                </Button>
-            </Container>
+        <Container fluid className="py-3">
             <h5 className="mb-3 fw-bold text-dark d-flex align-items-center">
                 Danh sách bảng
-                <PlusCircle
-                    size={24}
-                    className="ms-2 text-primary"
-                    onClick={() => {
-                        if (!groupInfo.id) {
-                            alert("Vui lòng chọn nhóm trước!");
-                            return;
-                        }
-                        setOpenBoardForm(true);
-                    }}
-                    style={{cursor: "pointer"}}
-                />
+                <PlusCircle size={24} className="ms-2 text-primary" style={{cursor: "pointer"}}
+                    onClick={() => {setOpenBoardForm(true);}}/>
             </h5>
 
             <Row className="g-3">
@@ -77,7 +53,7 @@ const BoardsList = () => {
                         <Col xs={12} sm={6} md={2} key={board.id}>
                             <Card className="p-2 d-flex align-items-center shadow-sm"
                                   style={{ borderRadius: "10px", backgroundColor: "#f5f5f5", cursor: "pointer" }}
-                                  onClick={() => console.log("Clicked board", board.name)}
+                                  onClick={() => navigate(`/dashboard/board/${board.id}`)}
                             >
                                 <p className="mb-0 fw-bold text-dark text-truncate" style={{ maxWidth: "120px" }}>
                                     {board.name}

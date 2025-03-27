@@ -1,0 +1,9 @@
+.member-option {
+    cursor: pointer;
+    padding: 5px;
+    background-color: #ffffff;
+}
+
+.member-option:hover {
+    background-color: #cdcdcd;
+}

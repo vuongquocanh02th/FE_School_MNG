@@ -18,7 +18,7 @@ export const authReducer = (state = initialState, action) => {
         case AUTH_RESET:
             return {...state, success: null, error: null}
         case LOGOUT:
-            return {...state, user:{}}
+            return {...state, user: {}}
         default:
             return state;
     }
