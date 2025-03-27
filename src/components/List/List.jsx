@@ -1,9 +1,10 @@
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, Card, Container } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+import { useParams} from "react-router";
 import { addList, fetchLists } from "../../redux/list/listAction.js";
-import { useParams } from "react-router";
 import { addCard, fetchCards } from "../../redux/card/cardAction.js";
+import {CardInfo} from "./CardInfo.jsx";
 
 export const List = () => {
     const dispatch = useDispatch();
@@ -16,6 +17,10 @@ export const List = () => {
     const [addingCardToList, setAddingCardToList] = useState(null);
     const [newCardTitle, setNewCardTitle] = useState("");
 
+
+    const [selectedCard, setSelectedCard] = useState(null);
+    const [showCardInfo, setShowCardInfo] = useState(false);
+
     useEffect(() => {
         if (boardId) {
             dispatch(fetchLists(boardId));
@@ -23,7 +28,6 @@ export const List = () => {
     }, [dispatch, boardId]);
 
     useEffect(() => {
-        // Khi đã có danh sách (lists), gọi fetchCards cho mỗi danh sách
         lists.forEach((list) => {
             if (!cardsByList[list.id]) {
                 dispatch(fetchCards(list.id));
@@ -42,13 +46,12 @@ export const List = () => {
         if (!newCardTitle.trim()) return;
 
         const newCard = {
-            id: Date.now(), // Tạo ID tạm thời
+            id: Date.now(),
             title: newCardTitle,
             description: "Mô tả thẻ",
             listId,
         };
 
-        // Cập nhật Redux store ngay lập tức
         dispatch({
             type: "ADD_CARD_SUCCESS",
             payload: { listId, card: newCard },
@@ -59,98 +62,100 @@ export const List = () => {
         setAddingCardToList(null);
     };
 
+    const handleCardClick = (card) =>{
+        setSelectedCard(card);
+        setShowCardInfo(true);
+    }
+
+
     return (
-        <div style={{ display: "flex", gap: "10px", overflowX: "auto", paddingBottom: "10px", alignItems: "flex-start", padding: "10px" }}>
+        <Container fluid className="d-flex gap-4 overflow-auto py-3">
             {lists.map((list) => (
-                <div
-                    key={list.id}
-                    style={{
-                        width: "300px",
-                        minHeight: "100px",
-                        backgroundColor: "#ebecf0",
-                        borderRadius: "10px",
-                        padding: "10px",
-                        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "10px",
-                    }}
-                >
-                    <h5 style={{ margin: 0, fontSize: "16px", fontWeight: "bold" }}>{list.name}</h5>
+                <Card key={list.id} style={{ width: "300px" }} className="shadow border-0 rounded-3">
+                    <Card.Body>
+                        <Card.Title className="fw-bold text-primary">{list.name}</Card.Title>
+                        <div className="overflow-auto" style={{ maxHeight: "250px" }}>
+                            {cardsByList[list.id] && cardsByList[list.id].length > 0 ? (
+                                cardsByList[list.id].map((card) => (
+                                    <Card key={card.id} className="mb-2 p-2 shadow-sm border-0 rounded-2 bg-light"
+                                          style={{ transition: "0.3s", cursor: "pointer" }}
+                                          onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#e3f2fd"}
+                                          onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#f8f9fa"}
+                                          onClick={() => handleCardClick(card)} >
+                                        {card.title}
+                                    </Card>
+                                ))
+                            ) : (
+                                <p className="text-muted text-center">No cards</p>
+                            )}
+                        </div>
 
-                    <div style={{ overflowY: "auto", maxHeight: "250px", padding: "5px", borderRadius: "5px" }}>
-                        {cardsByList[list.id] && cardsByList[list.id].length > 0 ? (
-                            cardsByList[list.id].map((card) => ( // Hiển thị thẻ của danh sách
-                                <div key={card.id} className="card" style={{ padding: "5px", marginBottom: "5px", backgroundColor: "#ffffff", borderRadius: "5px", boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)" }}>
-                                    {card.title}
+                        {addingCardToList === list.id ? (
+                            <div>
+                                <Form.Control
+                                    type="text"
+                                    value={newCardTitle}
+                                    autoFocus
+                                    placeholder="Nhập tên thẻ..."
+                                    onChange={(e) => setNewCardTitle(e.target.value)}
+                                    onKeyDown={(e) => e.key === "Enter" && handleAddCard(list.id)}
+                                    className="mb-2"
+                                />
+                                <div className="d-flex justify-content-between">
+                                    <Button variant="success" size="sm" onClick={() => handleAddCard(list.id)}>
+                                        Add Card
+                                    </Button>
+                                    <Button variant="outline-secondary" size="sm" onClick={() => setAddingCardToList(null)}>
+                                        ✖
+                                    </Button>
                                 </div>
-                            ))
+                            </div>
                         ) : (
-                            <p className="no-card" style={{ textAlign: "center", color: "#5e6c84" }}>No cards</p>
+                            <Button variant="link" className="text-muted p-0" onClick={() => setAddingCardToList(list.id)}>
+                                + Thêm thẻ
+                            </Button>
                         )}
-                    </div>
+                    </Card.Body>
+                </Card>
+            ))}
 
-                    {addingCardToList === list.id ? (
-                        <div>
+            <Card style={{ width: "300px" }} className="shadow-sm border-0 rounded-3">
+                <Card.Body className="d-flex flex-column align-items-center">
+                    {isAdding ? (
+                        <div className="w-100">
                             <Form.Control
                                 type="text"
-                                value={newCardTitle}
+                                value={newListName}
                                 autoFocus
-                                placeholder="Nhập tên thẻ..."
-                                onChange={(e) => setNewCardTitle(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && handleAddCard(list.id)}
-                                style={{ fontSize: "14px", padding: "8px", borderRadius: "5px" }}
+                                placeholder="Nhập tên danh sách..."
+                                onChange={(e) => setNewListName(e.target.value)}
+                                onKeyDown={(e) => e.key === "Enter" && handleAddList()}
+                                className="mb-2"
                             />
-                            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "5px" }}>
-                                <Button variant="success" size="sm" onClick={() => handleAddCard(list.id)}>
-                                    Add Card
+                            <div className="d-flex justify-content-between">
+                                <Button variant="primary" size="sm" onClick={handleAddList}>
+                                    Add List
                                 </Button>
-                                <Button variant="danger" size="sm" onClick={() => setAddingCardToList(null)}>
-                                    ❌
+                                <Button variant="outline-secondary" size="sm" onClick={() => setIsAdding(false)}>
+                                    ✖
                                 </Button>
                             </div>
                         </div>
                     ) : (
-                        <button
-                            style={{ backgroundColor: "transparent", border: "none", color: "#5e6c84", textAlign: "left", cursor: "pointer", padding: "5px", fontSize: "14px" }}
-                            onClick={() => setAddingCardToList(list.id)}
-                        >
-                            + Thêm thẻ
-                        </button>
+                        <Button variant="link" className="text-muted" onClick={() => setIsAdding(true)}>
+                            + Thêm danh sách
+                        </Button>
                     )}
-                </div>
-            ))}
-
-            <div style={{ width: "300px", minHeight: "100px", backgroundColor: "#ebecf0", borderRadius: "10px", padding: "10px", boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                {isAdding ? (
-                    <div>
-                        <Form.Control
-                            type="text"
-                            value={newListName}
-                            autoFocus
-                            placeholder="Nhập tên danh sách..."
-                            onChange={(e) => setNewListName(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && handleAddList()}
-                            style={{ fontSize: "14px", padding: "8px", borderRadius: "5px" }}
-                        />
-                        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "5px" }}>
-                            <Button variant="success" size="sm" onClick={handleAddList}>
-                                Add List
-                            </Button>
-                            <Button variant="danger" size="sm" onClick={() => setIsAdding(false)}>
-                                ❌
-                            </Button>
-                        </div>
-                    </div>
-                ) : (
-                    <button
-                        style={{ backgroundColor: "transparent", border: "none", color: "#5e6c84", textAlign: "left", cursor: "pointer", padding: "5px", fontSize: "14px" }}
-                        onClick={() => setIsAdding(true)}
-                    >
-                        + Thêm danh sách
-                    </button>
-                )}
-            </div>
-        </div>
+                </Card.Body>
+            </Card>
+            {/* Modal CardInfo */}
+            {selectedCard && (
+                <CardInfo
+                    card={selectedCard}
+                    show={showCardInfo}
+                    handleClose={() => setShowCardInfo(false)}
+                />
+            )}
+        </Container>
     );
 };

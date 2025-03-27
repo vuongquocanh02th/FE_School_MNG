@@ -8,6 +8,8 @@ import {ToastContainer} from "react-toastify";
 import Register from "./pages/auth/Register.jsx";
 import Group from "./pages/group/Group.jsx";
 import {BoardMain} from "./components/board/BoardMain.jsx";
+import {Label} from "@mui/icons-material";
+import {CardInfo} from "./components/List/CardInfo.jsx";
 
 const App = () => {
     return (
@@ -24,6 +26,7 @@ const App = () => {
                     <Route path="group/:groupId/info" element={<Group/>}/>
                     <Route path="board/:boardId" element={<BoardMain/>}/>
                     <Route path="boards" element={<Boards />}/>
+
                 </Route>
 
                 <Route path="*" element={<Navigate to="/dashboard/home" replace/>}/>
