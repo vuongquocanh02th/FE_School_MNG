@@ -30,7 +30,7 @@ const App = () => {
                         <Route path="board" element={<BoardList/>}/>
                     </Route>
                     <Route path="board/:boardId" element={<BoardMain/>}/>
-                    <Route path="boards" element={<Boards />}/>
+                    <Route path="boards" element={<Boards/>}/>
                     <Route path="test" element={<ListCardTest/>}/>
                 </Route>
 

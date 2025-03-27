@@ -1,52 +1,49 @@
-import { call, put, takeLatest } from "redux-saga/effects";
-import axios from "axios";
+import {call, put, takeLatest} from "redux-saga/effects";
 import {
     FETCH_LISTS_REQUEST,
     FETCH_LISTS_SUCCESS,
-    FETCH_LISTS_FAILURE,
     ADD_LIST_REQUEST,
-    ADD_LIST_SUCCESS,
-    ADD_LIST_FAILURE,
     UPDATE_LIST_REQUEST,
-    UPDATE_LIST_SUCCESS,
-    UPDATE_LIST_FAILURE,
+    MOVE_LIST,
 } from "../../redux/list/listAction.js";
-
-const API_URL = "http://localhost:8080/api/lists";
+import axiosInstance from "../../resources/axiosConfig.js";
 
 function* fetchListsSaga(action) {
     try {
-        console.log("📡 Fetching lists for Board ID:", action.payload);
-        const response = yield call(axios.get, `${API_URL}/board/${action.payload}`);
-        console.log("✅ Danh sách lists:", response.data);
-        yield put({ type: FETCH_LISTS_SUCCESS, payload: response.data });
+        const response = yield call(axiosInstance.get, `/api/lists/${action.payload}`);
+        for (const list of response) {
+            list.cards = list.cards.sort((a, b) => a.priority - b.priority);
+        }
+        yield put({type: FETCH_LISTS_SUCCESS, payload: response});
     } catch (error) {
-        console.error("❌ FETCH_LISTS_FAILURE:", error.response?.data?.message || error.message);
-        yield put({ type: FETCH_LISTS_FAILURE, payload: error.response?.data?.message || error.message });
+        console.error(error);
     }
 }
 
-
 function* addListSaga(action) {
     try {
-        console.log("🚀 Saga nhận action ADD_LIST_REQUEST với payload:", action.payload);
-        const response = yield call(axios.post, API_URL, action.payload, {
-            headers: { "Content-Type": "application/json" },
-        });
-        console.log("✅ API response:", response.data);
-        yield put({ type: ADD_LIST_SUCCESS, payload: response.data });
+        yield call(axiosInstance.post, `/api/lists`, action.payload);
+        yield put({type: FETCH_LISTS_REQUEST, payload: action.payload.board_id});
     } catch (error) {
-        console.error("❌ ADD_LIST_FAILURE:", error);
-        yield put({ type: ADD_LIST_FAILURE, payload: error.message });
+        console.error(error.message);
     }
 }
 
 function* updateListSaga(action) {
     try {
-        const response = yield call(axios.put, `${API_URL}/${action.payload.id}`, action.payload);
-        yield put({ type: UPDATE_LIST_SUCCESS, payload: response.data });
+        yield call(axiosInstance.put, `/api/lists/${action.payload.id}`, action.payload);
+        yield put({type: FETCH_LISTS_REQUEST, payload: action.payload.board_id});
     } catch (error) {
-        yield put({ type: UPDATE_LIST_FAILURE, payload: error.message });
+        console.error(error.message);
+    }
+}
+
+function* moveListSaga(action) {
+    try {
+        yield call(axiosInstance.put, `/api/lists/move`, action.payload);
+        yield put({type: FETCH_LISTS_REQUEST, payload: action.payload.board_id});
+    } catch (error) {
+        console.error(error.message);
     }
 }
 
@@ -54,4 +51,5 @@ export function* listSaga() {
     yield takeLatest(FETCH_LISTS_REQUEST, fetchListsSaga);
     yield takeLatest(ADD_LIST_REQUEST, addListSaga);
     yield takeLatest(UPDATE_LIST_REQUEST, updateListSaga);
+    yield takeLatest(MOVE_LIST, moveListSaga);
 }

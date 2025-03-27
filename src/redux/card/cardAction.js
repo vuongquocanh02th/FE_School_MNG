@@ -6,15 +6,16 @@ export const FETCH_CARDS_REQUEST = "FETCH_CARDS_REQUEST";
 export const FETCH_CARDS_SUCCESS = "FETCH_CARDS_SUCCESS";
 export const FETCH_CARDS_FAILURE = "FETCH_CARDS_FAILURE";
 
-// Action để lấy danh sách card từ API
+export const MOVE_CARD_REQUEST = "MOVE_CARD_REQUEST";
+
 export const fetchCards = (listId) => ({
     type: FETCH_CARDS_REQUEST,
-    payload: listId, // 🔥 Truyền listId vào payload
+    payload: listId
 });
 
 export const fetchCardsSuccess = (listId, cards) => ({
     type: FETCH_CARDS_SUCCESS,
-    payload: { listId, cards }, // 🔥 Giữ listId trong payload
+    payload: { listId, cards }
 });
 
 export const fetchCardsFailure = (error) => ({
@@ -25,12 +26,12 @@ export const fetchCardsFailure = (error) => ({
 // Action để thêm card mới
 export const addCard = (cardData) => ({
     type: ADD_CARD_REQUEST,
-    payload: cardData, // 🔥 cardData phải chứa listId
+    payload: cardData
 });
 
 export const addCardSuccess = (listId, card) => ({
     type: ADD_CARD_SUCCESS,
-    payload: { listId, card }, // 🔥 Giữ listId trong payload
+    payload: { listId, card }
 });
 
 export const addCardFailure = (error) => ({

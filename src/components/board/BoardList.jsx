@@ -8,6 +8,7 @@ import {GET_ALL_BOARDS, GET_BOARD_LIST} from "../../redux/board/boardAction.js";
 import {GET_GROUP_INFO} from "../../redux/group/groupAction.js";
 import * as PropTypes from "prop-types";
 import GroupMemberList from "../groupMember/GroupMemberList.jsx";
+import {useNavigate} from "react-router-dom";
 
 function GroupMembersList() {
     return null;
@@ -21,6 +22,7 @@ const BoardsList = () => {
     const [openBoardForm, setOpenBoardForm] = useState(false);
     const [showMembers, setShowMembers] = useState(false);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const groupInfo = useSelector(state => state.group.info);
     const boardList = useSelector(state => state.board.list);
     const allBoards = useSelector(state => state.board.allBoards);

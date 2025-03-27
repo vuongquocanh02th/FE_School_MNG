@@ -4,9 +4,10 @@ import {
 } from "./cardAction.js";
 
 const initialState = {
-    cardsByList: {}, // 🔥 Lưu card theo từng listId
+    cardsByList: {},
     loading: false,
     error: null,
+    success: null
 };
 
 export const cardReducer = (state = initialState, action) => {
@@ -17,50 +18,37 @@ export const cardReducer = (state = initialState, action) => {
                 loading: true,
                 error: null
             };
-
         case FETCH_CARDS_SUCCESS:
             return {
                 ...state,
                 loading: false,
                 cardsByList: {
                     ...state.cardsByList,
-                    [action.payload.listId]: action.payload.cards || [], // 🔥 Tránh undefined
+                    [action.payload.listId]: action.payload.cards.sort((a, b) => a.priority - b.priority)
                 },
             };
-
         case FETCH_CARDS_FAILURE:
             return {
                 ...state,
                 loading: false,
                 error: action.payload
             };
-
         case ADD_CARD_REQUEST:
             return {
                 ...state,
                 loading: true
             };
-
         case ADD_CARD_SUCCESS:
             return {
                 ...state,
-                loading: false,
-                cardsByList: {
-                    ...state.cardsByList,
-                    [action.payload.listId]: [
-                        ...(state.cardsByList[action.payload.listId] || []), // Giữ card cũ
-                        action.payload.card, // 🔥 Thêm card mới vào list tương ứng
-                    ],
-                },
+                loading: false
             };
-
         case ADD_CARD_FAILURE:
             return {
                 ...state,
                 loading: false,
                 error: action.payload
             };
-
         default:
             return state;
     }

@@ -1,20 +1,50 @@
-import { Button, Form } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import { addList, fetchLists } from "../../redux/list/listAction.js";
-import { useParams } from "react-router";
-import { addCard, fetchCards } from "../../redux/card/cardAction.js";
+import {Button, Form} from "react-bootstrap";
+import {useDispatch, useSelector} from "react-redux";
+import React, {useEffect, useState} from "react";
+import {fetchLists, MOVE_LIST} from "../../redux/list/listAction.js";
+import {useParams} from "react-router";
+import {ADD_CARD_REQUEST, MOVE_CARD_REQUEST} from "../../redux/card/cardAction.js";
+import {ListTitle} from "./ListTitle.jsx";
+import {ListAddForm} from "./ListAddForm.jsx";
+
+const listContainerStyle = {
+    display: "flex",
+    gap: "10px",
+    width: "auto",
+    maxWidth: "none",
+    paddingBottom: "10px",
+    alignItems: "flex-start",
+    padding: "10px"
+}
+
+const listStyle = {
+    width: "300px",
+    minHeight: "100px",
+    backgroundColor: "#ebecf0",
+    borderRadius: "10px",
+    padding: "10px",
+    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+    display: "flex",
+    flexDirection: "column",
+}
+
+const cardStyle = {
+    padding: "5px",
+    marginBottom: "5px",
+    backgroundColor: "#ffffff",
+    borderRadius: "5px",
+    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)"
+}
 
 export const List = () => {
     const dispatch = useDispatch();
-    const lists = useSelector((state) => state.list.lists) || [];
-    const cardsByList = useSelector((state) => state.card.cardsByList) || {};
-    const { boardId } = useParams();
+    const lists = useSelector((state) => state.list.lists);
+    const {boardId} = useParams();
 
-    const [isAdding, setIsAdding] = useState(false);
-    const [newListName, setNewListName] = useState("");
     const [addingCardToList, setAddingCardToList] = useState(null);
     const [newCardTitle, setNewCardTitle] = useState("");
+    let currentList = useState(null);
+    let currentCard = useState(null);
 
     useEffect(() => {
         if (boardId) {
@@ -22,71 +52,107 @@ export const List = () => {
         }
     }, [dispatch, boardId]);
 
-    useEffect(() => {
-        // Khi đã có danh sách (lists), gọi fetchCards cho mỗi danh sách
-        lists.forEach((list) => {
-            if (!cardsByList[list.id]) {
-                dispatch(fetchCards(list.id));
-            }
-        });
-    }, [dispatch, lists, cardsByList]);
+    const closeAddCard = () => {
+        setAddingCardToList(null);
+        setNewCardTitle("");
+    }
 
-    const handleAddList = () => {
-        if (!newListName.trim()) return;
-        dispatch(addList({ name: newListName.trim(), priority: lists.length + 1, boardId: Number(boardId) }));
-        setNewListName("");
-        setIsAdding(false);
-    };
-
-    const handleAddCard = (listId) => {
+    const handleAddCard = (list) => {
         if (!newCardTitle.trim()) return;
 
-        const newCard = {
-            id: Date.now(), // Tạo ID tạm thời
-            title: newCardTitle,
-            description: "Mô tả thẻ",
-            listId,
-        };
-
-        // Cập nhật Redux store ngay lập tức
         dispatch({
-            type: "ADD_CARD_SUCCESS",
-            payload: { listId, card: newCard },
+            type: ADD_CARD_REQUEST, payload: {
+                board_id: list.board_id,
+                card: {
+                    title: newCardTitle,
+                    list_id: list.id,
+                    priority: list.cards.length,
+                }
+            }
         });
-        dispatch(addCard(newCard));
 
         setNewCardTitle("");
         setAddingCardToList(null);
     };
 
-    return (
-        <div style={{ display: "flex", gap: "10px", overflowX: "auto", paddingBottom: "10px", alignItems: "flex-start", padding: "10px" }}>
-            {lists.map((list) => (
-                <div
-                    key={list.id}
-                    style={{
-                        width: "300px",
-                        minHeight: "100px",
-                        backgroundColor: "#ebecf0",
-                        borderRadius: "10px",
-                        padding: "10px",
-                        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "10px",
-                    }}
-                >
-                    <h5 style={{ margin: 0, fontSize: "16px", fontWeight: "bold" }}>{list.name}</h5>
+    const handleCardDragStart = (card) => (e) => {
+        e.stopPropagation();
+        e.dataTransfer.effectAllowed = 'move';
+        currentCard = card;
+        currentList = null;
+    };
 
-                    <div style={{ overflowY: "auto", maxHeight: "250px", padding: "5px", borderRadius: "5px" }}>
-                        {cardsByList[list.id] && cardsByList[list.id].length > 0 ? (
-                            cardsByList[list.id].map((card) => ( // Hiển thị thẻ của danh sách
-                                <div key={card.id} className="card" style={{ padding: "5px", marginBottom: "5px", backgroundColor: "#ffffff", borderRadius: "5px", boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)" }}>
+    const handleCardDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    const handleCardDrop = (card, list, index) => (e) => {
+        if (currentCard === card || currentCard === null)
+            return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        currentCard = {...currentCard, priority: index + 1};
+        dispatch({
+            type: MOVE_CARD_REQUEST, payload: {
+                board_id: list.board_id,
+                listId: list.id,
+                card: currentCard
+            }
+        });
+    };
+
+    const handleListDragStart = (list) => (e) => {
+        e.dataTransfer.effectAllowed = 'move';
+        currentCard = null;
+        currentList = list;
+    };
+
+    const handleListDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    const handleListDrop = (list, index) => (e) => {
+        if (currentList === list)
+            return;
+        e.preventDefault();
+
+        if (currentCard !== null) {
+            currentCard = {...currentCard, priority: 0};
+            dispatch({
+                type: MOVE_CARD_REQUEST, payload: {
+                    board_id: list.board_id,
+                    listId: list.id,
+                    card: currentCard
+                }
+            });
+            return;
+        }
+
+        currentList = {...currentList, priority: index};
+        dispatch({type: MOVE_LIST, payload: currentList});
+    };
+
+
+    return (
+        <div style={listContainerStyle}>
+            {lists.map((list, index) => (
+                <div key={list.id} style={listStyle} draggable onDragStart={handleListDragStart(list)}
+                     onDragOver={handleListDragOver} onDrop={handleListDrop(list, index)}>
+                    <ListTitle list={list}/>
+
+                    <div style={{overflowY: "auto", maxHeight: "550px", padding: "5px", borderRadius: "5px"}}>
+                        {list.cards && list.cards.length > 0 ? (
+                            list.cards.map((card, index) => (
+                                <div key={card.id} className="card" style={cardStyle} draggable
+                                     onDragStart={handleCardDragStart(card)}
+                                     onDragOver={handleCardDragOver} onDrop={handleCardDrop(card, list, index)}>
                                     {card.title}
                                 </div>
                             ))
                         ) : (
-                            <p className="no-card" style={{ textAlign: "center", color: "#5e6c84" }}>No cards</p>
+                            <p className="no-card" style={{textAlign: "center", color: "#5e6c84"}}>No cards</p>
                         )}
                     </div>
 
@@ -98,21 +164,30 @@ export const List = () => {
                                 autoFocus
                                 placeholder="Nhập tên thẻ..."
                                 onChange={(e) => setNewCardTitle(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && handleAddCard(list.id)}
-                                style={{ fontSize: "14px", padding: "8px", borderRadius: "5px" }}
+                                onKeyDown={(e) => e.key === "Enter" && handleAddCard(list)}
+                                onBlur={closeAddCard}
+                                style={{fontSize: "14px", padding: "8px", borderRadius: "5px"}}
                             />
-                            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "5px" }}>
-                                <Button variant="success" size="sm" onClick={() => handleAddCard(list.id)}>
+                            <div style={{display: "flex", justifyContent: "space-between", marginTop: "5px"}}>
+                                <Button variant="success" size="sm" onClick={() => handleAddCard(list)}>
                                     Add Card
                                 </Button>
-                                <Button variant="danger" size="sm" onClick={() => setAddingCardToList(null)}>
+                                <Button variant="danger" size="sm" onClick={closeAddCard}>
                                     ❌
                                 </Button>
                             </div>
                         </div>
                     ) : (
                         <button
-                            style={{ backgroundColor: "transparent", border: "none", color: "#5e6c84", textAlign: "left", cursor: "pointer", padding: "5px", fontSize: "14px" }}
+                            style={{
+                                backgroundColor: "transparent",
+                                border: "none",
+                                color: "#5e6c84",
+                                textAlign: "left",
+                                cursor: "pointer",
+                                padding: "5px",
+                                fontSize: "14px"
+                            }}
                             onClick={() => setAddingCardToList(list.id)}
                         >
                             + Thêm thẻ
@@ -121,36 +196,7 @@ export const List = () => {
                 </div>
             ))}
 
-            <div style={{ width: "300px", minHeight: "100px", backgroundColor: "#ebecf0", borderRadius: "10px", padding: "10px", boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                {isAdding ? (
-                    <div>
-                        <Form.Control
-                            type="text"
-                            value={newListName}
-                            autoFocus
-                            placeholder="Nhập tên danh sách..."
-                            onChange={(e) => setNewListName(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && handleAddList()}
-                            style={{ fontSize: "14px", padding: "8px", borderRadius: "5px" }}
-                        />
-                        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "5px" }}>
-                            <Button variant="success" size="sm" onClick={handleAddList}>
-                                Add List
-                            </Button>
-                            <Button variant="danger" size="sm" onClick={() => setIsAdding(false)}>
-                                ❌
-                            </Button>
-                        </div>
-                    </div>
-                ) : (
-                    <button
-                        style={{ backgroundColor: "transparent", border: "none", color: "#5e6c84", textAlign: "left", cursor: "pointer", padding: "5px", fontSize: "14px" }}
-                        onClick={() => setIsAdding(true)}
-                    >
-                        + Thêm danh sách
-                    </button>
-                )}
-            </div>
+            <ListAddForm listLength={lists.length} boardId={boardId}/>
         </div>
     );
 };
