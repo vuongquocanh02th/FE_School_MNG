@@ -6,8 +6,9 @@ import {
     CREATE_BOARD,
     CREATE_BOARD_SUCCESS,
     CREATE_BOARD_FAIL,
-    GET_ALL_BOARDS, SET_ALL_BOARDS,
+    GET_ALL_BOARDS, SET_ALL_BOARDS, GET_BOARD_DETAIL, GET_BOARD_DETAIL_SUCCESS, EDIT_BOARD_NAME,
 } from "../../redux/board/boardAction.js";
+import {toast} from "react-toastify";
 
 function* getBoardList(action) {
     try {
@@ -42,8 +43,29 @@ function* fetchAllBoards() {
     }
 }
 
+function* getBoardDetails(action) {
+    try {
+        const response = yield call(axiosInstance.get, "/api/boards/details/" + action.payload);
+        yield put({type: GET_BOARD_DETAIL_SUCCESS, payload: response})
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+function* editBoardName(action) {
+    try {
+        yield call(axiosInstance.put, "/api/boards/name/" + action.payload.id, action.payload);
+        toast.success("Đổi tên bảng thành công");
+        yield put({type: GET_BOARD_DETAIL, payload: action.payload.id})
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export default function* boardSaga() {
     yield takeLatest(GET_BOARD_LIST, getBoardList);
     yield takeLatest(CREATE_BOARD, createBoard);
     yield takeLatest(GET_ALL_BOARDS, fetchAllBoards);
+    yield takeLatest(GET_BOARD_DETAIL, getBoardDetails);
+    yield takeLatest(EDIT_BOARD_NAME, editBoardName)
 }
