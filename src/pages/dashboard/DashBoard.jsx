@@ -1,17 +1,21 @@
-import React from "react";
-import {Outlet, useNavigate} from "react-router-dom";
+import React, {useEffect} from "react";
+import {Outlet} from "react-router-dom";
 import {Row, Col} from "react-bootstrap";
 import Sidebar from "../../components/layout/Sidebar.jsx";
 import TopMenu from "../../components/layout/TopMenu.jsx";
 import {useDispatch, useSelector} from "react-redux";
+import {GET_USER_INFO} from "../../redux/auth/authAction.js";
 
-//// Truyền dữ liệu giữa component bằng redux, đừng dùng properties
 const Dashboard = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const dispatch = useDispatch();
+    // const form = useSelector(state => state.group.formType);
+
+    useEffect(() => {
+        dispatch({type: GET_USER_INFO});
+    }, [dispatch]);
 
     const openDrawer = useSelector(state => state.dashboard.openDrawer);
-    const form = useSelector(state => state.group.formType);
 
     return (
         <div className="vh-100 d-flex flex-column">
@@ -22,7 +26,7 @@ const Dashboard = () => {
                     <Sidebar/>
                 </Col>
 
-                <Col sm={6} md={8} lg={9} xl={10} className="p-0 d-flex flex-column m-0 overflow-y-hidden overflow-x-auto">
+                <Col sm={6} md={8} lg={9} xl={10} className="p-0 m-0 overflow-y-hidden overflow-x-auto">
                     <Outlet/>
                 </Col>
             </Row>

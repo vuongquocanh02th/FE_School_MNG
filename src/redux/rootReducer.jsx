@@ -5,6 +5,7 @@ import {authReducer} from "./auth/authReducer.js";
 import {dashboardReducer} from "./dashboard/dashboardReducer.js";
 import {memberGroupReducer} from "./member/memberGroupReducer.js";
 import {userReducer} from "./user/userReducer.js";
+import {cardReducer} from "./card/cardReducer.js";
 
 const rootReducer = combineReducers({
     group: groupReducer,
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
     auth: authReducer,
     dashboard: dashboardReducer,
     membersGroup: memberGroupReducer,
-    user: userReducer
+    user: userReducer,
+    card: cardReducer,
 });
 
 export default rootReducer;

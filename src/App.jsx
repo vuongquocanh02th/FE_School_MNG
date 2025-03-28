@@ -6,11 +6,20 @@ import Boards from "./pages/board/Boards.jsx";
 import Login from "./pages/auth/Login.jsx";
 import {ToastContainer} from "react-toastify";
 import Register from "./pages/auth/Register.jsx";
-import Group from "./pages/group/Group.jsx";
+import GroupIndex from "./pages/group/GroupIndex.jsx";
 import {BoardMain} from "./components/board/BoardMain.jsx";
 import UserDetail from "./pages/user/UserDetail.jsx";
 import UserEditFrom from "./pages/user/UserFromEdit.jsx";
 import ChangePassword from "./pages/user/ChangePassword.jsx";
+import GroupInfo from "./components/group/GroupInfo.jsx";
+import GroupMemberList from "./components/groupMember/GroupMemberList.jsx";
+import BoardList from "./components/board/BoardList.jsx";
+import ListCardTest from "./components/List/ListCardTest.jsx";
+import BoardInfo from "./components/board/BoardInfo.jsx";
+import BoardEditForm from "./components/board/BoardEditForm.jsx";
+import CardList from "./components/card/CardList.jsx";
+import CardDetail from "./components/card/CardDetail.jsx";
+import UpdateCard from "./components/card/CardEditFrom.jsx";
 
 const App = () => {
     return (
@@ -19,9 +28,9 @@ const App = () => {
                 <Route path="/home" element={<Home/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/register" element={<Register/>}/>
-                <Route path="/users/:userId" element={<UserDetail />} />
-                <Route path="/users/:userId/change-password" element={<ChangePassword />} />
-                <Route path="/users/:userId/edit" element={<UserEditFrom />} />
+                <Route path="/cards" element={<CardList/>}/>
+                <Route path="/cards/:id" element={<CardDetail/>}/>
+                <Route path="/cards/:id/edit" element={<UpdateCard/>}/>
                 <Route path="/dashboard/*" element={<Dashboard/>}>
                     <Route index element={<Navigate to="home" replace/>}/>
                     <Route path="home" element={<></>}/>
@@ -30,8 +39,17 @@ const App = () => {
                     <Route path="users/:userId/edit" element={<UserEditFrom />} />
                     <Route path="users/:userId/change-password" element={<ChangePassword />} />
                     <Route path="group/:groupId" element={<Boards/>}/>
-                    <Route path="group/:groupId/info" element={<Group/>}/>
-                    <Route path="board" element={<BoardMain/>}/>
+                    <Route path="test" element={<ListCardTest/>}/>
+                    <Route path="group/:groupId/*" element={<GroupIndex/>}>
+                        <Route path="info" element={<GroupInfo/>}/>
+                        <Route path="member" element={<GroupMemberList/>}/>
+                        <Route path="board" element={<BoardList/>}/>
+                    </Route>
+                    <Route path="board/:boardId" element={<BoardMain/>}/>
+                    <Route path="board/:boardId/*" element={<BoardMain/>}>
+                        <Route path="info" element={<BoardInfo/>}/>
+                        <Route path="edit" element={<BoardEditForm/>}/>
+                    </Route>
                 </Route>
 
                 <Route path="*" element={<Navigate to="/dashboard/home" replace/>}/>

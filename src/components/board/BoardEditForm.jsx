@@ -5,8 +5,8 @@ import { Button, Form } from 'react-bootstrap';
 
 
 const BoardEditForm = ({ board, onClose }) => {
-    const [name, setName] = useState(board.name);
-    const [visibility, setVisibility] = useState(board.visibility || 'PRIVATE');
+    const [name, setName] = useState(board?.name || "");
+    const [description, setDescription] = useState(board?.description || "");
     const dispatch = useDispatch();
 
     const handleSubmit = (e) => {
@@ -16,12 +16,10 @@ const BoardEditForm = ({ board, onClose }) => {
             payload: {
                 id: board.id,
                 name: name,
-                visibility: visibility,
-                group_id: board.group_id,
-                created_by: board.created_by,
+                description: description,
             }
         });
-        if (onClose) onClose(); // đóng form nếu có callback
+        if (onClose) onClose();
     };
 
     return (
@@ -38,15 +36,15 @@ const BoardEditForm = ({ board, onClose }) => {
                 />
             </Form.Group>
 
-            <Form.Group controlId="boardVisibility" className="mb-3">
-                <Form.Label>Quyền hiển thị</Form.Label>
-                <Form.Select
-                    value={visibility}
-                    onChange={(e) => setVisibility(e.target.value)}
-                >
-                    <option value="PRIVATE">Riêng tư</option>
-                    <option value="PUBLIC">Công khai</option>
-                </Form.Select>
+            <Form.Group controlId="boardDescription" className="mb-3">
+                <Form.Label>Mô tả</Form.Label>
+                <Form.Control
+                    as="textarea"
+                    rows={3}
+                    placeholder="Nhập mô tả bảng (nếu có)"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                />
             </Form.Group>
 
             <div className="d-flex justify-content-end gap-2">

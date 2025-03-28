@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import anonymous from "../../assets/anonymous.png";
 import {
     Container,
     Card,
@@ -64,9 +65,9 @@ function UserDetail() {
                     <Col md={4} className="text-center mb-4 mb-md-0">
                         <Image
                             src={
-                                detail?.imagePath
+                                detail.imagePath
                                     ? `http://localhost:8080${detail.imagePath}`
-                                    : "https://tintuc.dienthoaigiakho.vn/wp-content/uploads/2024/01/c39af4399a87bc3d7701101b728cddc9.jpg"
+                                    : anonymous
                             }
                             roundedCircle
                             width="180"
@@ -77,6 +78,10 @@ function UserDetail() {
                         <h4 className="mt-3 text-primary fw-bold">{detail.username}</h4>
                     </Col>
                     <Col md={8}>
+                        <div className="mb-3">
+                            <strong className="text-secondary">Họ và tên:</strong>
+                            <div className="fs-5">{detail.fullname}</div>
+                        </div>
                         <div className="mb-3">
                             <strong className="text-secondary">Email:</strong>
                             <div className="fs-5">{detail.email}</div>
@@ -89,18 +94,18 @@ function UserDetail() {
                 </Row>
                 <div className="mt-4 d-flex gap-3 justify-content-end">
                     <Button
-                        variant="outline-secondary"
-                        onClick={toHome}
-                        className="d-flex align-items-center gap-2"
-                    >
-                        <FaArrowLeft /> Quay lại
-                    </Button>
-                    <Button
                         variant="primary"
                         onClick={openEditForm}
                         className="d-flex align-items-center gap-2"
                     >
                         <FaEdit /> Chỉnh sửa
+                    </Button>
+                    <Button
+                        variant="outline-secondary"
+                        onClick={toHome}
+                        className="d-flex align-items-center gap-2"
+                    >
+                        Quay lại
                     </Button>
                 </div>
             </Card>

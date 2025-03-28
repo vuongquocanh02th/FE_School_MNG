@@ -11,6 +11,8 @@ import {
     UPDATE_BOARD,
     UPDATE_BOARD_SUCCESS,
     UPDATE_BOARD_FAIL,
+    GET_BOARD_DETAIL,
+    GET_BOARD_DETAIL_SUCCESS,
 } from "../../redux/board/boardAction.js";
 
 function* getBoardList(action) {
@@ -58,6 +60,15 @@ function* fetchAllBoards() {
         console.error("Lỗi khi lấy danh sách tất cả bảng:", error);
     }
 }
+function* getBoardDetail(action) {
+    try {
+        const response = yield call(axiosInstance.get, `/api/boards/${action.payload}`);
+        console.log(response);
+        yield put({ type: GET_BOARD_DETAIL_SUCCESS, payload: response });
+    } catch (err) {
+        console.error("Lỗi khi lấy chi tiết board:", err);
+    }
+}
 
 export default function* boardSaga() {
     yield takeLatest(GET_BOARD_LIST, getBoardList);
@@ -65,4 +76,6 @@ export default function* boardSaga() {
     yield takeLatest(CREATE_BOARD, createBoard);
     yield takeLatest(UPDATE_BOARD, updateBoard);
     yield takeLatest(GET_ALL_BOARDS, fetchAllBoards);
+    yield takeLatest(GET_BOARD_DETAIL, getBoardDetail);
+
 }

@@ -1,246 +1,190 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { toast } from 'react-toastify';
+import React, {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {toast} from 'react-toastify';
 import {
-    GET_MEMBERGROUP_LIST,
-    ADD_MEMBERGROUP,
-    REMOVE_MEMBERGROUP,
-    UPDATE_MEMBERGROUP_ROLE
+    GET_GROUP_MEMBER_LIST,
+    ADD_GROUP_MEMBER,
+    RESET_GROUP_MEMBER
 } from "../../redux/member/memberAction.js";
-import { GET_GROUP_INFO } from "../../redux/group/groupAction.js";
-import {
-    Container,
-    Button,
-    Form,
-    Card,
-    Table,
-    Image,
-    Alert,
-    Row,
-    Col,
-    Modal
-} from "react-bootstrap";
-import { Users } from "react-feather";
+import {GET_GROUP_INFO, GET_GROUP_LIST} from "../../redux/group/groupAction.js";
+import {Container, Button, Form, Card, Table, Image, Alert, Row, Col} from "react-bootstrap";
+import {Users} from "react-feather";
+import anonymous from "../../assets/anonymous.png";
+import GroupMemberMenu from "./GroupMemberMenu.jsx";
+import {reformatMemberType} from "../../util/ReformatData.js";
 
 function GroupMemberList() {
-    const { groupId } = useParams();
+    const {groupId} = useParams();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const members = useSelector((state) => state.membersGroup.members) || [];
+    const members = useSelector((state) => state.membersGroup.members);
     const addMemberSuccess = useSelector((state) => state.membersGroup.addMemberSuccess);
+    const leaveGroupSuccess = useSelector((state) => state.membersGroup.leaveGroupSuccess);
+    const user = useSelector((state) => state.auth.user);
 
+    const [sortedMembers, setSortedMembers] = useState([]);
+    const [userMember, setUserMember] = useState();
     const [showForm, setShowForm] = useState(false);
     const [email, setEmail] = useState("");
-    const [memberType, setMemberType] = useState("MEMBER");
     const [localMessage, setLocalMessage] = useState("");
 
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [selectedMember, setSelectedMember] = useState(null);
-    const addMemberError = useSelector((state) => state.membersGroup.addMemberError);
-
     useEffect(() => {
-        dispatch({ type: GET_GROUP_INFO, payload: groupId });
-        dispatch({ type: GET_MEMBERGROUP_LIST, payload: groupId });
+        dispatch({type: GET_GROUP_INFO, payload: groupId});
+        dispatch({type: GET_GROUP_MEMBER_LIST, payload: groupId});
     }, [dispatch, groupId]);
 
     useEffect(() => {
-        if (addMemberError) {
-            setLocalMessage(addMemberError);
+        if (user && members) {
+            let theUserMember;
+            let userMemberIndex;
+            members.map((member, index) => {
+                if (member.id === user.id) {
+                    theUserMember = {...member, isUser: true};
+                    userMemberIndex = index;
+                }
+                return member;
+            });
+            let newMembers = members.toSpliced(userMemberIndex, 1);
+            newMembers.splice(0, 0, theUserMember);
+            setUserMember(theUserMember);
+            setSortedMembers(newMembers);
         }
-    }, [addMemberError]);
-
-    const isValidEmail = (email) => {
-        // Regex kiểm tra định dạng email
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
-    };
-
+    }, [user, members]);
 
     useEffect(() => {
+        if (leaveGroupSuccess) {
+            dispatch({type: RESET_GROUP_MEMBER});
+            dispatch({type: GET_GROUP_LIST, payload: groupId});
+            toast.success("Rời nhóm thành công");
+            navigate("/dashboard/home");
+        }
+
         if (addMemberSuccess) {
             setEmail("");
-            setMemberType("MEMBER");
             setShowForm(false);
             toast.success("Thêm thành viên thành công!");
         }
-    }, [addMemberSuccess]);
+    }, [addMemberSuccess, leaveGroupSuccess]);
 
     const handleAddMember = () => {
         if (!email.trim()) {
             setLocalMessage("Vui lòng nhập email");
             return;
         }
-        if (!isValidEmail(email.trim())) {
-            setLocalMessage("Email không đúng định dạng");
-            return;
-        }
-        setLocalMessage(""); // reset lỗi cục bộ nếu có
         dispatch({
-            type: ADD_MEMBERGROUP,
-            payload: { groupId, email, memberType: memberType }
+            type: ADD_GROUP_MEMBER,
+            payload: {groupId, email}
         });
     };
 
-    const handleConfirmRemoveMember = () => {
-        if (selectedMember) {
-            dispatch({
-                type: REMOVE_MEMBERGROUP,
-                payload: {
-                    groupId: groupId,
-                    userId: selectedMember.id
-                }
-            });
-            toast.success(`Đã xóa thành viên ${selectedMember.username}`);
-            setShowDeleteModal(false);
+    const optionsType = (member) => {
+        if (member.id === userMember.id) {
+            return userMember.memberType.concat("-", "THIS");
+        } else {
+            return userMember.memberType.concat("-", member.memberType);
         }
-    };
-
-    const handleUpdateRole = (memberId, newRole) => {
-        dispatch({
-            type: UPDATE_MEMBERGROUP_ROLE,
-            payload: {
-                groupId: groupId,
-                userId: memberId,
-                newRole: newRole
-            }
-        });
-        toast.success(`Đã cập nhật vai trò thành "${newRole === 'MODERATOR' ? 'Quản trị viên' : 'Thành viên'}"!`);
-    };
-
-    const handleRemoveClick = (member) => {
-        setSelectedMember(member);
-        setShowDeleteModal(true);
-    };
+    }
 
     return (
         <Container className="mt-4">
-            <div className="mb-3">
+            <div className="mb-4" style={{width: "500px"}}>
                 {!showForm ? (
-                    <Button variant="outline-primary" className="me-3" onClick={() => setShowForm(true)}>
-                        <Users size={20} className="me-1" /> Thêm thành viên
+                    <Button
+                        variant="outline-primary"
+                        className="d-flex align-items-center gap-2 px-3 py-2 shadow-sm rounded-3"
+                        onClick={() => {
+                            setShowForm(true);
+                            setLocalMessage("");
+                        }}
+                    >
+                        <Users size={20}/> Thêm thành viên
                     </Button>
                 ) : (
-                    <Card className="p-3 mt-3">
-                        <Form.Group className="mb-2">
+                    <Card className="p-4 mt-3 shadow rounded-4">
+                        <Form.Group className="mb-3 position-relative">
                             <Form.Control
                                 type="email"
                                 placeholder="Nhập email thành viên..."
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                className="ps-5 py-2 rounded-3 shadow-sm border-secondary-subtle"
+                            />
+                            <Users
+                                size={18}
+                                className="position-absolute top-50 start-0 ms-3 translate-middle-y text-secondary"
                             />
                         </Form.Group>
-                        <Form.Group className="mb-2">
-                            <Form.Select
-                                value={memberType}
-                                onChange={(e) => setMemberType(e.target.value)}
-                            >
-                                <option value="MEMBER">Thành viên</option>
-                                <option value="MODERATOR">Quản trị viên</option>
-                            </Form.Select>
-                        </Form.Group>
                         {localMessage && (
-                            <Alert variant="danger">{localMessage}</Alert>
+                            <Alert variant="danger" className="py-2 px-3 rounded-3">
+                                {localMessage}
+                            </Alert>
                         )}
-                        <Row>
-                            <Col>
-                                <Button
-                                    variant="success"
-                                    onClick={handleAddMember}
-                                    className="me-2"
-                                >
-                                    Thêm
-                                </Button>
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => setShowForm(false)}
-                                >
-                                    Hủy
-                                </Button>
-                            </Col>
-                        </Row>
+                        <div className="d-flex justify-content-end gap-2">
+                            <Button
+                                variant="primary"
+                                onClick={handleAddMember}
+                                className="px-4 rounded-3"
+                            >
+                                Thêm
+                            </Button>
+                            <Button
+                                variant="outline-secondary"
+                                onClick={() => {
+                                    setShowForm(false);
+                                    setEmail("");
+                                    setLocalMessage("");
+                                }}
+                                className="px-4 rounded-3"
+                            >
+                                Hủy
+                            </Button>
+                        </div>
                     </Card>
                 )}
             </div>
 
-            {members.length === 0 ? (
-                <p>Không có thành viên nào trong nhóm.</p>
-            ) : (
-                <Table striped bordered hover>
-                    <thead>
-                    <tr>
-                        <th>Ảnh</th>
-                        <th>Tên</th>
-                        <th>Email</th>
-                        <th>Vai trò</th>
-                        <th>Hành động</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {members.map((member) => (
-                        <tr key={member.id}>
-                            <td>
-                                <Image
-                                    src={
-                                        member?.imagePath
-                                            ? `http://localhost:8080${member.imagePath}`
-                                            : "https://tintuc.dienthoaigiakho.vn/wp-content/uploads/2024/01/c39af4399a87bc3d7701101b728cddc9.jpg"
-                                    }
-                                    roundedCircle
-                                    width="40"
-                                    height="40"
-                                />
+            <Table style={{width: "500px"}}>
+                <tbody>
+                {sortedMembers[0] && sortedMembers.map((member) => (
+                    <React.Fragment key={member.id}>
+                        <tr>
+                            <td rowSpan={2} style={{width: "80px", height: "80px"}}>
+                                <div className="d-flex align-items-center justify-content-center"
+                                     style={{width: "100%", height: "100%"}}>
+                                    <Image
+                                        src={
+                                            member?.imagePath
+                                                ? `http://localhost:8080${member.imagePath}`
+                                                : anonymous
+                                        }
+                                        roundedCircle
+                                        width="40"
+                                        height="40"
+                                    />
+                                </div>
                             </td>
-                            <td>{member.username}</td>
-                            <td>{member.email}</td>
-                            <td>
-                                <Form.Select
-                                    value={member.memberType}
-                                    onChange={(e) =>
-                                        handleUpdateRole(
-                                            member.id,
-                                            e.target.value
-                                        )
-                                    }
-                                >
-                                    <option value="MEMBER">Thành viên</option>
-                                    <option value="MODERATOR">Quản trị viên</option>
-                                </Form.Select>
+                            <td style={{fontSize: "16px"}}>
+                                {member.username}
+                                <span style={{color: "darkgray", fontSize: "12px"}}>
+                                        {member.isUser && " (You)"}
+                                    </span>
                             </td>
-                            <td>
-                                <Button
-                                    variant="danger"
-                                    size="sm"
-                                    onClick={() => handleRemoveClick(member)}
-                                >
-                                    Xóa
-                                </Button>
+                            <td rowSpan={2} className="p-4" style={{width: "70px"}}>
+                                <GroupMemberMenu type={optionsType(member)} member={member} groupId={groupId}/>
                             </td>
                         </tr>
-                    ))}
-                    </tbody>
-                </Table>
-            )}
+                        <tr>
 
-            {/* Modal confirm xóa */}
-            <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>Xóa thành viên</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {selectedMember && (
-                        <>Bạn có chắc chắn muốn xóa thành viên <strong>{selectedMember.username}</strong> không?</>
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                        Không
-                    </Button>
-                    <Button variant="danger" onClick={handleConfirmRemoveMember}>
-                        Xóa
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                            <td style={{color: "darkgray", fontSize: "14px"}}>
+                                {reformatMemberType(member.memberType)}
+                            </td>
+                        </tr>
+                    </React.Fragment>
+                ))}
+                </tbody>
+            </Table>
         </Container>
     );
 }

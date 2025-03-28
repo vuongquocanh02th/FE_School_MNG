@@ -6,7 +6,7 @@ import {
     UPDATE_USER,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_FAIL, OPEN_FROM_EDIT_USER,
-} from './UserAction';
+} from './userAction';
 
 const initialState = {
     detail: null,

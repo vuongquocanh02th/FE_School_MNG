@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
+import anonymous from "../../assets/anonymous.png";
 import { Form, Button, Container, Card, Alert, Image, Spinner } from "react-bootstrap";
 import {
     GET_USER_DETAIL,
@@ -18,6 +19,7 @@ const UserEdit = () => {
     const [formData, setFormData] = useState({
         username: "",
         email: "",
+        fullname: "",
         description: "",
         avatar: null,
     });
@@ -37,6 +39,7 @@ const UserEdit = () => {
             setFormData({
                 username: detail.username || "",
                 email: detail.email || "",
+                fullname: detail.fullname || "",
                 description: detail.description || "",
                 avatar: null,
             });
@@ -88,23 +91,22 @@ const UserEdit = () => {
 
                 {updateError && <Alert variant="danger">{updateError}</Alert>}
 
-                {previewImage && (
                     <div className="mb-4 text-center">
                         <Image
                             src={
                                 previewImage ||
-                                (detail?.imagePath
-                                    ? `http://localhost:8080${detail.imagePath}`
-                                    : "https://tintuc.dienthoaigiakho.vn/wp-content/uploads/2024/01/c39af4399a87bc3d7701101b728cddc9.jpg")
+                                (detail?.avatar
+                                    ? `http://localhost:8080${detail.avatar}`
+                                    : anonymous
+                                )
                             }
                             alt="Avatar Preview"
                             roundedCircle
                             style={{ width: "150px", height: "150px", objectFit: "cover" }}
                         />
 
-                        <div className="text-muted mt-2">Xem trước ảnh đại diện</div>
+                        <div className="text-muted mt-2">Ảnh đại diện</div>
                     </div>
-                )}
 
                 <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3">
@@ -113,6 +115,17 @@ const UserEdit = () => {
                             type="text"
                             name="username"
                             value={formData.username}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                        <Form.Label>Họ và tên</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="fullname"
+                            value={formData.fullname}
                             onChange={handleChange}
                             required
                         />
@@ -140,7 +153,7 @@ const UserEdit = () => {
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                        <Form.Label>Cập nhật avatar mới</Form.Label>
+                        <Form.Label>Cập nhật ảnh đại diện mới</Form.Label>
                         <Form.Control
                             type="file"
                             accept="image/*"
@@ -159,7 +172,7 @@ const UserEdit = () => {
                             )}
                         </Button>
                         <Button variant="secondary" className="ms-2" onClick={() => navigate(-1)}>
-                            Quay lại
+                            Huỷ
                         </Button>
                     </div>
                 </Form>

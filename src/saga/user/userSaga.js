@@ -27,6 +27,7 @@ function* updateUserSaga(action) {
         const { id, data } = action.payload;
         const formData = new FormData();
         formData.append("username", data.username);
+        formData.append("fullname", data.fullname);
         formData.append("email", data.email);
         formData.append("description", data.description);
         if (data.avatar) {
