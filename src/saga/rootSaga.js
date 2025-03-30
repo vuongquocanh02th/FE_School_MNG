@@ -6,6 +6,7 @@ import {listSaga} from "./list/listSaga.js";
 import groupMemberSaga from "./member/groupMemberSaga.js";
 import userSaga from "./user/userSaga.js";
 import cardSaga from "./card/cardSaga.js";
+import labelSaga from "./label/labelSaga.js";
 
 export default function* rootSaga() {
     yield all([
@@ -15,6 +16,7 @@ export default function* rootSaga() {
         groupMemberSaga(),
         listSaga(),
         userSaga(),
-        cardSaga()
+        cardSaga(),
+        labelSaga(),
     ])
 }

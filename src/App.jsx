@@ -15,8 +15,6 @@ import GroupInfo from "./components/group/GroupInfo.jsx";
 import GroupMemberList from "./components/groupMember/GroupMemberList.jsx";
 import BoardList from "./components/board/BoardList.jsx";
 import ListCardTest from "./components/List/ListCardTest.jsx";
-import BoardInfo from "./components/board/BoardInfo.jsx";
-import BoardEditForm from "./components/board/BoardEditForm.jsx";
 import CardList from "./components/card/CardList.jsx";
 import CardDetail from "./components/card/CardDetail.jsx";
 
