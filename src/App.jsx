@@ -19,7 +19,6 @@ import BoardInfo from "./components/board/BoardInfo.jsx";
 import BoardEditForm from "./components/board/BoardEditForm.jsx";
 import CardList from "./components/card/CardList.jsx";
 import CardDetail from "./components/card/CardDetail.jsx";
-import UpdateCard from "./components/card/CardEditFrom.jsx";
 
 const App = () => {
     return (
@@ -30,14 +29,13 @@ const App = () => {
                 <Route path="/register" element={<Register/>}/>
                 <Route path="/cards" element={<CardList/>}/>
                 <Route path="/cards/:id" element={<CardDetail/>}/>
-                <Route path="/cards/:id/edit" element={<UpdateCard/>}/>
                 <Route path="/dashboard/*" element={<Dashboard/>}>
                     <Route index element={<Navigate to="home" replace/>}/>
                     <Route path="home" element={<></>}/>
-                    <Route path="user" element={<UserDetail/>}/>
-                    <Route path="users/:userId" element={<UserDetail />} />
-                    <Route path="users/:userId/edit" element={<UserEditFrom />} />
-                    <Route path="users/:userId/change-password" element={<ChangePassword />} />
+                    {/*<Route path="user" element={<UserDetail/>}/>*/}
+                    <Route path="users/:userId" element={<UserDetail/>}/>
+                    <Route path="users/:userId/edit" element={<UserEditFrom/>}/>
+                    <Route path="users/:userId/change-password" element={<ChangePassword/>}/>
                     <Route path="group/:groupId" element={<Boards/>}/>
                     <Route path="test" element={<ListCardTest/>}/>
                     <Route path="group/:groupId/*" element={<GroupIndex/>}>
@@ -46,10 +44,11 @@ const App = () => {
                         <Route path="board" element={<BoardList/>}/>
                     </Route>
                     <Route path="board/:boardId" element={<BoardMain/>}/>
-                    <Route path="board/:boardId/*" element={<BoardMain/>}>
-                        <Route path="info" element={<BoardInfo/>}/>
-                        <Route path="edit" element={<BoardEditForm/>}/>
-                    </Route>
+                    {/*<Route path="board/:boardId/*">*/}
+                    {/*    <Route path="card" element={<BoardMain/>}/>*/}
+                    {/*    <Route path="info" element={<BoardInfo/>}/>*/}
+                    {/*    <Route path="edit" element={<BoardEditForm/>}/>*/}
+                    {/*</Route>*/}
                 </Route>
 
                 <Route path="*" element={<Navigate to="/dashboard/home" replace/>}/>

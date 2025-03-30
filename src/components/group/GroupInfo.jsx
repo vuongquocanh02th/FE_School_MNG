@@ -45,10 +45,10 @@ export default function GroupInfo() {
                     <strong>Tên nhóm: </strong>
                     <span>{info.name}</span>
                 </ListGroup.Item>
-                <ListGroup.Item>
-                    <strong>Loại: </strong>
-                    <span>{info.type}</span>
-                </ListGroup.Item>
+                {/*<ListGroup.Item>*/}
+                {/*    <strong>Loại: </strong>*/}
+                {/*    <span>{info.type}</span>*/}
+                {/*</ListGroup.Item>*/}
                 <ListGroup.Item>
                     <strong>Quyền truy cập: </strong>
                     <span>{reformatGroupAccess(info.access)}</span>

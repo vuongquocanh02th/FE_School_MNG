@@ -12,7 +12,7 @@ import {
     UPDATE_BOARD_SUCCESS,
     UPDATE_BOARD_FAIL,
     GET_BOARD_DETAIL,
-    GET_BOARD_DETAIL_SUCCESS,
+    GET_BOARD_DETAIL_SUCCESS, EDIT_BOARD_NAME,
 } from "../../redux/board/boardAction.js";
 import {toast} from "react-toastify";
 
@@ -30,7 +30,7 @@ function* createBoard(action) {
         const response = yield call(axiosInstance.post, "/api/boards", action.payload);
         yield put({ type: CREATE_BOARD_SUCCESS, payload: response });
     } catch (err) {
-        yield put({ type: CREATE_BOARD_FAIL, payload: err.message });
+        // yield put({ type: CREATE_BOARD_FAIL, payload: err.message });
         console.error(err);
     }
 }

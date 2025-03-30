@@ -15,7 +15,7 @@ export default function GroupForm() {
     const groupDataTemplate = {
         id: "",
         name: "",
-        type: "",
+        // type: "",
         access: "PUBLIC",
         description: "",
     };
@@ -31,7 +31,7 @@ export default function GroupForm() {
 
     const validationSchema = Yup.object({
         name: Yup.string().required("Tên nhóm không được để trống"),
-        type: Yup.string().required("Loại nhóm không được để trống"),
+        // type: Yup.string().required("Loại nhóm không được để trống"),
     });
 
     const handleSubmit = async (values) => {
@@ -62,17 +62,17 @@ export default function GroupForm() {
                         {touched.name && errors.name && <div className="invalid-feedback">{errors.name}</div>}
                     </Form.Group>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label column="">Loại</Form.Label>
-                        <Field
-                            name="type"
-                            type="text"
-                            className={`form-control ${touched.type && errors.type ? "is-invalid" : ""}`}
-                            onChange={handleChange}
-                            value={values.type}
-                        />
-                        {touched.type && errors.type && <div className="invalid-feedback">{errors.type}</div>}
-                    </Form.Group>
+                    {/*<Form.Group className="mb-3">*/}
+                    {/*    <Form.Label column="">Loại</Form.Label>*/}
+                    {/*    <Field*/}
+                    {/*        name="type"*/}
+                    {/*        type="text"*/}
+                    {/*        className={`form-control ${touched.type && errors.type ? "is-invalid" : ""}`}*/}
+                    {/*        onChange={handleChange}*/}
+                    {/*        value={values.type}*/}
+                    {/*    />*/}
+                    {/*    {touched.type && errors.type && <div className="invalid-feedback">{errors.type}</div>}*/}
+                    {/*</Form.Group>*/}
 
                     <Form.Group className="mb-3">
                         <Form.Label column="">Truy cập</Form.Label>

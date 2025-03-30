@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
 import anonymous from "../../assets/anonymous.png";
 import {
     Container,
@@ -12,23 +12,23 @@ import {
     Alert,
 } from "react-bootstrap";
 import {GET_USER_DETAIL, OPEN_FROM_EDIT_USER, RESET_USER_DETAIL} from "../../redux/user/UserAction.js";
-import { FaArrowLeft, FaEdit } from "react-icons/fa";
+import {FaArrowLeft, FaEdit} from "react-icons/fa";
 
 function UserDetail() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { detail, error } = useSelector((state) => state.user);
+    const {detail, error} = useSelector((state) => state.user);
     const [localError, setLocalError] = useState(null);
 
     useEffect(() => {
         const userId = localStorage.getItem("userId");
 
         if (userId) {
-            dispatch({ type: GET_USER_DETAIL, payload: userId });
+            dispatch({type: GET_USER_DETAIL, payload: userId});
         }
         return () => {
-            dispatch({ type: RESET_USER_DETAIL });
+            dispatch({type: RESET_USER_DETAIL});
         };
     }, [dispatch]);
 
@@ -72,7 +72,11 @@ function UserDetail() {
                             roundedCircle
                             width="180"
                             height="180"
-                            style={{ objectFit: "cover", border: "4px solid #0d6efd", boxShadow: "0 0 15px rgba(0,0,0,0.1)" }}
+                            style={{
+                                objectFit: "cover",
+                                border: "4px solid #0d6efd",
+                                boxShadow: "0 0 15px rgba(0,0,0,0.1)"
+                            }}
                             alt="Ảnh đại diện"
                         />
                         <h4 className="mt-3 text-primary fw-bold">{detail.username}</h4>
@@ -98,7 +102,7 @@ function UserDetail() {
                         onClick={openEditForm}
                         className="d-flex align-items-center gap-2"
                     >
-                        <FaEdit /> Chỉnh sửa
+                        <FaEdit/> Chỉnh sửa
                     </Button>
                     <Button
                         variant="outline-secondary"
