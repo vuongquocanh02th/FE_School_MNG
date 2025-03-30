@@ -6,6 +6,7 @@ import {useParams} from "react-router";
 import {ADD_CARD_REQUEST, MOVE_CARD_REQUEST} from "../../redux/card/cardAction.js";
 import {ListTitle} from "./ListTitle.jsx";
 import {ListAddForm} from "./ListAddForm.jsx";
+import {GET_BOARD_DETAIL} from "../../redux/board/boardAction.js";
 
 const listContainerStyle = {
     display: "flex",
@@ -49,6 +50,7 @@ export const List = () => {
     useEffect(() => {
         if (boardId) {
             dispatch(fetchLists(boardId));
+            dispatch({type: GET_BOARD_DETAIL, payload: boardId});
         }
     }, [dispatch, boardId]);
 
@@ -165,7 +167,6 @@ export const List = () => {
                                 placeholder="Nhập tên thẻ..."
                                 onChange={(e) => setNewCardTitle(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleAddCard(list)}
-                                onBlur={closeAddCard}
                                 style={{fontSize: "14px", padding: "8px", borderRadius: "5px"}}
                             />
                             <div style={{display: "flex", justifyContent: "space-between", marginTop: "5px"}}>

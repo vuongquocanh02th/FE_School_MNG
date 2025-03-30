@@ -18,7 +18,7 @@ const BoardForm = ({ open, onClose, onBoardCreated, groupId }) => {
             onClose();
             dispatch({ type: RESET_CREATE_BOARD_STATUS }); // reset sau khi tạo thành công
         }
-    }, [createSuccess]);
+    }, [createSuccess, dispatch, onBoardCreated, onClose]);
 
     useEffect(() => {
         if (createError) {
@@ -56,7 +56,7 @@ const BoardForm = ({ open, onClose, onBoardCreated, groupId }) => {
         >
             {({ values, errors, touched, handleChange, handleSubmit, handleBlur, isSubmitting, resetForm }) => (
                 <Modal show={open} onHide={onClose} centered onExited={resetForm}>
-                <Modal.Header closeButton>
+                    <Modal.Header closeButton>
                         <Modal.Title>Tạo Bảng Mới</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
