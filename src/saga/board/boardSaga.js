@@ -6,7 +6,13 @@ import {
     CREATE_BOARD,
     CREATE_BOARD_SUCCESS,
     CREATE_BOARD_FAIL,
-    GET_ALL_BOARDS, SET_ALL_BOARDS, GET_BOARD_DETAIL, GET_BOARD_DETAIL_SUCCESS, EDIT_BOARD_NAME,
+    GET_ALL_BOARDS,
+    SET_ALL_BOARDS,
+    UPDATE_BOARD,
+    UPDATE_BOARD_SUCCESS,
+    UPDATE_BOARD_FAIL,
+    GET_BOARD_DETAIL,
+    GET_BOARD_DETAIL_SUCCESS,
 } from "../../redux/board/boardAction.js";
 import {toast} from "react-toastify";
 
@@ -29,6 +35,19 @@ function* createBoard(action) {
     }
 }
 
+function* updateBoard(action) {
+    try {
+        const response = yield call(
+            axiosInstance.put,
+            `/api/boards/${action.payload.id}`,
+            action.payload
+        );
+        yield put({ type: UPDATE_BOARD_SUCCESS, payload: response });
+    } catch (err) {
+        yield put({ type: UPDATE_BOARD_FAIL, payload: err.message });
+        console.error("Lỗi khi cập nhật bảng:", err);
+    }
+}
 
 function* fetchAllBoards() {
     try {
@@ -64,7 +83,9 @@ function* editBoardName(action) {
 
 export default function* boardSaga() {
     yield takeLatest(GET_BOARD_LIST, getBoardList);
+    yield takeLatest(GET_ALL_BOARDS, fetchAllBoards);
     yield takeLatest(CREATE_BOARD, createBoard);
+    yield takeLatest(UPDATE_BOARD, updateBoard);
     yield takeLatest(GET_ALL_BOARDS, fetchAllBoards);
     yield takeLatest(GET_BOARD_DETAIL, getBoardDetails);
     yield takeLatest(EDIT_BOARD_NAME, editBoardName)

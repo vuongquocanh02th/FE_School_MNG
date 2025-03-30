@@ -3,8 +3,9 @@ import groupSaga from "./group/groupSaga.js";
 import boardSaga from "./board/boardSaga.js";
 import authSaga from "./auth/authSaga.js";
 import {listSaga} from "./list/listSaga.js";
-import cardSaga from "./card/cardSaga.js";
 import groupMemberSaga from "./member/groupMemberSaga.js";
+import userSaga from "./user/userSaga.js";
+import cardSaga from "./card/cardSaga.js";
 
 export default function* rootSaga() {
     yield all([
@@ -13,6 +14,7 @@ export default function* rootSaga() {
         authSaga(),
         groupMemberSaga(),
         listSaga(),
-        cardSaga(),
+        userSaga(),
+        cardSaga()
     ])
 }

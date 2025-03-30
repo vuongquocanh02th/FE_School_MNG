@@ -33,7 +33,7 @@ function* register(action) {
 function* getUserInfo() {
     try {
         const data = yield call (axiosInstance.get, "/auth/info");
-        toast.success("Đăng nhập thành công");
+        // toast.success("Đăng nhập thành công");
         yield put({type: LOGIN_SUCCESS, payload: data});
     } catch (err) {
         yield put({type: LOGIN_ERROR, payload: err})

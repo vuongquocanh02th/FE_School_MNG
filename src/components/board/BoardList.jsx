@@ -44,7 +44,7 @@ const BoardsList = () => {
             <h5 className="mb-3 fw-bold text-dark d-flex align-items-center">
                 Danh sách bảng
                 <PlusCircle size={24} className="ms-2 text-primary" style={{cursor: "pointer"}}
-                    onClick={() => {setOpenBoardForm(true);}}/>
+                            onClick={() => {setOpenBoardForm(true);}}/>
             </h5>
 
             <Row className="g-3">

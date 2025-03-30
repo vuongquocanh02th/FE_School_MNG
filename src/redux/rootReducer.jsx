@@ -6,6 +6,7 @@ import {dashboardReducer} from "./dashboard/dashboardReducer.js";
 import {memberGroupReducer} from "./member/memberGroupReducer.js";
 import {listReducer} from "./list/listReducer.js";
 import {cardReducer} from "./card/cardReducer.js";
+import {userReducer} from "./user/userReducer.js";
 
 const rootReducer = combineReducers({
     group: groupReducer,
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
     dashboard: dashboardReducer,
     membersGroup: memberGroupReducer,
     list: listReducer,
-    card: cardReducer
+    card: cardReducer,
+    user: userReducer,
 });
 
 export default rootReducer;

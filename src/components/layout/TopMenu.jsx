@@ -2,7 +2,7 @@ import React from "react";
 import {Container, Navbar, Button, Dropdown, Image} from "react-bootstrap";
 import {FaBars, FaBell} from "react-icons/fa";
 import {useNavigate} from "react-router-dom";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../../resources/axiosConfig.js";
 import {LOGOUT} from "../../redux/auth/authAction.js";
 import {TOGGLE_DRAWER} from "../../redux/dashboard/dashboardAction.js";
@@ -19,12 +19,24 @@ const TopMenu = () => {
         navigate("/login");
     };
 
+    const user = useSelector((state) => state.auth.user);
+    const userId = user.id || localStorage.getItem("id");
+
+
+    const handleProfileClick = () => {
+            navigate(`/dashboard/users/${userId}`);
+    };
+
     const toHome = () => {
         navigate("/dashboard/home");
     }
 
     const toggleDrawer = () => {
         dispatch({type: TOGGLE_DRAWER});
+    }
+
+    function handlePasswordClick() {
+            navigate(`/dashboard/users/${userId}/change-password`);
     }
 
     return (
@@ -67,7 +79,8 @@ const TopMenu = () => {
                         <Dropdown.Menu>
                             <Dropdown.Item disabled>{username}</Dropdown.Item>
                             <Dropdown.Divider/>
-                            <Dropdown.Item>Profile</Dropdown.Item>
+                            <Dropdown.Item onClick={handleProfileClick}>Profile</Dropdown.Item>
+                            <Dropdown.Item onClick={handlePasswordClick}>Change password</Dropdown.Item>
                             <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>

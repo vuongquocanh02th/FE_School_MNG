@@ -5,8 +5,7 @@ import {toast} from 'react-toastify';
 import {
     GET_GROUP_MEMBER_LIST,
     ADD_GROUP_MEMBER,
-    REMOVE_GROUP_MEMBER,
-    UPDATE_GROUP_MEMBER_ROLE, RESET_GROUP_MEMBER
+    RESET_GROUP_MEMBER
 } from "../../redux/member/memberAction.js";
 import {GET_GROUP_INFO, GET_GROUP_LIST} from "../../redux/group/groupAction.js";
 import {Container, Button, Form, Card, Table, Image, Alert, Row, Col} from "react-bootstrap";
@@ -90,79 +89,100 @@ function GroupMemberList() {
 
     return (
         <Container className="mt-4">
-            <div className="mb-3">
+            <div className="mb-4" style={{width: "500px"}}>
                 {!showForm ? (
-                    <Button variant="outline-primary" className="me-3" onClick={() => setShowForm(true)}>
-                        <Users size={20} className="me-1"/> Thêm thành viên
+                    <Button
+                        variant="outline-primary"
+                        className="d-flex align-items-center gap-2 px-3 py-2 shadow-sm rounded-3"
+                        onClick={() => {
+                            setShowForm(true);
+                            setLocalMessage("");
+                        }}
+                    >
+                        <Users size={20}/> Thêm thành viên
                     </Button>
                 ) : (
-                    <Card className="p-3 mt-3">
-                        <Form.Group className="mb-2">
+                    <Card className="p-4 mt-3 shadow rounded-4">
+                        <Form.Group className="mb-3 position-relative">
                             <Form.Control
                                 type="email"
                                 placeholder="Nhập email thành viên..."
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                className="ps-5 py-2 rounded-3 shadow-sm border-secondary-subtle"
+                            />
+                            <Users
+                                size={18}
+                                className="position-absolute top-50 start-0 ms-3 translate-middle-y text-secondary"
                             />
                         </Form.Group>
                         {localMessage && (
-                            <Alert variant="danger">{localMessage}</Alert>
+                            <Alert variant="danger" className="py-2 px-3 rounded-3">
+                                {localMessage}
+                            </Alert>
                         )}
-                        <Row>
-                            <Col>
-                                <Button
-                                    variant="success"
-                                    onClick={handleAddMember}
-                                    className="me-2"
-                                >
-                                    Thêm
-                                </Button>
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => setShowForm(false)}
-                                >
-                                    Hủy
-                                </Button>
-                            </Col>
-                        </Row>
+                        <div className="d-flex justify-content-end gap-2">
+                            <Button
+                                variant="primary"
+                                onClick={handleAddMember}
+                                className="px-4 rounded-3"
+                            >
+                                Thêm
+                            </Button>
+                            <Button
+                                variant="outline-secondary"
+                                onClick={() => {
+                                    setShowForm(false);
+                                    setEmail("");
+                                    setLocalMessage("");
+                                }}
+                                className="px-4 rounded-3"
+                            >
+                                Hủy
+                            </Button>
+                        </div>
                     </Card>
                 )}
             </div>
 
             <Table style={{width: "500px"}}>
                 <tbody>
-                    {sortedMembers[0] && sortedMembers.map((member) => (
-                        <React.Fragment key={member.id}>
-                            <tr>
-                                <td rowSpan={2} style={{width: "80px", height: "80px"}}>
-                                    <div className="d-flex align-items-center justify-content-center"
-                                         style={{width: "100%", height: "100%"}}>
-                                        <Image
-                                            src={member.imagePath || anonymous}
-                                            roundedCircle
-                                            width="40"
-                                            height="40"
-                                        />
-                                    </div>
-                                </td>
-                                <td style={{fontSize: "16px"}}>
-                                    {member.username}
-                                    <span style={{color: "darkgray", fontSize: "12px"}}>
+                {sortedMembers[0] && sortedMembers.map((member) => (
+                    <React.Fragment key={member.id}>
+                        <tr>
+                            <td rowSpan={2} style={{width: "80px", height: "80px"}}>
+                                <div className="d-flex align-items-center justify-content-center"
+                                     style={{width: "100%", height: "100%"}}>
+                                    <Image
+                                        src={
+                                            member?.imagePath
+                                                ? `http://localhost:8080${member.imagePath}`
+                                                : anonymous
+                                        }
+                                        roundedCircle
+                                        width="40"
+                                        height="40"
+                                    />
+                                </div>
+                            </td>
+                            <td style={{fontSize: "16px"}}>
+                                {member.username}
+                                <span style={{color: "darkgray", fontSize: "12px"}}>
                                         {member.isUser && " (You)"}
                                     </span>
-                                </td>
-                                <td rowSpan={2} className="p-4" style={{width: "70px"}}>
-                                    <GroupMemberMenu type={optionsType(member)} member={member} groupId={groupId}/>
-                                </td>
-                            </tr>
-                            <tr>
+                            </td>
+                            <td rowSpan={2} className="p-4" style={{width: "70px"}}>
+                                <GroupMemberMenu type={optionsType(member)} member={member} groupId={groupId}/>
+                            </td>
+                        </tr>
+                        <tr>
 
-                                <td style={{color: "darkgray", fontSize: "14px"}}>
-                                    {reformatMemberType(member.memberType)}
-                                </td>
-                            </tr>
-                        </React.Fragment>
-                    ))}
+                            <td style={{color: "darkgray", fontSize: "14px"}}>
+                                {reformatMemberType(member.memberType)}
+                            </td>
+                        </tr>
+                    </React.Fragment>
+                ))}
                 </tbody>
             </Table>
         </Container>

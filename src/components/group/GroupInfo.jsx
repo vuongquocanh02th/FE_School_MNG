@@ -74,6 +74,9 @@ export default function GroupInfo() {
                 <Col xs="auto">
                     <Button variant="danger" onClick={handleDelete}>Xóa</Button>
                 </Col>
+                <Col xs="auto">
+                    <Button variant="secondary" onClick={handleReturn}>Quay lại</Button>
+                </Col>
             </Row>
 
 
