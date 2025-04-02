@@ -4,7 +4,7 @@ import {
     FETCH_LISTS_SUCCESS,
     ADD_LIST_REQUEST,
     UPDATE_LIST_REQUEST,
-    MOVE_LIST,
+    MOVE_LIST, DELETE_LIST,
 } from "../../redux/list/listAction.js";
 import axiosInstance from "../../resources/axiosConfig.js";
 
@@ -47,9 +47,19 @@ function* moveListSaga(action) {
     }
 }
 
+function* deleteList(action) {
+    try {
+        yield call(axiosInstance.delete, `/api/lists/${action.payload.list_id}`);
+        yield put({type: FETCH_LISTS_REQUEST, payload: action.payload.board_id});
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export function* listSaga() {
     yield takeLatest(FETCH_LISTS_REQUEST, fetchListsSaga);
     yield takeLatest(ADD_LIST_REQUEST, addListSaga);
     yield takeLatest(UPDATE_LIST_REQUEST, updateListSaga);
     yield takeLatest(MOVE_LIST, moveListSaga);
+    yield takeLatest(DELETE_LIST, deleteList)
 }

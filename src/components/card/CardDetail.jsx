@@ -1,52 +1,45 @@
-import React, { useEffect, useState } from "react";
-import { Container, Row, Col, ListGroup, Button, Form } from 'react-bootstrap';
-import { useDispatch, useSelector } from "react-redux";
-import { GET_CARD_DETAIL, CLEAR_CARD_DETAIL, UPDATE_CARD_DETAIL } from "../../redux/card/cardAction.js";
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router";
+import React, {useEffect, useState} from "react";
+import {Modal, Button, ListGroup, Form} from "react-bootstrap";
+import {useDispatch, useSelector} from "react-redux";
+import {GET_CARD_DETAIL, CLEAR_CARD_DETAIL, UPDATE_CARD_DETAIL} from "../../redux/card/cardAction.js";
 
-export default function CardDetail() {
+export default function CardDetailModal({show, handleClose, cardId, boardId}) {
     const dispatch = useDispatch();
-    const { cardId = 1 } = useParams();
-    const navigate = useNavigate();
-    const detail = useSelector((state) => state.card.detail);
-    const loading = useSelector((state) => state.card.loading);
-    const error = useSelector((state) => state.card.error);
+    const {detail} = useSelector((state) => state.card);
 
-    // State lưu nội dung và mục đang chỉnh sửa
     const [formData, setFormData] = useState({});
-    const [editField, setEditField] = useState(null); // Chỉ lưu mục đang chỉnh sửa
+    const [editField, setEditField] = useState(null);
 
     useEffect(() => {
         if (cardId) {
-            dispatch({ type: GET_CARD_DETAIL, payload: cardId });
+            dispatch({type: GET_CARD_DETAIL, payload: cardId});
         }
         return () => {
-            dispatch({ type: CLEAR_CARD_DETAIL });
+            dispatch({type: CLEAR_CARD_DETAIL});
         };
     }, [dispatch, cardId]);
 
     useEffect(() => {
         if (detail) {
             setFormData({
-                title: detail.title,
-                description: detail.description,
-                due_date: detail.due_date,
-                priority: detail.priority,
+                title: detail.title || "",
+                description: detail.description || "",
+                due_date: detail.due_date || ""
             });
         }
     }, [detail]);
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({...formData, [e.target.name]: e.target.value});
     };
 
     const handleSave = (field) => {
-        dispatch({ type: UPDATE_CARD_DETAIL, payload: { cardId, data: { [field]: formData[field] } } });
+        dispatch({type: UPDATE_CARD_DETAIL, payload: {boardId, cardId, data: {...detail,[field]: formData[field]}}});
         setEditField(null);
     };
 
     const handleBlur = (field) => handleSave(field);
+
     const handleKeyPress = (e, field) => {
         if (e.key === "Enter") handleSave(field);
     };
@@ -65,29 +58,33 @@ export default function CardDetail() {
                     autoFocus
                 />
             ) : (
-                <span onClick={() => setEditField(field)}>{formData[field] || "Chưa có"}</span>
+                <span
+                    onClick={() => setEditField(field)}
+                    style={{cursor: "pointer"}}
+                >
+          {formData[field] || "Chưa có"}
+        </span>
             )}
         </ListGroup.Item>
     );
 
-    if (loading) return <p className="text-center p-4">Đang tải...</p>;
-    if (error) return <p className="text-red-500 p-4">Lỗi: {error}</p>;
-    if (!detail) return <p className="text-center p-4">Không tìm thấy card</p>;
-
     return (
-        <Container className="my-2">
-            <ListGroup variant="flush">
-                {renderField("title", "Tiêu đề")}
-                {renderField("description", "Mô tả")}
-                {renderField("due_date", "Ngày hết hạn", "date")}
-                {renderField("priority", "Độ ưu tiên")}
-            </ListGroup>
-
-            <Row className="mt-4">
-                <Col xs="auto">
-                    <Button variant="secondary" onClick={() => navigate("/dashboard")}>Quay lại</Button>
-                </Col>
-            </Row>
-        </Container>
+        <Modal show={show} onHide={handleClose} size="lg" centered>
+            <Modal.Header closeButton>
+                <Modal.Title>Thông tin chi tiết</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <ListGroup variant="flush">
+                    {renderField("title", "Tiêu đề")}
+                    {renderField("description", "Mô tả")}
+                    {renderField("due_date", "Ngày hết hạn", "date")}
+                </ListGroup>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                    Đóng
+                </Button>
+            </Modal.Footer>
+        </Modal>
     );
 }

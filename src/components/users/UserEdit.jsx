@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useParams, useNavigate} from "react-router-dom";
 import anonymous from "../../assets/anonymous.png";
-import { Form, Button, Container, Card, Alert, Image, Spinner } from "react-bootstrap";
+import {Form, Button, Container, Card, Alert, Image, Spinner} from "react-bootstrap";
 import {
     GET_USER_DETAIL,
     RESET_USER_DETAIL,
@@ -11,11 +11,11 @@ import {
 import {toast} from "react-toastify";
 
 const UserEdit = () => {
-    const { userId } = useParams();
+    const {userId} = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { detail, updateSuccess, updateError, loading } = useSelector((state) => state.user);
+    const {detail, updateSuccess, updateError, loading} = useSelector((state) => state.user);
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -27,10 +27,10 @@ const UserEdit = () => {
 
     useEffect(() => {
         if (userId) {
-            dispatch({ type: GET_USER_DETAIL, payload: userId });
+            dispatch({type: GET_USER_DETAIL, payload: userId});
         }
         return () => {
-            dispatch({ type: RESET_USER_DETAIL });
+            dispatch({type: RESET_USER_DETAIL});
         };
     }, [dispatch, userId]);
 
@@ -40,10 +40,9 @@ const UserEdit = () => {
                 username: detail.username || "",
                 email: detail.email || "",
                 fullname: detail.fullname || "",
-                description: detail.description || "",
-                avatar: null,
+                description: detail.description || ""
             });
-            setPreviewImage(detail.imagePath ? `http://localhost:8080${detail.imagePath}` : null);
+            setPreviewImage(detail.imagePath ? `http://localhost:8080/images/${detail.imagePath}` : anonymous);
         }
     }, [detail]);
 
@@ -91,22 +90,15 @@ const UserEdit = () => {
 
                 {updateError && <Alert variant="danger">{updateError}</Alert>}
 
-                    <div className="mb-4 text-center">
-                        <Image
-                            src={
-                                previewImage ||
-                                (detail?.avatar
-                                    ? `http://localhost:8080${detail.avatar}`
-                                    : anonymous
-                                )
-                            }
-                            alt="Avatar Preview"
-                            roundedCircle
-                            style={{ width: "150px", height: "150px", objectFit: "cover" }}
-                        />
+                <div className="mb-4 text-center">
+                    <Image src={previewImage}
+                        alt="Avatar Preview"
+                        roundedCircle
+                        style={{width: "150px", height: "150px", objectFit: "cover"}}
+                    />
 
-                        <div className="text-muted mt-2">Ảnh đại diện</div>
-                    </div>
+                    <div className="text-muted mt-2">Ảnh đại diện</div>
+                </div>
 
                 <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3">
@@ -165,7 +157,7 @@ const UserEdit = () => {
                         <Button variant="primary" type="submit" disabled={loading}>
                             {loading ? (
                                 <>
-                                    <Spinner animation="border" size="sm" className="me-2" /> Đang cập nhật...
+                                    <Spinner animation="border" size="sm" className="me-2"/> Đang cập nhật...
                                 </>
                             ) : (
                                 "Cập nhật"

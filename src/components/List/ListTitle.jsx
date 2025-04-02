@@ -3,6 +3,7 @@ import {MoreVertical} from "react-feather";
 import React, {useState} from "react";
 import {UPDATE_LIST_REQUEST} from "../../redux/list/listAction.js";
 import {useDispatch} from "react-redux";
+import {ListMenu} from "./ListMenu.jsx";
 
 const listTitleStyle = {
     alignContent: "center",
@@ -55,9 +56,10 @@ export const ListTitle = ({list}) => {
                     {list.name}
                 </h5>
             }
-            <Button variant="link" style={{padding: 0}}>
-                <MoreVertical size={24}/>
-            </Button>
+            <ListMenu listId={list.id}/>
+            {/*<Button variant="link" style={{padding: 0}}>*/}
+            {/*    <MoreVertical size={24}/>*/}
+            {/*</Button>*/}
         </div>
     )
 }

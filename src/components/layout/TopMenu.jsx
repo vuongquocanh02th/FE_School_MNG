@@ -6,11 +6,10 @@ import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../../resources/axiosConfig.js";
 import {LOGOUT} from "../../redux/auth/authAction.js";
 import {TOGGLE_DRAWER} from "../../redux/dashboard/dashboardAction.js";
+import anonymous from "../../assets/anonymous.png";
 
 const TopMenu = () => {
     const navigate = useNavigate();
-    const username = localStorage.getItem("username") || "Guest";
-    const avatarUrl = localStorage.getItem("avatar");
     const dispatch = useDispatch();
 
     const handleLogout = () => {
@@ -24,7 +23,7 @@ const TopMenu = () => {
 
 
     const handleProfileClick = () => {
-            navigate(`/dashboard/users/${userId}`);
+        navigate(`/dashboard/users/${userId}`);
     };
 
     const toHome = () => {
@@ -36,7 +35,7 @@ const TopMenu = () => {
     }
 
     function handlePasswordClick() {
-            navigate(`/dashboard/users/${userId}/change-password`);
+        navigate(`/dashboard/users/${userId}/change-password`);
     }
 
     return (
@@ -66,22 +65,20 @@ const TopMenu = () => {
 
                     <Dropdown align="end" className="ms-3">
                         <Dropdown.Toggle variant="outline-light" className="d-flex align-items-center">
-                            {avatarUrl ? (
-                                <Image src={avatarUrl} roundedCircle width="30" height="30" alt="Avatar"/>
-                            ) : (
-                                <div className="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white fw-bold text-uppercase"
-                                    style={{ width: "25px", height: "25px" }}
-                                >
-                                    {username.charAt(0)}
-                                </div>
-                            )}
+                            <Image src={user.imagePath
+                                ? `http://localhost:8080/images/${user.imagePath}`
+                                : anonymous} roundedCircle width="30" height="30" alt="Avatar"/>
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
-                            <Dropdown.Item disabled>{username}</Dropdown.Item>
+                            <Dropdown.Item disabled>{user.username ? user.username : "guest"}</Dropdown.Item>
                             <Dropdown.Divider/>
-                            <Dropdown.Item onClick={handleProfileClick}>Profile</Dropdown.Item>
-                            <Dropdown.Item onClick={handlePasswordClick}>Change password</Dropdown.Item>
-                            <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                            {user.username &&
+                                (<>
+                                    <Dropdown.Item onClick={handleProfileClick}>Profile</Dropdown.Item>
+                                    <Dropdown.Item onClick={handlePasswordClick}>Change password</Dropdown.Item>
+                                </>)
+                            }
+                            <Dropdown.Item onClick={handleLogout}>{user.username ? "Logout" : "Login"}</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
                 </Navbar>

@@ -54,6 +54,7 @@ export default function Register() {
 
     useEffect(() => {
         if (success) {
+            dispatch({type: AUTH_RESET});
             navigate("/login");
         }
         if (error) {

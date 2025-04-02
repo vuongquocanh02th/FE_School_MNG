@@ -10,6 +10,8 @@ export const UPDATE_LIST_REQUEST = "UPDATE_LIST_REQUEST";
 export const UPDATE_LIST_SUCCESS = "UPDATE_LIST_SUCCESS";
 export const UPDATE_LIST_FAILURE = "UPDATE_LIST_FAILURE";
 
+export const DELETE_LIST = "DELETE_LIST";
+
 export const MOVE_LIST = "MOVE_LIST";
 
 export const fetchLists = (boardId) => ({

@@ -66,7 +66,7 @@ function UserDetail() {
                         <Image
                             src={
                                 detail.imagePath
-                                    ? `http://localhost:8080${detail.imagePath}`
+                                    ? `http://localhost:8080/images/${detail.imagePath}`
                                     : anonymous
                             }
                             roundedCircle

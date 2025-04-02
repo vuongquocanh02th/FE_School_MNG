@@ -156,7 +156,7 @@ function GroupMemberList() {
                                     <Image
                                         src={
                                             member?.imagePath
-                                                ? `http://localhost:8080${member.imagePath}`
+                                                ? `http://localhost:8080/images/${member.imagePath}`
                                                 : anonymous
                                         }
                                         roundedCircle

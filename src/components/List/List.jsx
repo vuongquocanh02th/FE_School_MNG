@@ -7,6 +7,7 @@ import {ADD_CARD_REQUEST, MOVE_CARD_REQUEST} from "../../redux/card/cardAction.j
 import {ListTitle} from "./ListTitle.jsx";
 import {ListAddForm} from "./ListAddForm.jsx";
 import {GET_BOARD_DETAIL} from "../../redux/board/boardAction.js";
+import CardDetailModal from "../card/CardDetail.jsx";
 
 const listContainerStyle = {
     display: "flex",
@@ -34,7 +35,8 @@ const cardStyle = {
     marginBottom: "5px",
     backgroundColor: "#ffffff",
     borderRadius: "5px",
-    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)"
+    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
+    cursor: "pointer"
 }
 
 export const List = () => {
@@ -46,6 +48,7 @@ export const List = () => {
     const [newCardTitle, setNewCardTitle] = useState("");
     let currentList = useState(null);
     let currentCard = useState(null);
+    const [chosenCard, setChosenCard] = useState(null);
 
     useEffect(() => {
         if (boardId) {
@@ -76,6 +79,14 @@ export const List = () => {
         setNewCardTitle("");
         setAddingCardToList(null);
     };
+
+    const handleCardClick = (cardId) => () => {
+        setChosenCard(cardId);
+    }
+
+    const handleCardDetailsClose = () => {
+        setChosenCard(null);
+    }
 
     const handleCardDragStart = (card) => (e) => {
         e.stopPropagation();
@@ -148,7 +159,7 @@ export const List = () => {
                         {list.cards && list.cards.length > 0 ? (
                             list.cards.map((card, index) => (
                                 <div key={card.id} className="card" style={cardStyle} draggable
-                                     onDragStart={handleCardDragStart(card)}
+                                     onClick={handleCardClick(card.id)} onDragStart={handleCardDragStart(card)}
                                      onDragOver={handleCardDragOver} onDrop={handleCardDrop(card, list, index)}>
                                     {card.title}
                                 </div>
@@ -198,6 +209,8 @@ export const List = () => {
             ))}
 
             <ListAddForm listLength={lists.length} boardId={boardId}/>
+
+            <CardDetailModal show={chosenCard !== null} handleClose={handleCardDetailsClose} cardId={chosenCard} boardId={boardId}/>
         </div>
     );
 };
