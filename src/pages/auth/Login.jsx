@@ -1,100 +1,76 @@
-import {useFormik} from "formik";
-import {saveUserInfo} from "../../resources/axiosConfig.js";
-import {toast} from "react-toastify";
-import {useNavigate} from "react-router-dom";
-import {Button, Card, Container, Form} from "react-bootstrap";
-import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {AUTH_RESET, LOGIN} from "../../redux/auth/authAction.js";
-import {Eye, EyeOff} from 'lucide-react'; // Thêm icon từ lucide-react (nếu bạn đã cài)
+import React, { useState } from 'react';
+import {
+    Box, Button, TextField, Typography, Paper, Grid, Alert, CircularProgress
+} from '@mui/material';
+import SchoolIcon from '@mui/icons-material/School';
 
-function Login() {
-    const formDataTemplate = {
-        username: '', password: ''
+const Login = () => {
+    const [form, setForm] = useState({ username: '', password: '' });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const success = useSelector(state => state.auth.user);
-    const error = useSelector(state => state.auth.error);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
 
-    const handleSubmit = (data) => {
-        dispatch({type: LOGIN, payload: data});
+        try {
+            // TODO: dispatch saga login action here
+            console.log('Logging in with', form);
+        } catch (err) {
+            setError('Đăng nhập thất bại.');
+        } finally {
+            setLoading(false);
+        }
     };
-
-    const formik = useFormik({
-        initialValues: formDataTemplate,
-        enableReinitialize: true,
-        onSubmit: handleSubmit,
-    })
-
-    const switchForm = () => {
-        navigate("/register");
-    }
-
-    useEffect(() => {
-        if (success && success.name) {
-            saveUserInfo(success);
-            localStorage.setItem("userId", success.id);
-            localStorage.setItem("userName", success.name);
-            localStorage.setItem("userEmail", success.email);
-            toast.success("Đăng nhập thành công");
-            navigate("/dashboard/home");
-        }
-        if (error) {
-            toast.error(error);
-            formik.setSubmitting(false);
-            dispatch({type: AUTH_RESET});
-        }
-    }, [success, error, navigate, formik, dispatch]);
 
     return (
-        <Container fluid className="d-flex align-items-center justify-content-center vh-100 w-100 bg-primary"
-                   style={{backgroundColor: '#0077be'}}>
-            <Card className="p-4 shadow-lg" style={{width: '100%', maxWidth: '400px'}}>
-                <h3 className="text-center mb-4">Đăng nhập</h3>
-                <Form onSubmit={formik.handleSubmit}>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Tên tài khoản</Form.Label>
-                        <Form.Control type="text" id="username" placeholder="name" name="username"
-                                      value={formik.values.username} onChange={formik.handleChange}
-                                      onBlur={formik.handleBlur}
+        <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
+            <Grid item xs={10} sm={6} md={4}>
+                <Paper elevation={6} sx={{ p: 4, borderRadius: 3 }}>
+                    <Box textAlign="center" mb={3}>
+                        <SchoolIcon sx={{ fontSize: 50, color: '#1976d2' }} />
+                        <Typography variant="h5" fontWeight={600}>Đăng Nhập</Typography>
+                    </Box>
+                    <form onSubmit={handleSubmit}>
+                        <TextField
+                            fullWidth
+                            margin="normal"
+                            label="Tên đăng nhập"
+                            name="username"
+                            value={form.username}
+                            onChange={handleChange}
+                            required
                         />
-                    </Form.Group>
-                    <Form.Group className="mb-3 position-relative">
-                        <Form.Label>Mật khẩu</Form.Label>
-                        <Form.Control
-                            type={showPassword ? "text" : "password"}
-                            id="password"
-                            placeholder="password"
+                        <TextField
+                            fullWidth
+                            margin="normal"
+                            label="Mật khẩu"
+                            type="password"
                             name="password"
-                            value={formik.values.password}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
+                            value={form.password}
+                            onChange={handleChange}
+                            required
                         />
-                        <div
-                            onClick={() => setShowPassword(!showPassword)}
-                            style={{
-                                position: 'absolute',
-                                top: '38px',
-                                right: '10px',
-                                cursor: 'pointer'
-                            }}
+                        {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, py: 1.5 }}
+                            disabled={loading}
                         >
-                            {showPassword ? <EyeOff size={20}/> : <Eye size={20}/>}
-                        </div>
-                    </Form.Group>
-                    <Button type="submit" className="btn btn-primary w-100">Đăng nhập</Button>
-                    <p className="mt-3 text-center">Chưa có tài khoản?
-                        <a className="" style={{cursor: "pointer"}} onClick={switchForm}>
-                            &nbsp;Đăng ký
-                        </a>
-                    </p>
-                </Form>
-            </Card>
-        </Container>
-    )
-}
+                            {loading ? <CircularProgress size={24} /> : 'Đăng Nhập'}
+                        </Button>
+                    </form>
+                </Paper>
+            </Grid>
+        </Grid>
+    );
+};
 
 export default Login;
