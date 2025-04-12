@@ -33,12 +33,3 @@ axiosInstance.interceptors.response.use(
 
 export default axiosInstance;
 
-export function saveUserInfo(data) {
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("username", data.username);
-}
-
-export function logout() {
-    localStorage.setItem("token", null);
-    localStorage.setItem("username", null);
-}

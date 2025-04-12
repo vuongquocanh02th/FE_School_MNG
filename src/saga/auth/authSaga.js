@@ -1,47 +1,32 @@
+import {loginFailure, loginSuccess, registerFailure, registerSuccess} from "../../redux/auth/authAction.js";
 import axiosInstance from "../../resources/axiosConfig.js";
-import {call, put, takeLatest} from "redux-saga/effects";
-import {
-    GET_USER_INFO,
-    LOGIN,
-    LOGIN_ERROR,
-    LOGIN_SUCCESS,
-    REGISTER,
-    REGISTER_ERROR,
-    REGISTER_SUCCESS
-} from "../../redux/auth/authAction.js";
-import {toast} from "react-toastify";
+import { call, put, takeLatest } from "redux-saga/effects";
 
-function* login(action) {
+function* loginWorker(action) {
     try {
-        const data = yield call (axiosInstance.post, "/auth/login", action.payload);
-        yield put({type: LOGIN_SUCCESS, payload: data})
+        const response = yield call(() =>
+            axiosInstance.post("api/auth/login", action.payload)
+        );
+        const token = response.data;
+        localStorage.setItem("token", token);
+        yield put(loginSuccess(token));
+        window.location.href = "/home"; // chuyển đến Home.jsx
     } catch (err) {
-        yield put({type: LOGIN_ERROR, payload: err})
+        yield put(loginFailure("Sai tên đăng nhập hoặc mật khẩu"));
     }
 }
 
-function* register(action) {
+function* registerWorker(action) {
     try {
-        const data = yield call (axiosInstance.post, "/auth/register", action.payload);
-        toast.success("Đăng ký thành công");
-        yield put({type: REGISTER_SUCCESS, payload: data})
+        yield call(() => axiosInstance.post("api/auth/register", action.payload));
+        yield put(registerSuccess());
+        window.location.href = "/login"; // chuyển sang login khi đăng ký xong
     } catch (err) {
-        yield put({type: REGISTER_ERROR, payload: err})
-    }
-}
-
-function* getUserInfo() {
-    try {
-        const data = yield call (axiosInstance.get, "/auth/info");
-        // toast.success("Đăng nhập thành công");
-        yield put({type: LOGIN_SUCCESS, payload: data});
-    } catch (err) {
-        yield put({type: LOGIN_ERROR, payload: err})
+        yield put(registerFailure("Đăng ký thất bại. Kiểm tra lại thông tin."));
     }
 }
 
 export default function* authSaga() {
-    yield takeLatest(LOGIN, login);
-    yield takeLatest(REGISTER, register);
-    yield takeLatest(GET_USER_INFO, getUserInfo);
+    yield takeLatest("LOGIN_REQUEST", loginWorker);
+    yield takeLatest("REGISTER_REQUEST", registerWorker);
 }
