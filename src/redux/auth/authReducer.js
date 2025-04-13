@@ -1,5 +1,9 @@
+const token = localStorage.getItem("token");
+const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
 const initialState = {
-    token: null,
+    token: token || null,
+    userInfo: userInfo || null,
     loading: false,
     error: null,
     registered: false,
@@ -12,7 +16,12 @@ export const authReducer = (state = initialState, action) => {
             return { ...state, loading: true, error: null, registered: false };
 
         case "LOGIN_SUCCESS":
-            return { ...state, loading: false, token: action.payload };
+            return {
+                ...state,
+                loading: false,
+                token: action.payload.token,
+                userInfo: action.payload.userInfo,
+            };
 
         case "REGISTER_SUCCESS":
             return { ...state, loading: false, registered: true };

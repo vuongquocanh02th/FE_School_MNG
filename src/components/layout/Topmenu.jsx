@@ -1,13 +1,13 @@
 // src/components/layout/Topmenu.jsx
 import React from "react";
 import { AppBar, Toolbar, Typography, Avatar, Box } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const Topmenu = () => {
-    // Giả lập dữ liệu user
-    const user = {
-        name: "Nguyễn Văn A",
-        avatar: "https://i.pravatar.cc/300",
-    };
+    const { userInfo } = useSelector((state) => state.auth);
+
+    const fullName = userInfo?.fullName || userInfo?.username || "Chưa đăng nhập";
+    const getInitial = (name) => name ? name.charAt(0).toUpperCase() : "?";
 
     return (
         <AppBar position="static" sx={{ bgcolor: "#1976d2" }}>
@@ -16,8 +16,10 @@ const Topmenu = () => {
                     Hệ thống quản lý trường học
                 </Typography>
                 <Box display="flex" alignItems="center" gap={1}>
-                    <Avatar src={user.avatar} />
-                    <Typography>{user.name}</Typography>
+                    <Avatar sx={{ bgcolor: "#fff", color: "#1976d2", fontWeight: "bold" }}>
+                        {getInitial(fullName)}
+                    </Avatar>
+                    <Typography>{fullName}</Typography>
                 </Box>
             </Toolbar>
         </AppBar>
