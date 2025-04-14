@@ -30,7 +30,7 @@ import {
 } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 
-const Sidebar = () => {
+const Sidebar = ({ onSelectTab }) => {
     const [openDaoTao, setOpenDaoTao] = useState(false);
     const [openBaiKiemTra, setOpenBaiKiemTra] = useState(false);
 
@@ -38,7 +38,9 @@ const Sidebar = () => {
     const fullName = userInfo?.fullName || userInfo?.username || "Chưa đăng nhập";
     const getInitial = (name) => name ? name.charAt(0).toUpperCase() : "?";
     const role = userInfo?.userType;
-    console.log("🎯 Role trong sidebar:", role);
+
+
+
     return (
         <Drawer  variant="permanent"
                  sx={{
@@ -61,7 +63,7 @@ const Sidebar = () => {
                 </Box>
                 <Divider />
                 <List>
-                    <ListItemButton>
+                    <ListItemButton onClick={() => onSelectTab("DASHBOARD")}>
                         <ListItemIcon><HomeIcon /></ListItemIcon>
                         <ListItemText primary="Trang chủ" />
                     </ListItemButton>
@@ -78,15 +80,15 @@ const Sidebar = () => {
                                 <List component="div" disablePadding>
                                     <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemIcon><ScheduleIcon /></ListItemIcon>
-                                        <ListItemText primary="Tạo TKB" />
+                                        <ListItemText primary="Quản lý thời khóa biểu" />
                                     </ListItemButton>
                                     <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemIcon><AssignmentIcon /></ListItemIcon>
-                                        <ListItemText primary="QL kỳ thi" />
+                                        <ListItemText primary="Quản lý bài kiểm tra" />
                                     </ListItemButton>
                                     <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemIcon><GradeIcon /></ListItemIcon>
-                                        <ListItemText primary="Thêm điểm" />
+                                        <ListItemText primary="Quản lý điểm thi" />
                                     </ListItemButton>
                                 </List>
                             </Collapse>
@@ -112,11 +114,11 @@ const Sidebar = () => {
                         <>
                             <ListItemButton>
                                 <ListItemIcon><PeopleIcon /></ListItemIcon>
-                                <ListItemText primary="QL học sinh" />
+                                <ListItemText primary="Quản lý học sinh" />
                             </ListItemButton>
-                            <ListItemButton>
+                            <ListItemButton onClick={() => onSelectTab("CLASS_MANAGEMENT")}>
                                 <ListItemIcon><ClassIcon /></ListItemIcon>
-                                <ListItemText primary="QL lớp học" />
+                                <ListItemText primary="Quản lý lớp học" />
                             </ListItemButton>
                         </>
                     )}
@@ -125,12 +127,16 @@ const Sidebar = () => {
                     {role === "QUAN_LY_CAP_CAO" && (
                         <>
                             <ListItemButton>
+                                <ListItemIcon><PeopleIcon /></ListItemIcon>
+                                <ListItemText primary="Quản lý giáo viên" />
+                            </ListItemButton>
+                            <ListItemButton>
                                 <ListItemIcon><AdminIcon /></ListItemIcon>
-                                <ListItemText primary="QL người dùng" />
+                                <ListItemText primary="Quản lý người dùng" />
                             </ListItemButton>
                             <ListItemButton>
                                 <ListItemIcon><SubjectIcon /></ListItemIcon>
-                                <ListItemText primary="QL môn học" />
+                                <ListItemText primary="Quản lý môn học" />
                             </ListItemButton>
                             <ListItemButton>
                                 <ListItemIcon><SettingsIcon /></ListItemIcon>

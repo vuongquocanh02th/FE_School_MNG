@@ -1,20 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "../../components/layout/Sidebar";
 import Topmenu from "../../components/layout/Topmenu.jsx";
-import { Box } from "@mui/material";
+import {Box, Typography} from "@mui/material";
+import ClassList from "../class/ClassList.jsx";
+import {DashBoard} from "../../components/dashboard/DashBoard.jsx";
+
 
 const Home = () => {
+    const [selectedTab, setSelectedTab] = useState("DASHBOARD");
+
+    const renderContent = () => {
+        switch (selectedTab) {
+            case "DASHBOARD":
+                return <DashBoard/>
+            case "CLASS_MANAGEMENT":
+                return <ClassList />;
+            default:
+                return (
+                    <Box>
+                        <Typography variant="h6">Chức năng đang được phát triển</Typography>
+                    </Box>
+                );
+        }
+    };
+
     return (
         <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-            {/* Top menu nằm trên */}
             <Topmenu />
-
-            {/* Dưới là layout ngang: sidebar + content */}
             <Box sx={{ display: "flex", flexGrow: 1 }}>
-                <Sidebar />
-                <Box sx={{ flexGrow: 1, bgcolor: "#f5f5f5", p: 3 }}>
-                    <h1>Chào mừng đến hệ thống quản lý trường học</h1>
-                    {/* Các nội dung khác */}
+                <Sidebar onSelectTab={setSelectedTab} />
+                <Box sx={{ flexGrow: 1, bgcolor: "#f5f5f5", p: 3, overflowY: "auto" }}>
+                    {renderContent()}
                 </Box>
             </Box>
         </Box>

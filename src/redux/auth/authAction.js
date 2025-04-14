@@ -26,3 +26,5 @@ export const registerFailure = (error) => ({
     type: "REGISTER_FAILURE",
     payload: error,
 });
+
+export const logout = () => ({ type: "LOGOUT" });

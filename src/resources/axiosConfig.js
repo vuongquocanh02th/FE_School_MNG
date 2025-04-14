@@ -7,18 +7,19 @@ const axiosInstance = axios.create({
     timeout: 0
 });
 
-axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem("token");
+axiosInstance.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+
+    // ✅ Bỏ qua attach token nếu là login hoặc register
+    if (!config.url.includes("/auth")) {
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
     }
-)
+
+    return config;
+});
+
 axiosInstance.interceptors.response.use(
     (response) => {
         return response.data;

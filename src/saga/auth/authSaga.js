@@ -6,15 +6,10 @@ import {jwtDecode} from "jwt-decode";
 function* loginWorker(action) {
     try {
         const response = yield call(() =>
-            axiosInstance.post("api/auth/login", action.payload)
+            axiosInstance.post("/api/auth/login", action.payload)
         );
-
         const token = response;
-        console.log("📦 Token nhận được:", token);
-
         const decoded = jwtDecode(token);  // ✅ phải là object chứa userType
-        console.log("🔍 Decoded JWT:", decoded);
-
         const userInfo = {
             username: decoded.sub,
             userType: decoded.userType,
@@ -29,14 +24,13 @@ function* loginWorker(action) {
         window.location.href = "/home";
 
     } catch (err) {
-        console.error("❌ Login error:", err);
         yield put(loginFailure("Sai tên đăng nhập hoặc mật khẩu", err));
     }
 }
 
 function* registerWorker(action) {
     try {
-        yield call(() => axiosInstance.post("api/auth/register", action.payload));
+        yield call(() => axiosInstance.post("/api/auth/register", action.payload));
         yield put(registerSuccess());
         window.location.href = "/login"; // chuyển sang login khi đăng ký xong
     } catch (err) {
