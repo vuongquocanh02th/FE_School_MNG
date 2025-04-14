@@ -4,6 +4,7 @@ import {userReducer} from "./user/userReducer.js";
 import {classReducer} from "./class/classReducer.js";
 import {classTypeReducer} from "./classType/classTypeReducer.js";
 import {staffReducer} from "./staff/staffReducer.js";
+import {subjectReducer} from "./subject/subjectReducer.js";
 
 const rootReducer = combineReducers({
     auth: authReducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
     class: classReducer,
     staff: staffReducer,
     classType: classTypeReducer,
+    subject: subjectReducer,
 });
 
 export default rootReducer;

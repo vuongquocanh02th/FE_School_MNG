@@ -134,7 +134,7 @@ const Sidebar = ({ onSelectTab }) => {
                                 <ListItemIcon><AdminIcon /></ListItemIcon>
                                 <ListItemText primary="Quản lý người dùng" />
                             </ListItemButton>
-                            <ListItemButton>
+                            <ListItemButton onClick={() => onSelectTab("SUBJECT_MANAGEMENT")}>
                                 <ListItemIcon><SubjectIcon /></ListItemIcon>
                                 <ListItemText primary="Quản lý môn học" />
                             </ListItemButton>

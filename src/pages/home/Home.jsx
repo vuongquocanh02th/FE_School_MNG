@@ -4,6 +4,7 @@ import Topmenu from "../../components/layout/Topmenu.jsx";
 import {Box, Typography} from "@mui/material";
 import ClassList from "../class/ClassList.jsx";
 import {DashBoard} from "../../components/dashboard/DashBoard.jsx";
+import SubjectList from "../subject/SubjectList.jsx";
 
 
 const Home = () => {
@@ -15,6 +16,8 @@ const Home = () => {
                 return <DashBoard/>
             case "CLASS_MANAGEMENT":
                 return <ClassList />;
+            case "SUBJECT_MANAGEMENT":
+                return <SubjectList/>;
             default:
                 return (
                     <Box>
