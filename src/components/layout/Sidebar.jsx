@@ -78,7 +78,7 @@ const Sidebar = ({ onSelectTab }) => {
                             </ListItemButton>
                             <Collapse in={openDaoTao} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                    <ListItemButton sx={{ pl: 4 }}>
+                                    <ListItemButton sx={{ pl: 4 }} onClick={() => onSelectTab("TIME_TABLE_MANAGEMENT")}>
                                         <ListItemIcon><ScheduleIcon /></ListItemIcon>
                                         <ListItemText primary="Quản lý thời khóa biểu" />
                                     </ListItemButton>
@@ -140,6 +140,7 @@ const Sidebar = ({ onSelectTab }) => {
                             </ListItemButton>
                             <ListItemButton>
                                 <ListItemIcon><SettingsIcon /></ListItemIcon>
+                                
                                 <ListItemText primary="Cài đặt hệ thống" />
                             </ListItemButton>
                         </>

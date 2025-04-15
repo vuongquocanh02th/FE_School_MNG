@@ -5,6 +5,7 @@ import {Box, Typography} from "@mui/material";
 import ClassList from "../class/ClassList.jsx";
 import {DashBoard} from "../../components/dashboard/DashBoard.jsx";
 import SubjectList from "../subject/SubjectList.jsx";
+import TimeTableMng from "../timeTable/TimeTableMng.jsx";
 
 
 const Home = () => {
@@ -18,6 +19,8 @@ const Home = () => {
                 return <ClassList />;
             case "SUBJECT_MANAGEMENT":
                 return <SubjectList/>;
+            case "TIME_TABLE_MANAGEMENT":
+                return <TimeTableMng/>;
             default:
                 return (
                     <Box>

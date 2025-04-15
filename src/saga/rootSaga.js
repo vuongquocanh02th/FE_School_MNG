@@ -6,6 +6,7 @@ import classSaga from "./class/classSaga.js";
 import classTypeSaga from "./classType/classTypeSaga.js";
 import staffSaga from "./staff/staffSaga.js";
 import subjectSaga from "./subject/subjectSaga.js";
+import timeTableSaga from "./timeTable/timeTableSaga.js";
 
 
 export default function* rootSaga() {
@@ -15,6 +16,7 @@ export default function* rootSaga() {
         classSaga(),
         classTypeSaga(),
         staffSaga(),
-        subjectSaga()
+        subjectSaga(),
+        timeTableSaga(),
     ])
 }

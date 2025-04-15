@@ -5,6 +5,7 @@ import {classReducer} from "./class/classReducer.js";
 import {classTypeReducer} from "./classType/classTypeReducer.js";
 import {staffReducer} from "./staff/staffReducer.js";
 import {subjectReducer} from "./subject/subjectReducer.js";
+import timeTableReducer from "./timeTable/timeTableReducer.js";
 
 const rootReducer = combineReducers({
     auth: authReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
     staff: staffReducer,
     classType: classTypeReducer,
     subject: subjectReducer,
+    timeTable: timeTableReducer,
 });
 
 export default rootReducer;
